@@ -14,7 +14,7 @@ If you're interested, then you can check some of my old posts from here:
 - [docs.microsoft.com/archive/blogs/jannemattila](https://docs.microsoft.com/en-us/archive/blogs/jannemattila/)
 
 I have always wanted share my code examples to make
-someone elese life a bit more easier. 
+someone elses life a bit more easier. 
 
 I haven't been writing articles for a while, but I have been
 writing code examples and sharing them in GitHub.
