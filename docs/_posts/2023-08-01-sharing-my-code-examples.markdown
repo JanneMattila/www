@@ -21,7 +21,7 @@ someone else's life a bit more easier.
 
 I haven't been writing articles for a while, but I have been
 writing code examples and sharing them in GitHub.
-You can see **my 150+ repositories in [GitHub](https://github.com/JanneMattila?tab=repositories)**.
+You can find **my 150+ repositories in [GitHub](https://github.com/JanneMattila?tab=repositories)**.
 
 I have been thinking that I should start writing articles again,
 just to be able to share some background information behind the code examples.
