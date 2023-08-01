@@ -25,6 +25,15 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: janne_mattila
 github_username: JanneMattila
+author:
+  name: Janne Mattila
+  twitter: janne_mattila
+  url: https://github.com/JanneMattila
+defaults:
+  - scope:
+      path: ""
+    values:
+      image: /assets/www.png
 
 # Build settings
 theme: jekyll-theme-slate
