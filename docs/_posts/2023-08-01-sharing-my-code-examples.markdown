@@ -2,7 +2,8 @@
 layout: posts
 title:  "Improving sharing of my code examples"
 date:   2023-08-01 06:00:00 +0300
-categories: azure
+categories: blog
+tags: blog github
 ---
 # Improving sharing of my code examples
 
