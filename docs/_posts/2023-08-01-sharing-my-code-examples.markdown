@@ -1,10 +1,10 @@
 ---
 layout: posts
-title:  "Sharing my code examples better"
+title:  "Improving sharing of my code examples"
 date:   2023-08-01 06:00:00 +0300
 categories: azure
 ---
-# Sharing my code examples better
+# Improving sharing of my code examples
 
 I've had multiple different blogs and websites over the years.
 Many of them have already disappeared from the internet and not available anymore
