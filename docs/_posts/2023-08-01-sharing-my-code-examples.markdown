@@ -14,14 +14,14 @@ If you're interested, then you can check some of my old posts from here:
 - [docs.microsoft.com/archive/blogs/jannemattila](https://docs.microsoft.com/en-us/archive/blogs/jannemattila/)
 
 I have always wanted share my code examples to make
-someone elses life a bit more easier. 
+someone else's life a bit more easier. 
 
 I haven't been writing articles for a while, but I have been
 writing code examples and sharing them in GitHub.
 You can see my 150+ repositories from [here](https://github.com/JanneMattila?tab=repositories).
 
 I have been thinking that I should start writing articles again,
-just to be able share some background information behind the code examples.
+just to be able to share some background information behind the code examples.
 They don't necessarily need to be long articles, but just something
 to give some context for the code examples to make them more
 easily understandable.
