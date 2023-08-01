@@ -1,7 +1,7 @@
 ---
 layout: posts
-title:  "Blog for sharing my code examples better"
-date:   2021-04-23 21:31:59 +0300
+title:  "Sharing my code examples better"
+date:   2023-08-01 06:00:00 +0300
 categories: azure
 ---
 I've had multiple different blogs and websites over the years.
