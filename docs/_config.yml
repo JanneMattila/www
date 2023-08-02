@@ -33,7 +33,8 @@ defaults:
   - scope:
       path: ""
     values:
-      image: /assets/www.png
+      description: "Janne Mattila's blog \\| From programmer to programmer -- Programming just for the fun of it"
+      image: /assets/share.png
 
 # Build settings
 theme: jekyll-theme-slate

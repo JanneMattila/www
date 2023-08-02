@@ -1,7 +1,8 @@
 ---
 layout: posts
 title:  "Improving sharing of my code examples"
-date:   2023-08-01 06:00:00 +0300
+image: /assets/posts/2023-08-02-sharing-my-code-examples/GitHub.png
+date:   2023-08-02 06:00:00 +0300
 categories: blog
 tags: blog github
 ---
@@ -22,6 +23,8 @@ someone else's life a bit more easier.
 I haven't been writing articles for a while, but I have been
 writing code examples and sharing them in GitHub.
 You can find **my 150+ repositories in [GitHub](https://github.com/JanneMattila?tab=repositories)**.
+
+[![My GitHub Repositories](/assets/posts/2023-08-02-sharing-my-code-examples/GitHub.png)](https://github.com/JanneMattila?tab=repositories)
 
 I have been thinking that I should start writing articles again,
 just to be able to share some background information behind the code examples.
