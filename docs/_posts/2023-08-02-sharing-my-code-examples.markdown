@@ -2,7 +2,7 @@
 layout: posts
 title:  "Improving sharing of my code examples"
 image: /assets/posts/2023-08-02-sharing-my-code-examples/GitHub.png
-date: 2023-08-02 00:00:00 +0300
+date: 2023-08-02 18:00:00 +0300
 categories: blog
 tags: blog github
 ---
