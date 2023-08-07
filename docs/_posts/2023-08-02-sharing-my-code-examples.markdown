@@ -2,12 +2,10 @@
 layout: posts
 title:  "Improving sharing of my code examples"
 image: /assets/posts/2023-08-02-sharing-my-code-examples/GitHub.png
-date:   2023-08-02 06:00:00 +0300
+date: 2023-08-02 00:00:00 +0300
 categories: blog
 tags: blog github
 ---
-# Improving sharing of my code examples
-
 I've had multiple different blogs and websites over the years.
 Many of them have already disappeared from the internet and not available anymore
 even from the internet archives (but I managed to find [one](https://web.archive.org/web/20060114062052/http://www.rattimus.net:80/Programming/filestopdf.html)!).
