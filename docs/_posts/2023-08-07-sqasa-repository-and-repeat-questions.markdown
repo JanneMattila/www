@@ -13,7 +13,7 @@ As I have been answering those questions, I have also been writing many of them 
 This of course has made my life a lot easier, since I can just provide link to my notes
 instead of writing the same answer over and over again.
 
-In fact, many people are quite frequently asking from me:
+In fact, many people are now quite frequently asking from me:
 
 > _"Do you happen to have code example about...?"_
 
