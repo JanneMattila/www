@@ -2,7 +2,7 @@
 layout: posts
 title:  "Cosmos DB, DNS, Networking -- It's all magic!"
 image: /assets/posts/2023-08-14-cosmosdb-and-magic/cosmosdb.png
-date: 2023-08-12 17:00:00 +0300
+date: 2023-08-14 17:00:00 +0300
 categories: azure
 tags: azure cosmosdb dns networking
 ---
