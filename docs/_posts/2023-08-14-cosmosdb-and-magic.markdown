@@ -29,7 +29,7 @@ of his skillset. So, the message for the participants was that **it's magic!**
 
 ![Cosmos DB and networking is magic](/assets/posts/common/magic.gif)
 
-_Meme from internet by unknown author_ (and yes I use this a lot!)
+_Meme from internet by unknown author_ (and yes I use this a lot at work!)
 
 I _unfortunately_ know, that rarely things are magic and there is always
 some simple explanation behind it.
@@ -54,7 +54,7 @@ for enabling multi-region writes:
 After the training session I ended up writing few notes down to clarify this a bit more.
 I'm not going to duplicate my notes here, but **you can read my notes from the original location:**
 
-[Region endpoints- Region endpoints](https://github.com/JanneMattila/some-questions-and-some-answers/blob/master/q%26a/azure_cosmos_db.md#region-endpoints)
+[Azure Cosmos DB - Region endpoints](https://github.com/JanneMattila/some-questions-and-some-answers/blob/master/q%26a/azure_cosmos_db.md#region-endpoints)
 
 
 ---
@@ -67,10 +67,10 @@ in the IDE has generated into their codebase.
 
 ---
 
-But if you're still interested about Cosmos DB _magic_, then you'd better try it out yourself!
+But if you're still interested in Cosmos DB _magic_, then you'd better try it out yourself!
 
 Create yourself a Cosmos DB account and enable multi-region writes for one additional region.
-Then you can use following commands to see how it works (using my [JanneMattila/AzureDatacenterIPOrNo](https://github.com/JanneMattila/AzureDatacenterIPOrNo) PowerShell module):
+Then you can use following PowerShell commands to see how it works (using my [JanneMattila/AzureDatacenterIPOrNo](https://github.com/JanneMattila/AzureDatacenterIPOrNo) PowerShell module):
 
 ```powershell
 Install-Module -Name AzureDatacenterIPOrNo
