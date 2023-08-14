@@ -57,7 +57,7 @@ I'm not going to duplicate my notes here, but **you can read my notes from the o
 {% include githubPlayer.html text="JanneMattila/some-questions-and-some-answers" link="JanneMattila/some-questions-and-some-answers/blob/master/q%26a/azure_cosmos_db.md#region-endpoints" %}
 
 Of course, this kind of _magical thing_ is nothing new.
-I have always recommended developers to understand different how _Configuration Wizards_ in IDEs work,
+I have always recommended developers to understand how different _Configuration Wizards_ in IDEs work,
 just that they don't get surprised later on. It's not one or two
 times when developer has been bitten by something that fancy wizard 
 in the IDE has generated into their codebase.
@@ -72,9 +72,11 @@ Then you can use following PowerShell commands to see how it works (using my [Ja
 ```powershell
 Install-Module -Name AzureDatacenterIPOrNo
 
+# This is your Cosmos DB account name
 $accountName = "cosmos000000010"
 $primaryEndpoint = "$accountName.documents.azure.com"
 
+# This is the another region you enabled for multi-region writes
 $anotherRegion = "southeastasia"
 $anotherRegionEndpoint = "$accountName-$anotherRegion.documents.azure.com"
 
