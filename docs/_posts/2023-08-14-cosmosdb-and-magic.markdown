@@ -54,10 +54,7 @@ for enabling multi-region writes:
 After the training session I ended up writing few notes down to clarify this a bit more.
 I'm not going to duplicate my notes here, but **you can read my notes from the original location:**
 
-[Azure Cosmos DB - Region endpoints](https://github.com/JanneMattila/some-questions-and-some-answers/blob/master/q%26a/azure_cosmos_db.md#region-endpoints)
-
-
----
+{% include githubPlayer.html text="JanneMattila/some-questions-and-some-answers" link="JanneMattila/some-questions-and-some-answers/blob/master/q%26a/azure_cosmos_db.md#region-endpoints" %}
 
 Of course, this kind of _magical thing_ is nothing new.
 I have always recommended developers to understand different how _Configuration Wizards_ in IDEs work,

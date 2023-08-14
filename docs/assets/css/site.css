@@ -11,3 +11,21 @@ p {
 .footerText {
     text-align: center;
 }
+
+.github-link {
+    vertical-align: middle;
+    text-align: center;
+    border: 1px lightgray;
+    border-style: dotted;
+}
+
+.github-logo {
+    vertical-align: middle;
+    padding: 5px;
+    border: 0px;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    -o-box-shadow: none;
+    -ms-box-shadow: none;
+}

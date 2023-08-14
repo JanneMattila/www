@@ -20,7 +20,9 @@ In fact, many people are now quite frequently asking from me:
 Maybe it's not a big suprise that same questions have come up several times.
 Therefore, I created a repository for all these smaller random questions.
 I ended up calling it **SQASA (Some Questions And Some Answers)** and
-you can find it here: [JanneMattila/some-questions-and-some-answers](https://github.com/JanneMattila/some-questions-and-some-answers)
+you can find it here: 
+
+{% include githubPlayer.html text="JanneMattila/some-questions-and-some-answers" link="JanneMattila/some-questions-and-some-answers" %}
 
 [![JanneMattila/some-questions-and-some-answers](/assets/posts/2023-08-07-sqasa-repository-and-repeat-questions/sqasa.png)](https://github.com/JanneMattila/some-questions-and-some-answers)
 
