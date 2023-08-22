@@ -12,11 +12,12 @@ p {
     text-align: center;
 }
 
-.github-link {
+.github-section {
     vertical-align: middle;
     text-align: center;
     border: 1px lightgray;
     border-style: dotted;
+    white-space: nowrap;
 }
 
 .github-logo {
@@ -28,4 +29,27 @@ p {
     -moz-box-shadow: none;
     -o-box-shadow: none;
     -ms-box-shadow: none;
+}
+
+.docker-section {
+    vertical-align: middle;
+    text-align: center;
+    border: 1px lightgray;
+    border-style: dotted;
+    white-space: nowrap;
+}
+
+.docker-logo {
+    vertical-align: middle;
+    padding: 5px;
+    border: 0px;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    -o-box-shadow: none;
+    -ms-box-shadow: none;
+}
+
+.mermaid-section {
+    text-align: center;
 }
