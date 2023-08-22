@@ -2,7 +2,7 @@
 layout: posts
 title:  "Testing your network configurations with 'webapp-network-tester' tool"
 image: /assets/posts/2023-08-22-testing-your-network-configuration/webapp-network-tester.png
-date:   2023-08-22 02:00:00 +0300
+date:   2023-08-22 06:00:00 +0300
 categories: networking
 tags: azure networking dns private-endpoints
 ---
