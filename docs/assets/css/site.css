@@ -2,17 +2,17 @@ p {
     font-size: 18px;
 }
 
-.projectTitle {
+.project-title {
     color: white;
     text-decoration: none;
     text-shadow: 2px 2px 2px gray;
 }
 
-.footerText {
+.footer-text {
     text-align: center;
 }
 
-.github-section {
+.external-section {
     vertical-align: middle;
     text-align: center;
     border: 1px lightgray;
@@ -29,14 +29,6 @@ p {
     -moz-box-shadow: none;
     -o-box-shadow: none;
     -ms-box-shadow: none;
-}
-
-.docker-section {
-    vertical-align: middle;
-    text-align: center;
-    border: 1px lightgray;
-    border-style: dotted;
-    white-space: nowrap;
 }
 
 .docker-logo {

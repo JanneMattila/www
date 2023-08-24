@@ -27,7 +27,7 @@ to think that how does that work?
 The presenter did mention that explaining that how it actually works is outside
 of his skillset. So, the message for the participants was that **it's magic!**
 
-![Cosmos DB and networking is magic](/assets/posts/common/magic.gif)
+![Cosmos DB and networking is magic](/assets/posts/common/magic-large.gif)
 
 _Meme from internet by unknown author_ (and yes I use this a lot at work!)
 
