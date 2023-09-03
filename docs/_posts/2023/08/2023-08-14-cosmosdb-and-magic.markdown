@@ -1,7 +1,7 @@
 ---
 layout: posts
 title:  "Cosmos DB, DNS, Networking -- It's all magic!"
-image: /assets/posts/2023-08-14-cosmosdb-and-magic/share.png
+image: /assets/posts/2023/08/14/cosmosdb-and-magic/share.png
 date: 2023-08-14 17:00:00 +0300
 categories: azure
 tags: azure cosmosdb dns networking
@@ -47,7 +47,7 @@ I could continue asking these questions, but I think you got the point.
 Here is Cosmos DB "Replicate data globally" blade, which you can use
 for enabling multi-region writes:
 
-[![Cosmos DB](/assets/posts/2023-08-14-cosmosdb-and-magic/share.png)](/assets/posts/2023-08-14-cosmosdb-and-magic/share.png)
+[![Cosmos DB](/assets/posts/2023/08/14/cosmosdb-and-magic/share.png)](/assets/posts/2023/08/14/cosmosdb-and-magic/share.png)
 
 ---
 
