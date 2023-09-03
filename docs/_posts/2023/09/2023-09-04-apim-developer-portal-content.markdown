@@ -4,7 +4,7 @@ title:  "Azure API Management Developer Portal content migrations"
 image: /assets/posts/2023/09/04/apim-developer-portal-content/share.png
 date:   2023-09-04 06:00:00 +0300
 categories: azure
-tags: azure development apim
+tags: azure development apim api-management developer-portal
 ---
 
 Azure API Management has been quite a commonly used service over the years among my customers. 
@@ -16,7 +16,7 @@ One aspect of APIM is sometimes overlooked _at least early_ in the development p
 which is related to handling the Developer Portal content. 
 You should plan to migrate that content between environments as well.
 
-[![APIM Developer Portal settings](/assets/posts/2023/09/04/apim-developer-portal-content/share.png)](/assets/posts/2023/09/04/apim-developer-portal-content/share.png)
+{% include imageEmbed.html link="/assets/posts/2023/09/04/apim-developer-portal-content/share.png" alt="APIM Developer Portal settings" %}
 
 Official APIM documentation has [Automate developer portal deployments](https://learn.microsoft.com/en-us/azure/api-management/automate-portal-deployments) instructions.
 It links to [api-management-developer-portal](https://github.com/Azure/api-management-developer-portal)

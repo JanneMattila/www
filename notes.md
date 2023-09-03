@@ -2,7 +2,6 @@
 
 ## Upcoming posts
 
-- APIM Developer Portal CI/CD
 - Serial port (e.g., COM3) to named pipe (e.g., \\.\pipe\com2) connector
 - GitHub Copilot
 - Azure Firewall

@@ -22,7 +22,7 @@ I haven't been writing articles for a while, but I have been
 writing code examples and sharing them in GitHub.
 You can find **my 150+ repositories in [GitHub](https://github.com/JanneMattila?tab=repositories)**.
 
-[![My GitHub Repositories](/assets/posts/2023/08/02/sharing-my-code-examples/share.png)](https://github.com/JanneMattila?tab=repositories)
+{% include imageEmbed.html link="/assets/posts/2023/08/02/sharing-my-code-examples/share.png" alt="My GitHub Repositories" target="https://github.com/JanneMattila?tab=repositories" %}
 
 I have been thinking that I should start writing articles again,
 just to be able to share some background information behind the code examples.

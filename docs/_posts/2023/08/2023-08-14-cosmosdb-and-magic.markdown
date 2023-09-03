@@ -27,7 +27,7 @@ to think that how does that work?
 The presenter did mention that explaining that how it actually works is outside
 of his skillset. So, the message for the participants was that **it's magic!**
 
-![Cosmos DB and networking is magic](/assets/posts/common/magic-large.gif)
+{% include imageEmbed.html link="/assets/posts/common/magic-large.gif" alt="Cosmos DB and networking is magic" %}
 
 _Meme from internet by unknown author_ (and yes I use this a lot at work!)
 
@@ -47,7 +47,7 @@ I could continue asking these questions, but I think you got the point.
 Here is Cosmos DB "Replicate data globally" blade, which you can use
 for enabling multi-region writes:
 
-[![Cosmos DB](/assets/posts/2023/08/14/cosmosdb-and-magic/share.png)](/assets/posts/2023/08/14/cosmosdb-and-magic/share.png)
+{% include imageEmbed.html link="/assets/posts/2023/08/14/cosmosdb-and-magic/share.png" alt="Cosmos DB" %}
 
 ---
 

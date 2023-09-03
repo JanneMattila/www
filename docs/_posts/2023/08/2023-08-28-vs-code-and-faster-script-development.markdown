@@ -22,7 +22,7 @@ Here are the main points:
 - Use keyboard as much as possible!
 - Use [Send snippet to Terminal](https://marketplace.visualstudio.com/items?itemName=jannemattila.send-snippet-to-terminal) VS Code extension (created by me)
 
-[![Send snippet to Terminal](/assets/posts/2023/08/28/vs-code-and-faster-script-development/share.gif)](/assets/posts/2023/08/28/vs-code-and-faster-script-development/share.gif)
+{% include imageEmbed.html link="/assets/posts/2023/08/28/vs-code-and-faster-script-development/share.gif" alt="Send snippet to Terminal" %}
 
 [Send snippet to Terminal](https://marketplace.visualstudio.com/items?itemName=jannemattila.send-snippet-to-terminal)
 extension is the key in this rapid development. 

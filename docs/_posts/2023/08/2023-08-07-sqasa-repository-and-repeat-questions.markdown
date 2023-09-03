@@ -24,7 +24,7 @@ you can find it here:
 
 {% include githubEmbed.html text="JanneMattila/some-questions-and-some-answers" link="JanneMattila/some-questions-and-some-answers" %}
 
-[![JanneMattila/some-questions-and-some-answers](/assets/posts/2023/08/07/sqasa-repository-and-repeat-questions/share.png)](https://github.com/JanneMattila/some-questions-and-some-answers)
+{% include imageEmbed.html link="/assets/posts/2023/08/07/sqasa-repository-and-repeat-questions/share.png" alt="JanneMattila/some-questions-and-some-answers" target="https://github.com/JanneMattila/some-questions-and-some-answers" %}
 
 Below you can find three examples of the questions that I have received several times over the years.
 

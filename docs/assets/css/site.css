@@ -20,6 +20,23 @@ p {
     white-space: nowrap;
 }
 
+.image-section {
+    vertical-align: middle;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.image-embedded-section {
+    vertical-align: middle;
+    padding: 5px;
+    border: 0px;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    -o-box-shadow: none;
+    -ms-box-shadow: none;
+}
+
 .github-logo {
     vertical-align: middle;
     padding: 5px;
