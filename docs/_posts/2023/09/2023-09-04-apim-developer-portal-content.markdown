@@ -36,7 +36,7 @@ node ./migrate ^
 ```
 
 The above script shows how to pass connection details for _source_ APIM Developer Portal instance
-and **at the same time** to the _target_ instance. This means that you have to have access to both
+and **at the same time** to the _target_ instance. This means that you need to have access to both
 environments at the same time. 
 
 _However_, I do not think that it's an approach that many Enterprises want.
@@ -62,6 +62,6 @@ I've also created GitHub Action for this, so you can use it in your GitHub workf
 
 {% include githubEmbed.html text="JanneMattila/azure-api-management-developer-portal-action" link="JanneMattila/azure-api-management-developer-portal-action" %}
 
-It's available in GitHub Marketplace. You can find it here: [Import or export Azure API Management Developer Portal content](https://github.com/marketplace/actions/import-or-export-azure-api-management-developer-portal-content).
+It's available at the GitHub Marketplace. You can find it here: [Import or export Azure API Management Developer Portal content](https://github.com/marketplace/actions/import-or-export-azure-api-management-developer-portal-content).
 
 Please try these out to see if you find them useful!
