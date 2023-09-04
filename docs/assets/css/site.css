@@ -15,9 +15,13 @@ p {
 .external-section {
     vertical-align: middle;
     text-align: center;
-    border: 1px lightgray;
+    border-radius: 5px;
+    box-shadow: 0 5px 12px 0 rgba(0, 0, 0, 0.2);
     border-style: dotted;
     white-space: nowrap;
+    overflow: clip;
+    text-overflow: ellipsis;
+    word-break: break-all;
 }
 
 .image-section {
