@@ -2,7 +2,7 @@
 layout: posts
 title:  "Serial port to named pipe connector"
 image: /assets/posts/2023/09/04/apim-developer-portal-content/share.png
-date:   2023-09-02 06:00:00 +0300
+date:   2030-09-11 06:00:00 +0300
 categories: iot
 tags: iot development home-assistant hyper-v
 ---
