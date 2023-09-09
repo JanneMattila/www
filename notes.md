@@ -2,7 +2,8 @@
 
 ## Upcoming posts
 
-- Serial port (e.g., COM3) to named pipe (e.g., \\.\pipe\com2) connector
+- Azure Arc & monitoring serialport2namedpipe
+- Analyze resources using KQL (Arc, Resource Graph)
 - GitHub Copilot
 - Azure Firewall
 - Azure Firewall & No network connectivity
