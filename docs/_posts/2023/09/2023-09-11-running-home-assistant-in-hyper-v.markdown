@@ -49,11 +49,12 @@ I call it `serialport2namedpipe` and it's available in my GitHub repository:
 {% include githubEmbed.html text="JanneMattila/serialport2namedpipe" link="JanneMattila/serialport2namedpipe" %}
 
 Repo contains more details about the solution and a sequence diagram that explains
-how it works in practice.
+how it works in practice all the way from Zigbee USB Gateway to Home Assistant.
 
 I have been running this solution for 6 months now and it has been working very well.
 
 ---
 
-I mentioned that I've also installed Azure Arc and AKS Edge Essentials to the same machine.
-But more about those in my next post so stay tuned!
+I mentioned that I've also installed Azure Arc and AKS Edge Essentials on the same machine.
+Azure Arc enables me to monitor my `serialport2namedpipe` but more about that
+in my next post so stay tuned!
