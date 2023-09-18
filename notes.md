@@ -2,9 +2,9 @@
 
 ## Upcoming posts
 
-- Azure Arc & monitoring serialport2namedpipe
+- Preparing for Azure service retirements
+  - Analyze resources using KQL (Arc, Resource Graph)
 - HCIBox
-- Analyze resources using KQL (Arc, Resource Graph)
 - GitHub Copilot
 - Azure Firewall
 - Azure Firewall & No network connectivity

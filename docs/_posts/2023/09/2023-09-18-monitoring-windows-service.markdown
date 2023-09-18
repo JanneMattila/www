@@ -4,7 +4,7 @@ title:  "Monitoring <em>serialport2namedpipe</em> Windows Service running in Azu
 image: /assets/posts/2023/09/18/monitoring-windows-service/arc-server.png
 date:   2023-09-18 06:00:00 +0300
 categories: azure
-tags: azure iot development home-assistant hyper-v
+tags: azure azure-monitor azure-arc iot development windows-service
 ---
 In my previous post, I wrote about 
 [Running Home Assistant in Hyper-V with Zigbee USB Gateway]({% post_url 2023/09/2023-09-11-running-home-assistant-in-hyper-v %}).
@@ -64,8 +64,9 @@ but for quick reference, here is an example GitOps configuration for AKS EE with
 
 For monitoring this solution, we can leverage Azure Monitor and its many capabilities. 
 To demo one specific monitoring scenario, I chose demo that we presented at the 
-Microsoft Finland Partner Architect Day _already_ in 19th of November 2019 jointly with my colleague. 
-Demo is about monitoring Windows Service using Azure Monitor tools. 
+Microsoft Finland Partner Architect Day _already_ in 19th of November 2019 jointly with my colleague
+[Tomi Pietilä](https://www.linkedin.com/in/tomi-pietila/).
+Demo is about monitoring Windows Service using Azure Monitor. 
 
 Here is a screenshot of one of the slides that we showed in our presentation:
 
