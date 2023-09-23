@@ -98,7 +98,7 @@ link in the workbook you'll find more information on each retirement
 as well as corrective action you should take.
 Here is the link for [Application Insights](https://azure.microsoft.com/en-us/updates/we-re-retiring-classic-application-insights-on-29-february-2024/).
 
-As you can see my environment has 325 Application Insights resources impacted.
+As you can see my **environment has 325 Application Insights resources impacted**.
 At the time or writing this, to migrate all these on time, _somebody_ should migrate ~2 resources per day before retirement. 
 
 But this brings up important follow-up questions: 
@@ -113,7 +113,13 @@ etc.
 
 ---
 
-I'm trying to create also resource graph queries to some of these items in the services retirement list. I'm trying to put them here:
+Natural next step is to analyze your environment and find out which other resources are impacted.
+Use that information to build backlog, so you'll know the amount of work ahead of you.
+
+---
+
+I'm also trying to highlight selected resource graph queries which help you find these retired services from your environment.
+I'll put them here:
 
 {% include githubEmbed.html text="JanneMattila/some-questions-and-some-answers" link="JanneMattila/some-questions-and-some-answers/blob/master/q%26a/azure_resource_graph.md" %}
 
