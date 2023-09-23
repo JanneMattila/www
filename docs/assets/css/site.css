@@ -2,6 +2,15 @@ p {
     font-size: 18px;
 }
 
+hr {
+    border: 0;
+    height: 1px;
+    background: black;
+    background-image: linear-gradient(to right, #ccc, #333, #ccc);
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
 .project-title {
     color: white;
     text-decoration: none;

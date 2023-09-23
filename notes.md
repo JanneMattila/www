@@ -2,11 +2,12 @@
 
 ## Upcoming posts
 
-- Preparing for Azure service retirements
-  - Analyze resources using KQL (Arc, Resource Graph)
+- Azure Firewall
+- Arc onboarding mapping
+- Azure VNet and subnet as property vs. child resource
+  - https://github.com/Azure/azure-quickstart-templates/issues/2786
 - HCIBox
 - GitHub Copilot
-- Azure Firewall
 - Azure Firewall & No network connectivity
 - Echo & Webhooks
 - API Examples

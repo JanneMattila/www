@@ -20,7 +20,7 @@ But since cloud has been around quite some time, we're more and more seeing
 that also in cloud some services are going away.
 This might mean that you need to adjust your architecture or update your applications to accommodate those changes.
 
-Last few years I have been very closely working with customers using Azure
+Last few years I have been working closely with customers using Azure
 and every time when there is a major service retirement,
 I try to highlight this to them well in advance. 
 One major service retirement that I tried to do all the possible things
@@ -50,7 +50,7 @@ But let's come back to Application Insights later.
 
 ---
 
-One concrete example about services retirements that we didn't manage to notice early, 
+To give one concrete example about services retirement example that we didn't manage to notice early, 
 was PHP retirement in Windows App Service plan last year:
 
 [Community support for PHP 7.4 is ending on 28 November 2022](https://azure.microsoft.com/en-us/updates/community-support-for-php-74-is-ending-on-28-november-2022/)
@@ -76,7 +76,9 @@ retirements well in advance.
 Luckily, there are many tools to help you. 
 I'll try to highlight them here and hopefully you'll do validation for your environment as well.
 
-**Azure Advisor** is a great tool for getting recommendations for your Azure resources. 
+### Azure Advisor
+
+Azure Advisor is a great tool for getting recommendations for your Azure resources. 
 It also has ready-made workbooks available to you. You can find them here:
 
 [aka.ms/advisorworkbooks](https://aka.ms/advisorworkbooks)
@@ -89,8 +91,6 @@ It also has ready-made workbooks available to you. You can find them here:
 
 This workbook is still in _preview_, so it’s not perfect and contains subset of services
 but still a great resource to take into use. **Try it out now!**
-
----
 
 Top of my services retirement list is Application Insights which is retiring feature "Classic" in February 2024. 
 By clicking that "Learn more"
@@ -111,8 +111,6 @@ But this brings up important follow-up questions:
 
 etc.
 
----
-
 Natural next step is to analyze your environment and find out which other resources are impacted.
 Use that information to build backlog, so you'll know the amount of work ahead of you.
 
@@ -123,11 +121,44 @@ I'll put them here:
 
 {% include githubEmbed.html text="JanneMattila/some-questions-and-some-answers" link="JanneMattila/some-questions-and-some-answers/blob/master/q%26a/azure_resource_graph.md" %}
 
-Here are other tools that you should checkout:
+### Other tools
+
+Here are other tools that you should *definitely* checkout:
 
 [Azure Charts](https://azurecharts.com/timeboards/deprecations) - Azure Deprecations Board
 
-[Azure Updates by Retirements](https://azure.microsoft.com/en-us/updates/?updateType=retirements) and RSS Feeds
+---
+
+[Azure Updates by Retirements](https://azure.microsoft.com/en-us/updates/?updateType=retirements)
+
+You can use RSS Feeds to pull Azure Updates information to your own tools.
+
+Here is example Excel file that I've created:
+
+{% include imageEmbed.html link="/assets/posts/2023/09/25/preparing-for-azure-services-retirements/excel.png" %}
+
+[AzureServicesRetirements.xlsx](/assets/posts/2023/09/25/preparing-for-azure-services-retirements/AzureServicesRetirements.xlsx)
+
+Here is an example PowerShell script to fetch that information:
+
+```powershell
+$url = "https://azurecomcdn.azureedge.net/en-us/updates/feed/?updateType=retirements"
+$xml = [xml](iwr $url).Content
+$items = $xml.rss.channel.item | % { [pscustomobject]@{ 
+    Title = $_.title; 
+    Link = $_.link; 
+    Description = $_.description; 
+    Published = $_.pubDate 
+}}
+
+# Show first item in list format
+$items[0] | Format-List
+
+# Show all items
+$items
+```
+
+---
 
 [Service Health](https://portal.azure.com/#view/Microsoft_Azure_Health/AzureHealthBrowseBlade/~/serviceIssues) and 
 [Health Advisories](https://learn.microsoft.com/en-us/azure/service-health/service-health-overview#service-health-events) 
