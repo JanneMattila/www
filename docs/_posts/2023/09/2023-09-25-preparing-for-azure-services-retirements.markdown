@@ -1,7 +1,7 @@
 ---
 layout: posts
 title:  "Preparing for Azure services retirements"
-image: /assets/posts/2023/09/25/preparing-for-azure-services-retirements/advisor.png
+image: /assets/posts/2023/09/25/preparing-for-azure-services-retirements/services-retirement-workbook.png
 date:   2023-09-25 06:00:00 +0300
 categories: azure
 tags: azure governance advisor workbooks
@@ -76,7 +76,7 @@ retirements well in advance.
 Luckily, there are many tools to help you. 
 I'll try to highlight them here and hopefully you'll do validation for your environment as well.
 
-### Azure Advisor
+## Azure Advisor
 
 Azure Advisor is a great tool for getting recommendations for your Azure resources. 
 It also has ready-made workbooks available to you. You can find them here:
@@ -121,7 +121,7 @@ I'll put them here:
 
 {% include githubEmbed.html text="JanneMattila/some-questions-and-some-answers" link="JanneMattila/some-questions-and-some-answers/blob/master/q%26a/azure_resource_graph.md" %}
 
-### Other tools
+## Other tools
 
 Here are other tools that you should *definitely* checkout:
 
@@ -133,7 +133,7 @@ Here are other tools that you should *definitely* checkout:
 
 You can use RSS Feeds to pull Azure Updates information to your own tools.
 
-Here is example Excel file that I've created:
+Here is example Excel file that I've created which connects to the RSS feed:
 
 {% include imageEmbed.html link="/assets/posts/2023/09/25/preparing-for-azure-services-retirements/excel.png" %}
 
@@ -143,19 +143,22 @@ Here is an example PowerShell script to fetch that information:
 
 ```powershell
 $url = "https://azurecomcdn.azureedge.net/en-us/updates/feed/?updateType=retirements"
-$xml = [xml](iwr $url).Content
-$items = $xml.rss.channel.item | % { [pscustomobject]@{ 
-    Title = $_.title; 
-    Link = $_.link; 
-    Description = $_.description; 
-    Published = $_.pubDate 
-}}
+$xml = [xml](Invoke-WebRequest $url).Content
+$items = $xml.rss.channel.item | ForEach-Object { [pscustomobject]@{ 
+        Title       = $_.title; 
+        Link        = $_.link; 
+        Description = $_.description; 
+        Published   = $_.pubDate 
+    } }
 
 # Show first item in list format
 $items[0] | Format-List
 
 # Show all items
 $items
+
+# Export to CSV
+$items | Export-CSV "retirements.csv"
 ```
 
 ---
@@ -164,9 +167,11 @@ $items
 [Health Advisories](https://learn.microsoft.com/en-us/azure/service-health/service-health-overview#service-health-events) 
 (and while you're there check and setup your [Resource Health alerts](https://learn.microsoft.com/en-us/azure/service-health/resource-health-alert-monitor-guide))
 
----
+{% include imageEmbed.html link="/assets/posts/2023/09/25/preparing-for-azure-services-retirements/health-advisories.png" %}
 
-I hope you have now some tools to validate your environment. 
+## Final thoughts
+
+I hope you have now some ideas and tools to validate your environment. 
 Please also take this as part of your governance and management processes,
 so that you periodically check that none of these alerts have been falling through cracks.
 

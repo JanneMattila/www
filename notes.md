@@ -9,16 +9,17 @@
 - HCIBox
 - GitHub Copilot
 - Azure Firewall & No network connectivity
+- AKS Edge Essentials
 - Echo & Webhooks
 - API Examples
 - AKS Workshop
 - Network tester & Latency
 - webapp-update
+- IIS folder and many files
 - webapp-and-folders
 - Kubernetes probe demo
 - Network test scripts
 - TCP Network tests
-- AKS Edge Essentials
 - Azure Policy
 - Azure Virtual WAN with secured virtual hub demo
 - AKS Identity
