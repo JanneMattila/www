@@ -164,8 +164,7 @@ $items | Export-CSV "retirements.csv"
 ---
 
 [Service Health](https://portal.azure.com/#view/Microsoft_Azure_Health/AzureHealthBrowseBlade/~/serviceIssues) and 
-[Health Advisories](https://learn.microsoft.com/en-us/azure/service-health/service-health-overview#service-health-events) 
-(and while you're there check and setup your [Resource Health alerts](https://learn.microsoft.com/en-us/azure/service-health/resource-health-alert-monitor-guide))
+Health Advisories (and while you're there check and setup your [Resource Health alerts](https://learn.microsoft.com/en-us/azure/service-health/resource-health-alert-monitor-guide))
 
 {% include imageEmbed.html link="/assets/posts/2023/09/25/preparing-for-azure-services-retirements/health-advisories.png" %}
 
