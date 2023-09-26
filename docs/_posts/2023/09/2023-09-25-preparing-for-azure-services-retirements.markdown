@@ -50,7 +50,7 @@ But let's come back to Application Insights later.
 
 ---
 
-To give one concrete example about services retirement example that we didn't manage to notice early, 
+To give one concrete example about services retirement that we didn't manage to notice early, 
 was PHP retirement in Windows App Service plan last year:
 
 [Community support for PHP 7.4 is ending on 28 November 2022](https://azure.microsoft.com/en-us/updates/community-support-for-php-74-is-ending-on-28-november-2022/)
@@ -164,7 +164,7 @@ $items | Export-CSV "retirements.csv"
 ---
 
 [Service Health](https://portal.azure.com/#view/Microsoft_Azure_Health/AzureHealthBrowseBlade/~/serviceIssues) and 
-Health Advisories (and while you're there check and setup your [Resource Health alerts](https://learn.microsoft.com/en-us/azure/service-health/resource-health-alert-monitor-guide))
+[Health Advisories](https://learn.microsoft.com/en-us/azure/service-health/service-health-overview#service-health-events) (and while you're there check and setup your [Resource Health alerts](https://learn.microsoft.com/en-us/azure/service-health/resource-health-alert-monitor-guide))
 
 {% include imageEmbed.html link="/assets/posts/2023/09/25/preparing-for-azure-services-retirements/health-advisories.png" %}
 
