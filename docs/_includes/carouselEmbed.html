@@ -1,0 +1,105 @@
+{% assign imageNames = include.names | split: "," %}
+{% assign elementPrefix = include.prefix | default: 'first' %}
+<script>
+    let isOpened = false;
+    let index = 0;
+    let path = "{{ include.path }}";
+    let imageNames = "{{ include.names }}".split(",");
+    let images = [];
+    let imagesLoaded = 0;
+    let imagesToLoad = imageNames.length;
+    let historyEntryAdded = false;
+
+    console.log(imageNames);
+    console.log(imageNames[0]);
+
+    for (let i = 0; i < imageNames.length; i++) {
+        const file = imageNames[i];
+        const img = new Image();
+        img.onload = function () {
+            imagesLoaded++;
+        };
+        img.src = `${path}/${file}.png`;
+        images[i] = img;
+    }
+</script>
+
+<div>
+    <img id="{{ elementPrefix }}carousel" src="{{ include.path }}/{{ imageNames[0] }}.png" alt="...">
+</div>
+
+<script>
+    const carousel = document.getElementById("{{ elementPrefix }}carousel");
+
+    const gotoFullscreen = (isFullscreen) => {
+        console.log(history);
+        if (isFullscreen) {
+            carousel.classList.add("fullscreen");
+            history.pushState({ "isFullscreen": true }, "", location.href);
+        }
+        else {
+            carousel.classList.remove("fullscreen");
+            history.replaceState(null, "", location.href);
+        }
+    };
+    const toImage = (num) => {
+        index = num;
+        carousel.src = `${path}/${imageNames[index]}.png`;
+    };
+    const previousImage = () => {
+        index--;
+        if (index < 0) {
+            index = imagesToLoad - 1;
+        }
+        toImage(index);
+    };
+
+    const nextImage = () => {
+        index = (index + 1) % imagesToLoad;
+        toImage(index);
+    };
+
+    carousel.addEventListener("click", e => {
+        console.log(e);
+        console.log(e.offsetX);
+        console.log(e.srcElement.width);
+        console.log(e.offsetX / e.srcElement.width);
+
+        if (e.offsetX < e.srcElement.width * 0.2) {
+            previousImage();
+        }
+        else if (e.offsetX > e.srcElement.width * 0.8) {
+            nextImage();
+        }
+        else {
+            isOpened = !isOpened;
+            gotoFullscreen(isOpened);
+        }
+    });
+
+    document.addEventListener('keyup', (e) => {
+        if (e.key === "Escape") {
+            isOpened = false;
+            gotoFullscreen(isOpened);
+        }
+        else if (e.key === "Home" || e.key === "PageUp") {
+            toImage(0);
+        }
+        else if (e.key === "ArrowLeft" && !e.altKey) {
+            previousImage();
+        }
+        else if (e.key === "ArrowRight" && !e.altKey) {
+            nextImage();
+        }
+        else if (e.key === "End" || e.key === "PageDown") {
+            toImage(imagesToLoad - 1);
+        }
+    });
+
+    window.addEventListener('popstate', function (event) {
+        if (isOpened) {
+            isOpened = false;
+            gotoFullscreen(isOpened);
+        }
+    });
+</script>
