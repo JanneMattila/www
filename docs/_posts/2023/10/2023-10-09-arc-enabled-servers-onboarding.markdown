@@ -13,7 +13,4 @@ https://github.com/Azure/ArcEnabledServersGroupPolicy/blob/main/EnableAzureArc.p
 
 Inline CSV
 
-Image carousel
-https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_carousel2&stacked=h
-
 {% include carouselEmbed.html names="excel,map" path="/assets/posts/2023/10/09/onboarding-arc-enabled-servers" %}

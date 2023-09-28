@@ -2,7 +2,7 @@
 layout: posts
 title:  "Learn Azure Firewall with isolated demo environment"
 image: /assets/posts/2023/10/02/learn-azure-firewall-with-isolated-demo-environment/azure-firewall-demo.png
-date:   2030-10-02 06:00:00 +0300
+date:   2023-10-02 06:00:00 +0300
 categories: azure
 tags: azure firewall learn
 ---
@@ -50,14 +50,22 @@ Here is the Azure Firewall demo repo:
 Repository contains more detailed information on how to get started,
 what's the architecture in more detail and some tasks for you to implement for learning purposes.
 
-<!--
-I recorded a quick screencast on how you can deploy it yourself:
+---
 
-{% include youtubeEmbed.html id="jWbj7LMQv-g" %}
--->
+**Here are the step-by-step instructions how you can test it too**
 
-After doing the basic tests, you should see following logs in the `AZFWApplicationRule` table:
+_You can navigate between below images by clicking left or right side of the image
+or use arrow keys for navigation._
+
+_Click in the middle to see the image in full size._
+
+{% include carouselEmbed.html names="1_repo,2_git,3_setup_vscode,4_open_run_ps1,5_run_tree,6_deploy1,7_deploy_complete,8_azure_portal,9_login_to_jumpbox,10_jumpbox1,11_jumpbox_connectivity_to_spokes,12_jumpbox_deny,13_jumpbox_exit,14_fw_rgc,15_study_bicep,16_remove" text="Azure Firewall Demo deployment instructions" path="/assets/posts/2023/10/02/learn-azure-firewall-with-isolated-demo-environment" %}
+
+After running those basic connectivity tests as shown in the screenshots, you should see following logs at the `AZFWApplicationRule` table:
     
 {% include imageEmbed.html link="/assets/posts/2023/10/02/learn-azure-firewall-with-isolated-demo-environment/firewall-logs.png" %}
 
-Okay now it's your turn to try it out and deploy some firewalls!
+Now you're good to go and start testing various firewall rules and routing configurations.
+Remember to delete the resource group when you're done with your testing.
+
+I hope you find this useful!

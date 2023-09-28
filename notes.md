@@ -2,7 +2,6 @@
 
 ## Upcoming posts
 
-- Azure Firewall
 - Arc onboarding mapping
 - Azure VNet and subnet as property vs. child resource
   - https://github.com/Azure/azure-quickstart-templates/issues/2786
