@@ -76,6 +76,10 @@ hr {
     text-align: center;
 }
 
+.carousel {
+    cursor: pointer;
+}
+
 .fullscreen {
     position: fixed;
     top: 0;
@@ -96,4 +100,8 @@ hr {
     -ms-box-shadow: none;
     background-color: black;
     z-index: 9999;
+}
+
+.fullscreen-body {
+    overflow: hidden;
 }
