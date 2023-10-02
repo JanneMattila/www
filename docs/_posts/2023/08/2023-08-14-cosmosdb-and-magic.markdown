@@ -47,7 +47,7 @@ I could continue asking these questions, but I think you got the point.
 Here is Cosmos DB "Replicate data globally" blade, which you can use
 for enabling multi-region writes:
 
-{% include carouselEmbed.html postfix="1" names="share" text="Cosmos DB" path="/assets/posts/2023/08/14/cosmosdb-and-magic" %}
+{% include imageEmbed.html link="/assets/posts/2023/08/14/cosmosdb-and-magic/share.png" alt="Cosmos DB" %}
 
 ---
 

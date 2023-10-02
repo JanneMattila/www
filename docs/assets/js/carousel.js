@@ -50,6 +50,12 @@ class Carousel {
         });
 
         this.carousel.addEventListener("click", e => {
+            if (this.imagesToLoad === 1) {
+                this.isOpened = !this.isOpened;
+                this.gotoFullscreen(this.isOpened);
+                return
+            }
+
             if (e.offsetX < e.target.width * 0.2) {
                 this.previousImage();
             }
