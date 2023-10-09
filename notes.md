@@ -3,8 +3,17 @@
 ## Upcoming posts
 
 - HCIBox
+- Azure Budgets and Alerts
+  - Mid-month budget alert
+- Azure Functions, PowerShell and Teams Webhook
+  - https://learn.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-powershell?tabs=windows%2Cazure-cli%2Cbrowser
+  - https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook?tabs=dotnet
+  - https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite?tabs=npm
 - Azure VNet and subnet as property vs. child resource
   - https://github.com/Azure/azure-quickstart-templates/issues/2786
+- Demo failures
+  - VMSS 1000 VMs
+  - AKS debugging with bridge in auditorium and zooming too much
 - GitHub Copilot
 - Azure Firewall & No network connectivity
 - AKS Edge Essentials

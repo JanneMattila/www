@@ -1,10 +1,10 @@
 ---
 layout: posts
 title:  "Onboarding multiple Arc-enabled servers with the help of map file"
-image: /assets/posts/2023/10/09/onboarding-arc-enabled-servers/add-servers-with-azure-arc.png
+image: /assets/posts/2023/10/09/onboarding-arc-enabled-servers/map.png
 date:   2023-10-09 06:00:00 +0300
 categories: azure
-tags: azure firewall learn
+tags: azure arc servers
 ---
 Onboarding Azure Arc-enabled servers is typically started from Azure Portal using this dialog:
 
