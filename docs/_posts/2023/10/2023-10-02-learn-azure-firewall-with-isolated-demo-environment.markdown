@@ -59,7 +59,7 @@ or use arrow keys for navigation._
 
 _Click in the middle to enlarge the image._
 
-{% include carouselEmbed.html postfix="1" names="0_start,1_repo,2_git,3_setup_vscode,4_open_run_ps1,5_run_tree,6_deploy1,7_deploy_complete,8_azure_portal,9_login_to_jumpbox,10_jumpbox1,11_jumpbox_connectivity_to_spokes,12_jumpbox_deny,13_jumpbox_exit,14_fw_rgc,15_study_bicep,16_remove" text="Azure Firewall Demo deployment instructions" path="/assets/posts/2023/10/02/learn-azure-firewall-with-isolated-demo-environment" %}
+{% include carouselEmbed.html postfix="1" imageNamePrefix="azfw" imageCount="17" text="Azure Firewall Demo deployment instructions" path="/assets/posts/2023/10/02/learn-azure-firewall-with-isolated-demo-environment" %}
 
 Remember to use my [VS Code]({% post_url 2023/08/2023-08-28-vs-code-and-faster-script-development %}) tricks to speed up your testing.
 

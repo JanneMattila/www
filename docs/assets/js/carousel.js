@@ -1,8 +1,10 @@
 class Carousel {
-    constructor(elementName, path, imageNames) {
+    constructor(elementName, path, imageNamePrefix, imageCount) {
         console.log("Carousel constructor");
         this.path = path;
-        this.imageNames = imageNames;
+        this.imageNamePrefix = imageNamePrefix;
+
+        console.log(this.imageNamePrefix);
 
         this.carousel = document.getElementById(elementName);
 
@@ -10,18 +12,17 @@ class Carousel {
         this.index = 0;
         this.images = [];
         this.imagesLoaded = 0;
-        this.imagesToLoad = imageNames.length;
+        this.imagesToLoad = imageCount;
         this.historyEntryAdded = false;
     }
 
     start = () => {
-        for (let i = 0; i < this.imageNames.length; i++) {
-            const file = this.imageNames[i];
+        for (let i = 1; i <= this.imagesToLoad; i++) {
             const img = new Image();
             img.onload = function () {
                 this.imagesLoaded++;
             };
-            img.src = `${this.path}/${file}.png`;
+            img.src = `${this.path}/${this.imageNamePrefix}-${i.toString().padStart(2, '0')}.png`;
             this.images[i] = img;
         }
 
@@ -84,7 +85,7 @@ class Carousel {
 
     toImage = (num) => {
         this.index = num;
-        this.carousel.src = `${this.path}/${this.imageNames[this.index]}.png`;
+        this.carousel.src = `${this.path}/${this.imageNamePrefix}-${(num + 1).toString().padStart(2, '0')}.png`;
     };
 
     previousImage = () => {

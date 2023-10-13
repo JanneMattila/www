@@ -1,17 +1,17 @@
-{% assign imageNames = include.names | split: "," %}
 {% assign elementPostfix = include.postfix | default: '1' %}
 
 <div>
-    <img id="carousel{{ elementPostfix }}" src="{{ include.path }}/{{ imageNames[0] }}.png" alt="{{ include.text }}"
-        class="carousel">
+    <img id="carousel{{ elementPostfix }}" src="{{ include.path }}/{{ include.imageNamePrefix }}-01.png"
+        alt="{{ include.text }}" class="carousel">
 </div>
 
 <script>
     {
         const path = "{{ include.path }}";
-        const imageNames = "{{ include.names }}".split(",");
+        const imageNamePrefix = "{{ include.imageNamePrefix }}";
+        const imageCount = parseInt("{{ include.imageCount }}");
         const elementName = "carousel{{ elementPostfix }}";
-        const carousel = new Carousel(elementName, path, imageNames);
+        const carousel = new Carousel(elementName, path, imageNamePrefix, imageCount);
         carousel.start();
     }
 </script>
