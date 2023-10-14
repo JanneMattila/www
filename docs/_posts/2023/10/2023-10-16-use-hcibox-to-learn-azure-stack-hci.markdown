@@ -1,7 +1,7 @@
 ---
 layout: posts
 title:  "Use HCIBox to learn Azure Stack HCI"
-image: /assets/posts/2023/10/16/use-hcibox-to-learn-azure-stack-hci/add-servers-with-azure-arc.png
+image: /assets/posts/2023/10/16/use-hcibox-to-learn-azure-stack-hci/share.png
 date:   2023-10-16 06:00:00 +0300
 categories: azure
 tags: azure arc jumpstart hci
@@ -13,7 +13,7 @@ Just follow those instructions as you're good to go.
 
 What makes HCIBox so interesting, is the fact how it's built using nested virtualization.
 It's a great way to learn and test various scenarios without the need to have physical hardware.
-That implementation is a great example that you can use to great other nested virtualization scenarios too.
+That implementation is a great example that you can use to create other nested virtualization scenarios too.
 
 Since I like to deploy my environment using scripts, 
 I've created a little PowerShell helper for deploying my HCI environment. 
@@ -29,7 +29,7 @@ _Click in the middle to enlarge the image._
 
 {% include carouselEmbed.html postfix="1" imageNamePrefix="hcibox" imageCount="30" text="HCIBox deployment instructions" path="/assets/posts/2023/10/16/use-hcibox-to-learn-azure-stack-hci" %}
 
-Hopefully, you now have good high-level view how to deploy your own HCIBox environment.
+I hope you now have a good high-level overview of what HCIBox is and how to deploy it to yourself.
 
 This is a safe environment for you to test out and break things and learn as you go.
 
