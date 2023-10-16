@@ -7,6 +7,7 @@
   - https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook?tabs=dotnet
   - https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite?tabs=npm
 - SNAT
+- Azure Storage costs for 500 TB
 - Azure VNet and subnet as property vs. child resource
   - https://github.com/Azure/azure-quickstart-templates/issues/2786
 - Demo failures

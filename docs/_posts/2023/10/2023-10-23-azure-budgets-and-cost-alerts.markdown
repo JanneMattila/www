@@ -1,0 +1,74 @@
+---
+layout: posts
+title:  "Azure budgets and cost alerts are your friends"
+image: /assets/posts/2023/10/23/azure-budgets-and-cost-alerts/share.png
+date:   2023-10-23 06:00:00 +0300
+categories: azure
+tags: azure budget cost alert
+---
+When new Azure projects are started, development teams very
+often use [Azure Pricing Calculator](https://azure.microsoft.com/en-us/pricing/calculator/) 
+for estimating their costs. 
+Many teams use that also to adjust their architecture to better
+optimize their cost structure. 
+Pricing calculator is also often used for estimating production
+and then non-production costs separately to see what kind
+of total running costs are expected from their solution. 
+
+_Unfortunately_, too often after this initial estimation
+next step is to monitor costs after the fact e.g., 
+"_What was our cost for previous month or quarter?_"
+
+I would like this to be improved so that teams
+have better  visibility and control over their costs.
+After all, you most likely would want to know about 
+higher-than-expected costs sooner rather than later.
+
+**Luckily, we already have tools for this purpose!**
+
+[Budgets](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-acm-create-budgets) 
+are a good way of defining the cost limits
+and [cost alerts](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/cost-mgt-alerts-monitor-usage-spending) 
+at different levels.
+You might have a budget for specific applications
+and another one for the entire subscription. 
+
+Your budget configuration should not be 
+"_do it once and forget it existence_" but instead 
+it should be asset that you maintain as
+any other component of the application. 
+If things change you should adjust the budget as well. 
+
+I recommend teams set up the alerting limits so
+that they should get notifications even under
+the normal usage circumstances. 
+Let me walk through simple example of subscription level budget.
+
+My budget for "_development_" subscription is set to 500 euros. 
+To get mid-month notifications, I've set up my cost alerts like this:
+
+| Type       | % of budget | Amount | 
+| ---------- | ----------- | ------ |
+| Forecasted | 50%         | 250 EUR |
+| Forecasted | 100%        | 500 EUR |
+| Actual     | 50%         | 250 EUR |
+| Actual     | 100%        | 500 EUR |
+
+Why would I like to get notifications if either "forecasted" or "actual"
+is hitting the 50% mark?
+It typically is good indication that how fast I’m approaching the budget limit. 
+If nothing special happens, I’m expecting to get notification around 15th of each month.
+It tells me that I’m on the schedule and the cost are not accumulating faster than expected.
+Many times, when I’m testing various topics with AKS clusters or Azure Firewall or Azure Stack HCI,
+I’ll get cost alert email earlier e.g., 10th of that month. 
+That email contains information that helps me to understand the forecasted cost.
+It reminds me that I should release my test environments or shut them down to save costs.
+It’s also easy to calculate from days that how much over I’m most likely to go.
+If I need more information, I can go to [Cost analysis](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/reporting-get-started#cost-analysis) to study my costs.
+
+These alerts have saved me many times from big surprises. 
+I often need to test various workloads that might be using features
+that make it harder to estimate the exact cost.
+Or then I need to test services that have higher compute cost so I want to optimize their run time to save costs.
+
+Remember: **Budget alert is your friend!**
