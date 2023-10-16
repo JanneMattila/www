@@ -56,7 +56,7 @@ To get mid-month notifications, I've set up my cost alerts like this:
 
 Why would I like to get notifications if either "forecasted" or "actual"
 is hitting the 50% mark?
-It typically is good indication that how fast I’m approaching the budget limit. 
+It's typically good indication that how fast I’m approaching the budget limit. 
 If nothing special happens, I’m expecting to get notification around 15th of each month.
 It tells me that I’m on the schedule and the cost are not accumulating faster than expected.
 Many times, when I’m testing various topics with AKS clusters or Azure Firewall or Azure Stack HCI,
@@ -65,10 +65,24 @@ That email contains information that helps me to understand the forecasted cost.
 It reminds me that I should release my test environments or shut them down to save costs.
 It’s also easy to calculate from days that how much over I’m most likely to go.
 If I need more information, I can go to [Cost analysis](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/reporting-get-started#cost-analysis) to study my costs.
+At the end of the month I might get notification if "forecasted" cost is expected to
+go over the budget. Again, this is just a safety net for me to be aware of the situation.
+
+Getting notifications is good way of verifying that your notification setup is working.
+This is especially important if you pass this notification using webhook to your chatops channel
+or something similar, which might itself expire after some time.
+
+If you only use "actual" cost alert with value which is equal to your budget, 
+then you will get notification only when you have already exceeded your budget.
+That might be already too late and you might need to rapidly check if something
+unexpected is happening. Of course, **it's much worse if you see this unexpected cost**
+**after one or two months**. That's why I like to get notifications before that happens. 
 
 These alerts have saved me many times from big surprises. 
 I often need to test various workloads that might be using features
 that make it harder to estimate the exact cost.
-Or then I need to test services that have higher compute cost so I want to optimize their run time to save costs.
+Or then I need to test services that have high compute cost so I want to optimize their run time to save costs. If I have some long running process, then the very next day I want to clean that up to save costs.
 
 Remember: **Budget alert is your friend!**
+
+I hope you find this useful!
