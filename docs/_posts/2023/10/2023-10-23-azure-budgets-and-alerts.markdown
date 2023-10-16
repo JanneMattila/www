@@ -6,3 +6,6 @@ date:   2030-10-23 06:00:00 +0300
 categories: azure
 tags: azure cost
 ---
+
+- Azure Budgets and Alerts
+  - Mid-month budget alert

@@ -2,8 +2,6 @@
 
 ## Upcoming posts
 
-- Azure Budgets and Alerts
-  - Mid-month budget alert
 - Azure Functions, PowerShell and Teams Webhook
   - https://learn.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-powershell?tabs=windows%2Cazure-cli%2Cbrowser
   - https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook?tabs=dotnet
