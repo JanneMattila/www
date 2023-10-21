@@ -2,10 +2,6 @@
 
 ## Upcoming posts
 
-- Azure Functions, PowerShell and Teams Webhook
-  - https://learn.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-powershell?tabs=windows%2Cazure-cli%2Cbrowser
-  - https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook?tabs=dotnet
-  - https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite?tabs=npm
 - SNAT
 - Azure Storage costs for 500 TB
 - Azure VNet and subnet as property vs. child resource

@@ -64,7 +64,7 @@ To get mid-month notifications, I've set up my cost alerts like this:
 Why would I like to get notifications if either "forecasted" or "actual"
 is hitting the 50% mark?
 It's typically good indication that how fast I’m approaching the budget limit. 
-If nothing special happens, I’m expecting to get notification around 15th of each month.
+If nothing special happens, I’m expecting to get notifications around 15th of each month.
 It tells me that I’m on the schedule and the cost are not accumulating faster than expected.
 
 Here is example alert that I've received 11th of the month, so a bit ahead of the mid-month schedule:
