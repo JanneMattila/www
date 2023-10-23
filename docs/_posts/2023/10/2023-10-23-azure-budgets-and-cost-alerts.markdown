@@ -11,7 +11,7 @@ often use [Azure Pricing Calculator](https://azure.microsoft.com/en-us/pricing/c
 for estimating their costs. 
 Some teams even use that information to adjust their architecture to optimize their cost structure. 
 Pricing calculator is also often used for estimating separately production
-and then non-production costs. That helps in estimating the total
+and non-production costs. That helps to estimate the total
 running costs of their solution. 
 
 _Unfortunately_, too often after this initial estimation
@@ -78,11 +78,11 @@ That email contains information that helps me to understand the forecasted cost.
 It reminds me that I should release my test environments or shut them down to save costs.
 It’s also easy to calculate from days that how much over I’m most likely to go.
 If I need more information, I can go to [Cost analysis](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/reporting-get-started#cost-analysis) to study my costs.
-At the end of the month, I might get notification if cost is going over the budget. 
+At the end of the month, I might get notification if the cost is going over the budget. 
 Again, this is just a safety net for me to be aware of the situation.
 
 Getting notifications is a good way of verifying that your notification setup is working.
-This is especially important if you pass this notification using webhook to your chatops channel
+This is especially important if you pass this notification using webhook to your ChatOps channel
 or something similar, which might expire after some time.
 
 If you only use "actual" cost alert with value which is equal to your budget, 
@@ -94,7 +94,10 @@ unexpected is happening. Of course, **it's much worse if you see this unexpected
 These alerts have saved me many times from big surprises. 
 I often need to test various workloads that might be using features
 that make it harder to estimate the exact cost.
-Or then I need to test services that have high compute cost, so I want to optimize their run time to save costs. If I a some long running process, then the very next day I want to clean that up to save costs.
+Or then I need to test services that have high compute cost, 
+so I want to optimize their run time to save costs. 
+If I have some long running process, 
+then the very next day I want to clean that up to save costs.
 
 Remember: **Budget alert is your friend!**
 
