@@ -9,11 +9,10 @@ tags: azure budget cost alert
 When new Azure projects are started, development teams very
 often use [Azure Pricing Calculator](https://azure.microsoft.com/en-us/pricing/calculator/) 
 for estimating their costs. 
-Many teams use that also to adjust their architecture to better
-optimize their cost structure. 
-Pricing calculator is also often used for estimating production
-and then non-production costs separately to see what kind
-of total running costs are expected from their solution. 
+Some teams even use that information to adjust their architecture to optimize their cost structure. 
+Pricing calculator is also often used for estimating separately production
+and then non-production costs. That helps in estimating the total
+running costs of their solution. 
 
 _Unfortunately_, too often after this initial estimation
 next step is to monitor costs after the fact e.g., 
@@ -25,6 +24,8 @@ After all, you most likely would want to know about
 higher-than-expected costs sooner rather than later.
 
 **Luckily, we already have tools for this purpose!**
+
+## Budgets and cost alerts
 
 {% include imageEmbed.html link="/assets/posts/2023/10/23/azure-budgets-and-cost-alerts/budget.png" %}
 
@@ -77,8 +78,8 @@ That email contains information that helps me to understand the forecasted cost.
 It reminds me that I should release my test environments or shut them down to save costs.
 It’s also easy to calculate from days that how much over I’m most likely to go.
 If I need more information, I can go to [Cost analysis](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/reporting-get-started#cost-analysis) to study my costs.
-At the end of the month, I might get notification if "forecasted" cost is expected to
-go over the budget. Again, this is just a safety net for me to be aware of the situation.
+At the end of the month, I might get notification if cost is going over the budget. 
+Again, this is just a safety net for me to be aware of the situation.
 
 Getting notifications is a good way of verifying that your notification setup is working.
 This is especially important if you pass this notification using webhook to your chatops channel
