@@ -2,7 +2,7 @@
 layout: posts
 title:  "Automating maintenance tasks with Azure Functions and PowerShell"
 image: /assets/posts/2023/10/30/automating-maintenance-tasks/teams.png
-date:   2030-10-30 06:00:00 +0300
+date:   2023-10-30 06:00:00 +0300
 categories: azure
 tags: azure functions powershell scripting automation
 ---
@@ -30,7 +30,9 @@ documentation for more information if you’re not familiar with Azure Functions
 
 [Timer trigger for Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer?tabs=python-v2%2Cisolated-process%2Cnodejs-v4&pivots=programming-language-powershell)
 
-In this post I’ll cover one example end-to-end so that you 
+## Maintenance tasks example
+
+In this post I’ll cover _one_ example end-to-end so that you 
 get good idea how you can also use it to run your own automations.
 
 The scenario for our automation is the following:
@@ -127,7 +129,7 @@ HTTP trigger will return the `$response` as JSON:
 
 Timer trigger will force shutdown virtual machines that are running out of allowed schedule
 by using `-ForceShutdown` parameter.
-Additionally, timer trigger processes `$response` and sends message
+It also processes `$response` and creates markdown output and sends message
 to Teams channel about the virtual machines that has been shut down. 
 For that [Incoming Webhooks](https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook?tabs=dotnet)
 is used. 
@@ -137,11 +139,19 @@ Here is example of the message that is sent to Teams channel:
 
 {% include imageEmbed.html link="/assets/posts/2023/10/30/automating-maintenance-tasks/teams.png" %}
 
-Here is our final solution in VS Code:
+Here is the solution in VS Code:
 
 {% include imageEmbed.html link="/assets/posts/2023/10/30/automating-maintenance-tasks/vs-code.png" %}
 
-Source can be found here:
+Source for this demo can be found here:
 
 {% include githubEmbed.html text="JanneMattila/azure-functions-and-powershell" link="JanneMattila/azure-functions-and-powershell" %}
 
+## Wrap-up
+
+This post contained one example of how you can use Azure Functions and PowerShell
+for managing your maintenance tasks.
+
+I'll continue on this topic to cover the deployment of this solution to Azure.
+
+I hope you find this useful!
