@@ -1,6 +1,6 @@
 ---
 layout: posts
-title:  "Automating maintenance tasks with Azure Functions and PowerShell"
+title:  "Automating maintenance tasks with Azure Functions and PowerShell - Part 1"
 image: /assets/posts/2023/10/30/automating-maintenance-tasks/teams.png
 date:   2023-10-30 06:00:00 +0300
 categories: azure
@@ -8,10 +8,12 @@ tags: azure functions powershell scripting automation
 ---
 PowerShell has become a very popular way of automating different installations
 or maintenance tasks. Read my previous blog post about 
-[Arc-enabled servers onboarding]({% post_url 2023/10/2023-10-09-arc-enabled-servers-onboarding %})
-which also used PowerShell. In Azure PowerShell has been used 
-a lot for automating many Azure maintenance tasks such as scanning resources, 
-stopping virtual machines, manual scaling or clean up tasks. 
+[Onboarding multiple Arc-enabled servers with the help of map file]({% post_url 2023/10/2023-10-09-arc-enabled-servers-onboarding %}).
+In that post I use PowerShell in the example to extend installation functionality. 
+
+PowerShell is also frequently used in various automation and maintenance tasks in Azure development.
+Scripting can be used for scanning resources, stopping virtual machines, scaling automation or clean up tasks.
+
 Azure Automation Account has been traditionally used for hosting these automations, 
 but Azure Functions has taken that position many times in the last years. 
 I think Azure Functions with PowerShell and managed identities is 
@@ -33,7 +35,7 @@ documentation for more information if you’re not familiar with Azure Functions
 ## Maintenance tasks example
 
 In this post I’ll cover _one_ example end-to-end so that you 
-get good idea how you can also use it to run your own automations.
+get good idea how you can use it to run your own automations.
 
 The scenario for our automation is the following:
 
@@ -45,7 +47,7 @@ A couple of important things I want to highlight in these kinds of automations:
 
 > **Please split the functionality to _Azure Functions aware code_ and 
 > _plain vanilla Azure PowerShell code_.** _Azure Functions aware code_ manages
-> the triggers (e.g., Timer, HTTP) and output bindings and fetches 
+> the triggers (e.g., Timer, HTTP), output bindings and fetches 
 > the required parameters from environment variables or any 
 > other place so that it can then pass them on to the 
 > _plain vanilla Azure PowerShell_ script as PowerShell parameters.
@@ -53,12 +55,17 @@ A couple of important things I want to highlight in these kinds of automations:
 Above is important because it enables you to do much faster local development
 when you do that _plain vanilla Azure PowerShell_ automation directly
 without any dependency to the Azure Functions Runtime.
-For that I recommend reading my
+To improve your scripting, I recommend reading my
 [VS Code and faster script development]({% post_url 2023/08/2023-08-28-vs-code-and-faster-script-development %})
 blog post.
 
-You can also use [pester](https://pester.dev/) and other scripting tools to test your
-_plain vanilla Azure PowerShell_ code more easier.
+_Plain vanilla Azure PowerShell_ can be easily tested using [pester](https://pester.dev/) test framework.
+Similarly, you can use any other scripting tools to test and validate your code.
+Additionally, **you have now portability of that code**. 
+It can be executed manually in your local machine or in any other place
+and not just in Azure Functions.
+
+---
 
 To get quickly started, here are commands for generating the basic project structure:
 
@@ -75,9 +82,11 @@ func new --name TimerScanVirtualMachines --template "Timer trigger"
 
 # Create folder for our business logic (shared between triggers)
 mkdir Scripts
+echo "# Code here" > Scripts/ScanVirtualMachines.ps1
 
 # Create folder for our pester tests
 mkdir Tests
+echo "# Tests here" > Tests/ScanVirtualMachines.Tests.ps1
 
 # Open in VS Code
 code .
@@ -123,7 +132,7 @@ $response = .\Scripts\ScanVirtualMachines.ps1 -Count 1000 -ForceShutdown
 
 Notice that we’re passing different parameters to the script based on the trigger type.
 
-HTTP trigger will return the `$response` as JSON:
+HTTP trigger returns the `$response` as JSON:
 
 {% include imageEmbed.html link="/assets/posts/2023/10/30/automating-maintenance-tasks/http.png" %}
 
@@ -139,7 +148,18 @@ Here is example of the message that is sent to Teams channel:
 
 {% include imageEmbed.html link="/assets/posts/2023/10/30/automating-maintenance-tasks/teams.png" %}
 
-Here is the solution in VS Code:
+You can invoke these triggers from command-line using:
+
+```powershell
+# HTTP trigger
+curl http://localhost:7071/api/ScanVirtualMachines
+curl http://localhost:7071/api/ScanVirtualMachines?count=1000
+
+# Timer trigger
+curl --request POST -H "Content-Type: application/json" --data '{}' http://localhost:7071/admin/functions/TimerScanVirtualMachines
+```
+
+Here is our solution in VS Code:
 
 {% include imageEmbed.html link="/assets/posts/2023/10/30/automating-maintenance-tasks/vs-code.png" %}
 
@@ -147,11 +167,12 @@ Source for this demo can be found here:
 
 {% include githubEmbed.html text="JanneMattila/azure-functions-and-powershell" link="JanneMattila/azure-functions-and-powershell" %}
 
-## Wrap-up
+## Summary
 
 This post contained one example of how you can use Azure Functions and PowerShell
-for managing your maintenance tasks.
+for managing your maintenance tasks. You can use this same model for
+many other use cases as well.
 
-I'll continue on this topic to cover the deployment of this solution to Azure.
+Next step is to deploy this solution to Azure. I'll cover that in my next post.
 
 I hope you find this useful!
