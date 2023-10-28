@@ -2,6 +2,7 @@
 
 ## Upcoming posts
 
+- Defender for Cloud - Warnings
 - SNAT
 - Azure Storage costs for 500 TB
 - Azure VNet and subnet as property vs. child resource
@@ -16,6 +17,7 @@
 - API Examples
 - AKS Workshop
 - Network tester & Latency
+  - SAP framework
 - webapp-update
 - IIS folder and many files
 - webapp-and-folders

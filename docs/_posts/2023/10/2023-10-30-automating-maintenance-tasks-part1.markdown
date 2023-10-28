@@ -1,7 +1,7 @@
 ---
 layout: posts
-title:  "Automating maintenance tasks with Azure Functions and PowerShell - Part 1"
-image: /assets/posts/2023/10/30/automating-maintenance-tasks/teams.png
+title:  "Automating maintenance tasks with Azure Functions and PowerShell - Part 1: Development"
+image: /assets/posts/2023/10/30/automating-maintenance-tasks-part1/teams.png
 date:   2023-10-30 06:00:00 +0300
 categories: azure
 tags: azure functions powershell scripting automation
@@ -134,7 +134,7 @@ Notice that we’re passing different parameters to the script based on the trig
 
 HTTP trigger returns the `$response` as JSON:
 
-{% include imageEmbed.html link="/assets/posts/2023/10/30/automating-maintenance-tasks/http.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/10/30/automating-maintenance-tasks-part1/http.png" %}
 
 Timer trigger will force shutdown virtual machines that are running out of allowed schedule
 by using `-ForceShutdown` parameter.
@@ -146,7 +146,7 @@ You can find more information about that from the documentation.
 
 Here is example of the message that is sent to Teams channel:
 
-{% include imageEmbed.html link="/assets/posts/2023/10/30/automating-maintenance-tasks/teams.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/10/30/automating-maintenance-tasks-part1/teams.png" %}
 
 You can invoke these triggers from command-line using:
 
@@ -161,7 +161,7 @@ curl --request POST -H "Content-Type: application/json" --data '{}' http://local
 
 Here is our solution in VS Code:
 
-{% include imageEmbed.html link="/assets/posts/2023/10/30/automating-maintenance-tasks/vs-code.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/10/30/automating-maintenance-tasks-part1/vs-code.png" %}
 
 Source for this demo can be found here:
 
@@ -169,10 +169,11 @@ Source for this demo can be found here:
 
 ## Summary
 
-This post contained one example of how you can use Azure Functions and PowerShell
+This post contained _one_ example of how you can use Azure Functions and PowerShell
 for managing your maintenance tasks. You can use this same model for
 many other use cases as well.
 
 Next step is to deploy this solution to Azure. I'll cover that in my next post.
+Stay tuned for part 2!
 
 I hope you find this useful!
