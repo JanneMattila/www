@@ -175,7 +175,7 @@ Source for this demo can be found here:
 
 ## Summary
 
-This post contained _one_ example of how you can use Azure Functions and PowerShell
+This post demonstrated _one_ example of how you can use Azure Functions and PowerShell
 for managing your maintenance tasks. You can use this same model for
 many other use cases as well.
 
