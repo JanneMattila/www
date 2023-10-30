@@ -9,7 +9,7 @@ tags: azure functions powershell scripting automation
 PowerShell has become a very popular way of automating different installations
 or maintenance tasks. Read my previous blog post about 
 [Onboarding multiple Arc-enabled servers with the help of map file]({% post_url 2023/10/2023-10-09-arc-enabled-servers-onboarding %}).
-In that post I use PowerShell in the example to extend installation functionality. 
+In that post I used PowerShell to extend the installation functionality. 
 
 PowerShell is also frequently used in various automation and maintenance tasks in Azure development.
 Scripting can be used for scanning resources, stopping virtual machines, scaling automation or clean up tasks.
@@ -40,7 +40,7 @@ get good idea how you can use it to run your own automations.
 The scenario for our automation is the following:
 
 - Scan virtual machines based on tags
-- If virtual machines are _running out of allowed schedule_, then stop them
+- If virtual machines are _running out of the allowed schedule_, then stop them
 - Post message to Teams channel to notify about virtual machines that have been shut down
 
 A couple of important things I want to highlight in these kinds of automations:
@@ -61,8 +61,8 @@ blog post.
 
 _Plain vanilla Azure PowerShell_ can be easily tested using [pester](https://pester.dev/) test framework.
 Similarly, you can use any other scripting tools to test and validate your code.
-Additionally, **you have now portability of that code**. 
-It can be executed manually in your local machine or in any other place
+Additionally, **now you have portability of that code**. 
+It can be executed manually on your local machine or in any other place
 and not just in Azure Functions.
 
 ---
@@ -106,7 +106,7 @@ Then you’re ready to start the Azure Functions:
 func start
 ```
 
-Now you’re ready to start developing you automation scripts to the _Scripts_
+Now you’re ready to start developing your automation scripts to the _Scripts_
 folder and in this example case it will be _ScanVirtualMachines.ps1_.
 
 Here is the logic for scanning virtual machines:
@@ -115,19 +115,19 @@ Here is the logic for scanning virtual machines:
 - Analyze the _schedule_ value and compare it to current time
   - `8-16` means that virtual machine is allowed to run between 8 AM and 4 PM
   - `21-04` means that virtual machine is allowed to run between 9 PM and 4 AM
-- If current time is outside of allowed schedule, then _optionally_ stop the virtual machine
-- Return list of virtual machines that are running out of allowed schedule
+- If current time is outside of the allowed schedule, then _optionally_ stop the virtual machine
+- Return list of virtual machines that are running out of the allowed schedule
 
 Now you can call this logic from both triggers. Here is the code from _HttpScanVirtualMachines_:
 
 ```powershell
-$response = .\Scripts\ScanVirtualMachines.ps1 -Count $count
+$response = . $env:FUNCTIONS_APPLICATION_DIRECTORY/Scripts/ScanVirtualMachines.ps1 -Count $count
 ```
 
 Similarly, here is the code from _TimerScanVirtualMachines_:
 
 ```powershell
-$response = .\Scripts\ScanVirtualMachines.ps1 -Count 1000 -ForceShutdown
+$response = . $env:FUNCTIONS_APPLICATION_DIRECTORY/Scripts/ScanVirtualMachines.ps1 -Count 1000 -ForceShutdown
 ```
 
 Notice that we’re passing different parameters to the script based on the trigger type.
@@ -139,12 +139,18 @@ HTTP trigger returns the `$response` as JSON:
 Timer trigger will force shutdown virtual machines that are running out of allowed schedule
 by using `-ForceShutdown` parameter.
 It also processes `$response` and creates markdown output and sends message
-to Teams channel about the virtual machines that has been shut down. 
+to Teams channel about the virtual machines that have been shut down. 
 For that [Incoming Webhooks](https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook?tabs=dotnet)
 is used. 
 You can find more information about that from the documentation.
 
-Here is example of the message that is sent to Teams channel:
+`$env:FUNCTIONS_APPLICATION_DIRECTORY` is environment variable which provides easy way to
+have full path to the script and you don't have to rely on the current working directory.
+<!-- C:\local\Temp\functions\standby\wwwroot -->
+<!-- WARNING: INITIALIZATION: Fallback context save mode to process because of error during checking token cache persistence: Could not find file 'C:\home\site\wwwroot\.IdentityService'.. -->
+<!-- https://github.com/Azure/azure-functions-host/issues/5789 -->
+
+Here is an example of the message that is sent to Teams channel:
 
 {% include imageEmbed.html link="/assets/posts/2023/10/30/automating-maintenance-tasks-part1/teams.png" %}
 
@@ -173,7 +179,7 @@ This post contained _one_ example of how you can use Azure Functions and PowerSh
 for managing your maintenance tasks. You can use this same model for
 many other use cases as well.
 
-Next step is to deploy this solution to Azure. I'll cover that in my next post.
+Next step is to _deploy this solution to Azure_. I'll cover that in my next post.
 Stay tuned for part 2!
 
 I hope you find this useful!

@@ -15,4 +15,21 @@ In this post I'll cover how you can _deploy_ these maintenance tasks to Azure.
 
 ## Summary
 
-TBD
+
+Roles:
+Virtual Machine Contributor
+https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#virtual-machine-contributor
+
+curl "https://$funcAppUri/api/ScanVirtualMachines?code=$code"
+{
+  "VirtualMachines": [
+    {
+      "Name": "vm-runbook-worker",
+      "Subscription": "4....4",
+      "ResourceGroup": "automation-account-rg",
+      "Location": "westus3",
+      "Schedule": "8-10"
+    }
+  ],
+  "Continues": true
+}
