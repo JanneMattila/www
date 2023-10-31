@@ -3,6 +3,8 @@
 ## Upcoming posts
 
 - Defender for Cloud - Warnings
+- Arc enabled servers - Onboarding using policy
+- Advent of Code
 - SNAT
 - Azure Storage costs for 500 TB
 - Azure VNet and subnet as property vs. child resource

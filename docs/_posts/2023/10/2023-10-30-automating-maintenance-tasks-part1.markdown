@@ -4,7 +4,7 @@ title:  "Automating maintenance tasks with Azure Functions and PowerShell - Part
 image: /assets/posts/2023/10/30/automating-maintenance-tasks-part1/teams.png
 date:   2023-10-30 06:00:00 +0300
 categories: azure
-tags: azure functions powershell scripting automation
+tags: azure functions powershell scripting automation teams
 ---
 PowerShell has become a very popular way of automating different installations
 or maintenance tasks. Read my previous blog post about 
