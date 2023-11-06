@@ -179,7 +179,9 @@ This post demonstrated _one_ example of how you can use Azure Functions and Powe
 for managing your maintenance tasks. You can use this same model for
 many other use cases as well.
 
-Next step is to _deploy this solution to Azure_. I'll cover that in my next post.
-Stay tuned for part 2!
+Next step is to _deploy this solution to Azure_. 
+Read about it here:
+
+[Automating maintenance tasks with Azure Functions and PowerShell - Part 2: Deployment]({% post_url 2023/11/2023-11-06-automating-maintenance-tasks-part2 %})
 
 I hope you find this useful!

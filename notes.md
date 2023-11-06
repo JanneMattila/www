@@ -4,7 +4,22 @@
 
 - Defender for Cloud - Warnings
 - Arc enabled servers - Onboarding using policy
+  - Lock down each feature
 - Advent of Code
+- K8s & Docker desktop local API, Deprecations
+  - If you use old kubectl, then you might not have those capabilities introduced in newer versions
+- PowerShell
+  # https://www.scriptinglibrary.com/languages/powershell/powershell-text-to-speech/
+  if ($null -eq $global:SpeechSynthesizer) {
+      "Loaded existing speech synthesizer"
+      Add-Type -AssemblyName System.Speech
+      $global:SpeechSynthesizer = New-Object -TypeName System.Speech.Synthesis.SpeechSynthesizer
+
+      $global:SpeechSynthesizer.SelectVoice("Microsoft Zira Desktop")
+  } 
+
+  $SpeechSynthesizer.Speak("Computer says no")
+  $SpeechSynthesizer.Speak("Computer says yes")
 - SNAT
 - Azure Storage costs for 500 TB
 - Azure VNet and subnet as property vs. child resource
