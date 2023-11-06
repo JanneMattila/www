@@ -1,7 +1,7 @@
 ---
 layout: posts
 title:  "Automating maintenance tasks with Azure Functions and PowerShell - Part 2: Deployment"
-image: /assets/posts/2023/11/06/automating-maintenance-tasks-part2/teams.png
+image: /assets/posts/2023/11/06/automating-maintenance-tasks-part2/azure-resources.png
 date:   2023-11-06 06:00:00 +0300
 categories: azure
 tags: azure functions powershell scripting automation cicd devops
