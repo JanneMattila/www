@@ -6,15 +6,15 @@ date:   2023-11-13 06:00:00 +0300
 categories: azure
 tags: azure security defender
 ---
-You might have received emails from "Microsoft Defender for Cloud" similar to this:
+You might have received emails from "Microsoft Defender for Cloud" like this:
 
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/13/defender-suspicious-activity/email-dangling-domain.png" %}
 
-or similar to this:
+or like this:
 
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/13/defender-suspicious-activity/email-sensitive-volume-mount.png" %}
 
-or one with extra bonus twist and _multiple alerts_ from single cluster in one email:
+or one with extra bonus twist and _multiple alerts_ from a single cluster in one email:
 
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/13/defender-suspicious-activity/email-multiple.png" %}
 
@@ -35,17 +35,17 @@ and see your "Security alerts" list in case you have not noticed them before:
 
 {% include imageEmbed.html link="/assets/posts/2023/11/13/defender-suspicious-activity/alerts-list.png" %}
 
-and if you for some reason haven't yet enabled it, then now is good time to do that.
+and if you for some reason haven't yet enabled _Microsoft Defender for Cloud_, then now is a good time to do that.
 
 **Microsoft Defender for Cloud > Environment settings > Select subscription > Defender plans: Enable all plans** or select all the plans that you want to enable.
 
 More information can be found here:
-[Connect your Azure subscriptions](https://learn.microsoft.com/en-us/azure/defender-for-cloud/connect-azure-subscription)
+[Connect your Azure subscriptions](https://learn.microsoft.com/en-us/azure/defender-for-cloud/connect-azure-subscription).
 
 ---
 
-But let's get back to my list of alerts above. It does look bad, doesn't it?
-Let's go them through one-by-one.
+But let's get back to the list of alerts above. It does look bad, doesn't it?
+Let's go through them one-by-one.
 
 ### Dangling domain
 
@@ -61,8 +61,6 @@ might be something that I _forget_ to do. And that's exactly what happened here.
 I had created app service with custom domain and then I had deleted it, but I
 had forgotten to delete DNS Records associated with it.
 
-Luckily, I get these notifications to remind me to finish up 
-
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/13/defender-suspicious-activity/dangling-domain.png" %}
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/13/defender-suspicious-activity/dangling-domain2.png" %}
 
@@ -71,14 +69,16 @@ More information about
 and
 [Alerts for Azure App Service](https://learn.microsoft.com/en-us/azure/defender-for-cloud/alerts-reference#alerts-azureappserv).
 
+So, I went to DNS zone and deleted the old record. Problem solved!
+
 ### Sensitive volume mount
 
 [Azure Kubernetes Service](https://learn.microsoft.com/en-us/azure/aks/intro-kubernetes)
-is service that used by many of my customers and it means that I actively work with it.
+is a service that is used by many of my customers and it means that I actively work with it.
 Therefore, I have created a lot of demos around it _including_
-_Microsoft Defender for Cloud_. So this alert is not a surprise, since
-I have added [hostPath](https://kubernetes.io/docs/concepts/storage/volumes/#hostpath)
-to my demo on purpose:
+_Microsoft Defender for Cloud_. This alert wasn't a surprise, since
+I have caused it on purpose by adding [hostPath](https://kubernetes.io/docs/concepts/storage/volumes/#hostpath)
+to my demo deployment:
 
 ```yaml
 apiVersion: apps/v1
@@ -112,16 +112,16 @@ spec:
             - containerPort: 80
               name: http
               protocol: TCP
-          volumeMounts:
-            - name: hostpath
-              mountPath: /mnt/host
+          volumeMounts:            # <--
+            - name: hostpath       # <--
+              mountPath: /mnt/host # <--
       volumes:
-        - name: hostpath
-          hostPath:
-            path: /
+        - name: hostpath # <--
+          hostPath:      # <--
+            path: /      # <--
 ```
 
-Microsoft Defender for Cloud does alert about this:
+Microsoft Defender for Cloud alerts about this:
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/13/defender-suspicious-activity/container-mount.png" %}
 
 It also provides all the details needed to take corrective actions:
@@ -143,9 +143,14 @@ highlighted them to me:
 
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/13/defender-suspicious-activity/container2.png" %}
 
+Since this is learning environment which I only deploy temporarily, I'll just
+mark these as resolved:
+
+{% include imageEmbed.html link="/assets/posts/2023/11/13/defender-suspicious-activity/resolve.png" %}
+
 ### Multiple alerts from single cluster
 
-This is something that I got after preparing for workshop about AKS.
+This is something that I got after preparing for workshop about AKS:
 
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/13/defender-suspicious-activity/multiple-incidents.png" %}
 
@@ -166,16 +171,18 @@ helm repo add scubakiz https://scubakiz.github.io/clusterinfo/
 helm install clusterinfo scubakiz/clusterinfo
 ```
 
-And that's why I got this alert. It's good tool for demonstrating
-deployments etc. but not something that you want to have
-in the production clusters.
+I use it to demo the deployments so that it's visually easy to see the changes
+using Cluster Info. Despite this alert, I recommend using it for learning purposes.
+
+This AKS resource lifespan is only duration of one workshop, so I can dismiss these two alerts.
 
 ### Suspicious User Agent detected
 
-This one is interesting one. Clearly something is scanning my web applications
-with quite interesting user agent:
+This one is an interesting one. Clearly something is scanning my web application:
 
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/13/defender-suspicious-activity/app-service.png" %}
+
+Quite interesting user agent in the request:
 
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/13/defender-suspicious-activity/app-service2.png" %}
 
@@ -190,16 +197,21 @@ we get good explanation for this:
 > This behavior can indicate on attempts to exploit a vulnerability
 > in your App Service application.
 
+This is something that I'll monitor because it seems to be one time thing for now.
+
 ### Sample alerts
 
-
+You can also use _Sample alerts_ functionality to generate alerts for your environment:
 
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/13/defender-suspicious-activity/sample-alerts.png" %}
 
+{% include imageEmbed.html link="/assets/posts/2023/11/13/defender-suspicious-activity/sample-alerts2.png" %}
+
 ### Summary
 
-I hope I have convinced you to study [Microsoft Defender for Cloud](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-cloud-introduction)
-further.
+I hope you got some idea how 
+[Microsoft Defender for Cloud](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-cloud-introduction)
+can help you to find these issues and alert you about these findings. 
+Now it's your turn to take it for a spin and learn more about it.
 
-
-
+I hope you find this useful!
