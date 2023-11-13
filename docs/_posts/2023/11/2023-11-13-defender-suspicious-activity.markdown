@@ -156,12 +156,12 @@ This is something that I got after preparing for workshop about AKS:
 
 After opening the details, we can quickly see that `sensitive volume mount`
 is also in this cluster:
-{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/13/defender-suspicious-activity/multiple-incidents2.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/13/defender-suspicious-activity/multiple-incidents2.png" %}
 
 But the second one with `New high privileges role detected` was new one.
 Opening details of the alert explains it right away: 
 
-{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/13/defender-suspicious-activity/multiple-incidents-high-role.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/13/defender-suspicious-activity/multiple-incidents-high-role.png" %}
 
 So indeed, I've deployed [ClusterInfo](https://scubakiz.github.io/clusterinfo/)
 into my cluster using [Helm](https://helm.sh/):
