@@ -1,7 +1,7 @@
 ---
 layout: posts
-title:  "Understanding Virtual Network service endpoints"
-image: /assets/posts/2023/11/20/understanding-virtual-network-service-endpoints/alert-list.png
+title:  "How virtual network service endpoints work"
+image: /assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/alert-list.png
 date:   2023-11-20 06:00:00 +0300
 categories: azure
 tags: azure security defender
@@ -29,7 +29,7 @@ Virtual machine is running in subnet which has [User-Defined Route (UDR)](https:
 
 Here are the Azure resources that are needed for this test setup:
 
-{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/understanding-virtual-network-service-endpoints/azure-resources.png" %}
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/azure-resources.png" %}
 
 Application is simple PowerShell script that sends data to Azure Table Storage.
 I'm using Ubuntu virtual machine so I 
@@ -97,11 +97,11 @@ Now we have all the pieces in place and we can start testing.
 
 ### Test 1: No UDRs and no service endpoints
 
-{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/understanding-virtual-network-service-endpoints/vm1.png" %}
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/vm1.png" %}
 
 We haven't yet enabled any services endpoints for that subnet:
 
-{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/understanding-virtual-network-service-endpoints/no-service-endpoints.png" %}
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/no-service-endpoints.png" %}
 
 No big suprises in this test. Everything works as expected.
 Traffic flows using the _default system routes_. 
@@ -109,7 +109,7 @@ Public IP is used for outbound communication to the internet.
 
 We can see data in the table storage exactly as we expected:
 
-{% include imageEmbed.html link="/assets/posts/2023/11/20/understanding-virtual-network-service-endpoints/table-data.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/table-data.png" %}
 
 _Okay this is slightly off-topic_ but you might be wondering, 
 is the outbound traffic really using public IP address?
@@ -119,11 +119,11 @@ So yes in that regards.
 
 Therefore you might be tempted to think that you can use that IP for Storage account firewall:
 
-{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/understanding-virtual-network-service-endpoints/storage-fw.png" %}
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/storage-fw.png" %}
 
 But after you enable that you see that our application is not able to communicate to the storage account anymore:
 
-{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/understanding-virtual-network-service-endpoints/ssh-failed.png" %}
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/ssh-failed.png" %}
 
 Error message is: 
 
@@ -149,9 +149,13 @@ Reason is simple and documented in
 > Services deployed in the same region as the storage account **use private Azure IP addresses for communication**.
 > So, you can't restrict access to specific Azure services based on their public outbound IP address range.
 
+And no, you cannot use private IP address for storage account firewall either:
+
+{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/private-ip-fw.png" %}
+
 ### Test 2: UDR and no service endpoints
 
-{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/understanding-virtual-network-service-endpoints/vm2.png" %}
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/vm2.png" %}
 
 In this test setup we will use UDR to force all traffic to NVA.
 But since this is test setup, we don't have NVA running and those packages will be send to `/dev/null` (=dropped).
@@ -172,13 +176,13 @@ $routeTable | Remove-AzRouteConfig -Name "to-nva" | Set-AzRouteTable
 
 When `to-vna` route is in use, you should see this in the route table:
 
-{% include imageEmbed.html link="/assets/posts/2023/11/20/understanding-virtual-network-service-endpoints/route.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/route.png" %}
 
 Any connections, like SSH, will get stuck during this time period.
 
 This is also visible in our data since data upload was blocked for 2 minutes and 13 seconds:
 
-{% include imageEmbed.html link="/assets/posts/2023/11/20/understanding-virtual-network-service-endpoints/table-120-seconds.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/table-120-seconds.png" %}
 
 That was due to default value of `-TimeoutSec` parameter in
 [Invoke-RestMethod](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/invoke-restmethod)
@@ -186,11 +190,11 @@ with `indefinite` timeout.
 
 If I change that to e.g., 5 seconds, then I'll see packet drops:
 
-{% include imageEmbed.html link="/assets/posts/2023/11/20/understanding-virtual-network-service-endpoints/table-120-seconds-packet-drop.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/table-120-seconds-packet-drop.png" %}
 
 If I now improve upload logic by introducing simple queue for failed messages and re-process them, I can now see those errors in the table:
 
-{% include imageEmbed.html link="/assets/posts/2023/11/20/understanding-virtual-network-service-endpoints/table-120-seconds-queue.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/table-120-seconds-queue.png" %}
 
 Error message is: `The request was canceled due to the configured HttpClient.Timeout of 5 seconds elapsing.`
 
@@ -204,11 +208,12 @@ actually worked during the test period.
 
 ### Test 3: UDR and Storage service endpoint
 
-{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/understanding-virtual-network-service-endpoints/vm3.png" %}
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/vm3.png" %}
 
-In this test setup we will enable `Microsoft.Storage` service endpoint for the subnet:
+Virtual network service endpoints are enabled on a per-subnet basis within a VNet.
+In this test setup we will enable `Microsoft.Storage` service endpoint for our test subnet:
 
-{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/understanding-virtual-network-service-endpoints/service-endpoint-storage.png" %}
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/service-endpoint-storage.png" %}
 
 Above setting changes the routing behavior in the network. 
 Best way to see the _effective routes_ is to go to:
@@ -220,7 +225,7 @@ Best way to see the _effective routes_ is to go to:
 
 Here are the effective routes from our test setup:
 
-{% include imageEmbed.html link="/assets/posts/2023/11/20/understanding-virtual-network-service-endpoints/effective-routes.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/effective-routes.png" %}
 
 There are two `VirtualNetworkServiceEndpoint` routes with _many many many_ address prefixes.
 Yes, it would be nice to have some additional metadata in the view to make it easier to understand
@@ -245,16 +250,24 @@ IpRange          Source                      SystemService Ip            Region
 Above routing definitions are more specific and thus override our `to-nva` route.
 Traffic is therefore directly routed to the Storage account.
 
-Let's test this in practice. I will enable `to-nva` route for 120 seconds and then remove it
+It's also important to understand [how Azure selects a route](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview#how-azure-selects-a-route):
+
+> **If multiple routes contain the same address prefix**,
+> Azure selects the route type, based on the **following priority**:<br/>
+> 1. User-defined route
+> 2. BGP route
+> 3. System route
+
+Let's test our scenario now in practice. I will enable `to-nva` route for 120 seconds and then remove it
 similarly as in previous test.
 
 SSH gets stuck as previously:
 
-{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/understanding-virtual-network-service-endpoints/ssh-stuck.png" %}
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/ssh-stuck.png" %}
 
 However, our application continuous to pump data to the table storage without any issues:
 
-{% include imageEmbed.html link="/assets/posts/2023/11/20/understanding-virtual-network-service-endpoints/table-storage-works.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/table-storage-works.png" %}
 
 So it works as expected. Traffic to the Storage account is not impacted by the UDR.
 This also explains why you don't see this traffic in your NVA logs.
@@ -263,13 +276,6 @@ This also explains why you don't see this traffic in your NVA logs.
 
 I hope I managed to explain how Virtual Network service endpoints work in practise.
 I think it's valuable to give tools for people to understand how things work.
-
-https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview#how-azure-selects-a-route
-
-If multiple routes contain the same address prefix, Azure selects the route type, based on the following priority:
-User-defined route
-BGP route
-System route
 
 I can't recommend enough this video to get better understanding about routing in Azure:
 
