@@ -1,15 +1,15 @@
 ---
 layout: posts
 title:  "How virtual network service endpoints work"
-image: /assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/alert-list.png
+image: /assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/effective-routes.png
 date:   2023-11-20 06:00:00 +0300
 categories: azure
-tags: azure security defender
+tags: azure networking routing
 ---
 _Virtual Network service endpoints_ topic has come up few times in the last month, 
 so I decided to write a blog post about it.
-It's not a new thing but it's still something that people have missed or haven't quite understood how it works in practise.
-Therefore, I'll try to go it through with very concrete example.
+It's not a new thing but it's still something that people have missed or haven't quite understood how it works in practice.
+Therefore, I'll try to go through with very concrete example.
 
 From [Virtual Network service endpoints](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-service-endpoints-overview) documentation:
 
@@ -22,7 +22,7 @@ From [Virtual Network service endpoints](https://learn.microsoft.com/en-us/azure
 
 ## Test setup
 
-To show this in practise, I'm going to build following test setup:
+To show this in practice, I'm going to build the following test setup:
 
 Application running in virtual machine and it's sending data to [Azure Table Storage](https://learn.microsoft.com/en-us/azure/storage/tables/table-storage-overview).
 Virtual machine is running in subnet which has [User-Defined Route (UDR)](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview) and it forces **all** traffic to _Network Virtual Appliance (NVA)_.
@@ -93,7 +93,7 @@ And as always, full source code is available in the GitHub:
 
 {% include githubEmbed.html text="JanneMattila/powershell-demos" link="JanneMattila/powershell-demos" %}
 
-Now we have all the pieces in place and we can start testing.
+Now we have all the pieces in place, and we can start testing.
 
 ### Test 1: No UDRs and no service endpoints
 
@@ -103,7 +103,7 @@ We haven't yet enabled any services endpoints for that subnet:
 
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/no-service-endpoints.png" %}
 
-No big suprises in this test. Everything works as expected.
+No big surprises in this test. Everything works as expected.
 Traffic flows using the _default system routes_. 
 Public IP is used for outbound communication to the internet.
 
@@ -111,13 +111,13 @@ We can see data in the table storage exactly as we expected:
 
 {% include imageEmbed.html link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/table-data.png" %}
 
-_Okay this is slightly off-topic_ but you might be wondering, 
+_Okay this is slightly off-topic_, but you might be wondering, 
 is the outbound traffic really using public IP address?
 
-If you do `curl https://myip.jannemattila.com` response will you your Public IP.
+If you do `curl https://myip.jannemattila.com` then response will show your Public IP.
 So yes in that regards.
 
-Therefore you might be tempted to think that you can use that IP for Storage account firewall:
+Therefore, you might be tempted to think that you can use that IP for Storage account firewall:
 
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/storage-fw.png" %}
 
@@ -125,7 +125,7 @@ But after you enable that you see that our application is not able to communicat
 
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/ssh-failed.png" %}
 
-Error message is: 
+The error message is: 
 
 ```json
 {
@@ -158,7 +158,7 @@ And no, you cannot use private IP address for storage account firewall either:
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/vm2.png" %}
 
 In this test setup we will use UDR to force all traffic to NVA.
-But since this is test setup, we don't have NVA running and those packages will be send to `/dev/null` (=dropped).
+But since this is test setup, we don't have NVA running so those packages will be sent to `/dev/null` (=dropped).
 
 With this script we can enable `0.0.0.0/0` route to NVA, let it impact for e.g., 120 seconds and then remove that route:
 
@@ -178,7 +178,7 @@ When `to-vna` route is in use, you should see this in the route table:
 
 {% include imageEmbed.html link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/route.png" %}
 
-Any connections, like SSH, will get stuck during this time period.
+Any connections, like SSH, will get stuck during this period.
 
 This is also visible in our data since data upload was blocked for 2 minutes and 13 seconds:
 
@@ -196,14 +196,14 @@ If I now improve upload logic by introducing simple queue for failed messages an
 
 {% include imageEmbed.html link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/table-120-seconds-queue.png" %}
 
-Error message is: `The request was canceled due to the configured HttpClient.Timeout of 5 seconds elapsing.`
+The error message is: `The request was canceled due to the configured HttpClient.Timeout of 5 seconds elapsing.`
 
 Now we have seen that UDR works as expected. It forces all traffic to NVA
 and our application is not able to send data to the table storage
 in this test setup.
 
 Since our UDR forced **all** the traffic to NVA, 
-it means that no other outbound traffic to internet
+it means that no other outbound traffic to the internet
 actually worked during the test period.
 
 ### Test 3: UDR and Storage service endpoint
@@ -216,19 +216,19 @@ In this test setup we will enable `Microsoft.Storage` service endpoint for our t
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/service-endpoint-storage.png" %}
 
 Above setting changes the routing behavior in the network. 
-Best way to see the _effective routes_ is to go to:
+The best way to see the _effective routes_ is to go to:
 
 **Virtual Machine > Networking > Network interface > Effective routes**
 
-> Virtual machine has to be running in order to see the effective routes.
-> And unfortunately no, you cannot test this with just network interface.
+> Virtual machine must be running in order to see the effective routes.
+> And unfortunately, no, you cannot test this with just a network interface.
 
 Here are the effective routes from our test setup:
 
 {% include imageEmbed.html link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/effective-routes.png" %}
 
 There are two `VirtualNetworkServiceEndpoint` routes with _many many many_ address prefixes.
-Yes, it would be nice to have some additional metadata in the view to make it easier to understand
+Yes, it would be nice to have some additional metadata in the view to making it easier to understand
 which service endpoint is responsible for which route.
 You can pick any of the IP addresses and validate that it's indeed from Storage account IP address range:
 
@@ -247,7 +247,7 @@ IpRange          Source                      SystemService Ip            Region
 191.239.200.0/22 ServiceTags_Public_20231106               191.239.203.0
 ```
 
-Above routing definitions are more specific and thus override our `to-nva` route.
+The above routing definitions are more specific and thus override our `to-nva` route.
 Traffic is therefore directly routed to the Storage account.
 
 It's also important to understand [how Azure selects a route](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview#how-azure-selects-a-route):
@@ -265,23 +265,23 @@ SSH gets stuck as previously:
 
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/ssh-stuck.png" %}
 
-However, our application continuous to pump data to the table storage without any issues:
+However, our application continuously pumps data into the table storage without any issues:
 
 {% include imageEmbed.html link="/assets/posts/2023/11/20/how-virtual-network-service-endpoints-work/table-storage-works.png" %}
 
-So it works as expected. Traffic to the Storage account is not impacted by the UDR.
+So, it works as expected. Traffic to the Storage account is not impacted by the UDR.
 This also explains why you don't see this traffic in your NVA logs.
 
 ### Summary
 
-I hope I managed to explain how Virtual Network service endpoints work in practise.
+I hope I have managed to explain how Virtual Network service endpoints work in practice.
 I think it's valuable to give tools for people to understand how things work.
 
-I can't recommend enough this video to get better understanding about routing in Azure:
+I can't recommend this video enough to get better understanding about routing in Azure:
 
 ["Does my traffic stay on the Microsoft Network?" -- Adam Stuart](https://www.youtube.com/watch?v=ssrAPwOKw4g)
 
 I'm planning to write more about this topic in the future and especially about
-SNAT port exchaustion which every now and then causes issues for people.
+SNAT port exhaustion which every now and then causes issues for people.
 
 I hope you find this useful!
