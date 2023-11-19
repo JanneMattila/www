@@ -30,14 +30,15 @@
         <section id="main_content" class="inner">
             {{ content }}
 
-            {% assign postsByYearAndMonth = site.posts | where_exp: 'post', 'post.date <= site.time' |
-                group_by_exp:"post", "post.date | date: '%Y %B'" %} {% for postPerTime in postsByYearAndMonth %} <h1>{{
-                postPerTime.name }}</h1>
-                {% for post in postPerTime.items %}
-                <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
-                <p>{{ post.ingress }}</p>
-                {% endfor %}
-                {% endfor %}
+            {% assign postsByYearAndMonth = site.posts | where_exp: 'post', 'post.date > site.time' |
+            group_by_exp:"post", "post.date | date: '%Y %B'" %}
+            {% for postPerTime in postsByYearAndMonth %}
+            <h1>{{ postPerTime.name }}</h1>
+            {% for post in postPerTime.items %}
+            <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+            <p>{{ post.ingress }}</p>
+            {% endfor %}
+            {% endfor %}
         </section>
     </div>
 

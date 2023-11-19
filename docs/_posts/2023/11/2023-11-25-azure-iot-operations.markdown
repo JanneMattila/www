@@ -6,7 +6,7 @@ date:   2023-11-25 06:00:00 +0300
 categories: azure
 tags: azure iot
 ---
-[Azure IoT Operations](https://azure.microsoft.com/en-us/updates/azureiotoperationspreview/) was announced in Ignite last week.
+[Azure IoT Operations](https://azure.microsoft.com/en-us/updates/azureiotoperationspreview/) was announced at Ignite last week.
 
 Read more about the announcement from the following blog post and documentation pages:
 
@@ -18,7 +18,16 @@ Arc Jumpstart folks has been busy at work and created a new jumpstart for this t
 
 [Enhance operational insights at the edge using Azure IoT Operations (AIO)](https://azurearcjumpstart.com/azure_arc_jumpstart/azure_edge_iot_ops/aio_manufacturing)
 
+So quite much content available already for this new service.
+Of course, I had to deploy this to my Intel NUC machine.
+Here are my deployed resources:
+
 {% include imageEmbed.html link="/assets/posts/2023/11/25/aio/azure-rg.png" %}
+
+One thing I want to highlight is that this is building on top of many other services.
+Even if Azure IoT Operations itself is in preview, it is using many other services that are already GA.
+
+In my case, I have deployed it on top of [AKS Edge Essentials](https://learn.microsoft.com/en-us/azure/aks/hybrid/aks-edge-overview).
 
 {% include imageEmbed.html link="/assets/posts/2023/11/25/aio/arc-connect.png" %}
 {% include imageEmbed.html link="/assets/posts/2023/11/25/aio/arc-ssh.png" %}
