@@ -2,7 +2,6 @@
 
 ## Upcoming posts
 
-- Advent of Code
 - Azure Storage costs for 500 TB
 - SNAT
   - Service Endpoints - Demo by using e.g., SQL without and UDR to NVA and Storage with Service Endpoint
