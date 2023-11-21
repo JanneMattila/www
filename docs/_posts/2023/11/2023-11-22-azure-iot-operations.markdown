@@ -2,7 +2,7 @@
 layout: posts
 title:  "Azure IoT Operations Preview is now available"
 image: /assets/posts/2023/11/27/advent-of-code/2022.png
-date:   2023-11-25 06:00:00 +0300
+date:   2023-11-22 06:00:00 +0300
 categories: azure
 tags: azure iot
 ---
