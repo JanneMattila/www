@@ -1,7 +1,7 @@
 ---
 layout: posts
 title:  "Azure IoT Operations Preview is now available"
-image: /assets/posts/2023/11/27/advent-of-code/2022.png
+image: /assets/posts/2023/11/22/aio/aio-homeaks.png
 date:   2023-11-22 06:00:00 +0300
 categories: azure
 tags: azure iot
@@ -21,12 +21,12 @@ Arc Jumpstart folks has been busy at work and created a new jumpstart for this t
 So quite a lot of content is available already for this new service.
 Of course, I had to deploy this to my Intel NUC machine running in my living room:
 
-{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/25/aio/nuc1.jpg" %}
-{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/25/aio/nuc2.jpg" %}
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/22/aio/nuc1.jpg" %}
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/11/22/aio/nuc2.jpg" %}
 
 Here are my deployed resources in Azure:
 
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/azure-rg.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/azure-rg.png" %}
 
 Main resources from above list are:
 
@@ -60,29 +60,29 @@ and RDP to access Arc-enabled servers.
 You can connect in the Portal using [Cloud Shell](https://learn.microsoft.com/en-us/azure/cloud-shell/overview)
 by clicking on the _Connect in browser_ button:
 
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/arc-connect.png" %}
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/cloudshell.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/arc-connect.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/cloudshell.png" %}
 
 Or then you can connect from your local machine using [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli):
 
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/arc-ssh.png" %}
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/arc-ssh2.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/arc-ssh.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/arc-ssh2.png" %}
 
 You can also use [Windows Admin Center](https://learn.microsoft.com/en-us/windows-server/manage/windows-admin-center/azure/manage-arc-hybrid-machines) to connect to your Arc-enabled servers:
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/arc-wac.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/arc-wac.png" %}
 
 From Window Admin Center you can then use Remote Desktop for connecting to your machine:
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/arc-wac-rdp.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/arc-wac-rdp.png" %}
 
 Azure Arc-enabled Kubernetes has tons of features, but I'll just show
 two favorite ones of mine. 
 [Azure Monitor Container Insights for Azure Arc-enabled Kubernetes clusters](https://learn.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-enable-arc-enabled-clusters?toc=%2Fazure%2Fazure-arc%2Fkubernetes%2Ftoc.json&bc=%2Fazure%2Fazure-arc%2Fkubernetes%2Fbreadcrumb%2Ftoc.json&tabs=create-cli%2Cverify-portal)
 is the first feature to highlight:
 
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/aks-monitoring.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/aks-monitoring.png" %}
 
 Second one is [GitOps using Flux v2](https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/conceptual-gitops-flux2) for application deployment:
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/aks-gitops.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/aks-gitops.png" %}
 
 With the above configuration cluster pulls configuration from this GitHub repository and
 deploys it to the cluster automatically:
@@ -96,38 +96,38 @@ Azure IoT Operations has its own portal:
 
 It displays all your AIO enabled clusters in the home view:
 
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/aio-home.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/aio-home.png" %}
 
 Opening my `homeaks` shows all the assets underneath it:
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/aio-homeaks.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/aio-homeaks.png" %}
 
 Thermostat properties:
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/aio-thermostat.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/aio-thermostat.png" %}
 Thermostat tags:
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/aio-thermostat2.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/aio-thermostat2.png" %}
 Boiler properties:
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/aio-boiler.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/aio-boiler.png" %}
 Boiler tags:
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/aio-boiler2.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/aio-boiler2.png" %}
 
 I can then manage [Data pipelines](https://learn.microsoft.com/en-us/azure/iot-operations/process-data/overview-data-processor) that are then executed in the edge using the same place:
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/aio-pipelines.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/aio-pipelines.png" %}
 
 I've created the world's most simple pipeline just to show how it works:
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/aio-pipeline1.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/aio-pipeline1.png" %}
 
 It takes messages from topics (note the [MQTT Topic filter](https://learn.microsoft.com/en-us/azure/event-grid/mqtt-topic-spaces#mqtt-topic-filter) as `#` in the end):
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/aio-pipelines-mq.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/aio-pipelines-mq.png" %}
 
 For demo purposes, I'll invoke external rest endpoint for each message so
 that I can see the message content and see how frequent messages are being sent:
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/aio-pipelines-http.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/aio-pipelines-http.png" %}
 
 I can then enable that pipeline from the portal:
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/aio-pipelines-edit.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/aio-pipelines-edit.png" %}
 
 It's then synchronized to the edge, and it gets executed there:
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/aio-pipelines-save2.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/aio-pipelines-save2.png" %}
 
 Now messages start to flow to my external endpoint, and I can capture them there.
 Here is one example message:
@@ -230,7 +230,7 @@ works exactly as expected.
 If you were wondering how Azure IoT Operations was deployed to the edge, then you
 can see it in the Kubernetes clusters extensions:
 
-{% include imageEmbed.html link="/assets/posts/2023/11/25/aio/aks-extensions.png" %}
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/aks-extensions.png" %}
 
 ## Summary
 
