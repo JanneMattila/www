@@ -110,7 +110,7 @@ Boiler properties:
 Boiler tags:
 {% include imageEmbed.html link="/assets/posts/2023/11/22/aio/aio-boiler2.png" %}
 
-I can then manage [Data pipelines](https://learn.microsoft.com/en-us/azure/iot-operations/process-data/overview-data-processor) that are then executed in the edge using the same place:
+I can then manage [Data pipelines](https://learn.microsoft.com/en-us/azure/iot-operations/process-data/overview-data-processor) that are then executed on the edge. I can do all this work from the same portal:
 {% include imageEmbed.html link="/assets/posts/2023/11/22/aio/aio-pipelines.png" %}
 
 I've created the world's most simple pipeline just to show how it works:
@@ -224,6 +224,46 @@ Here is another example message:
 
 Those messages started flowing very fast, so the data processing pipeline
 works exactly as expected.
+
+You can process the data on the edge using
+capabilities under _Stages_. You can use multiple
+steps in the data processing pipeline:
+
+{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2023/11/22/aio/stages.png" %}
+
+You can use _Destinations_ to push your data to e.g., 
+[Microsoft Fabric](https://learn.microsoft.com/en-us/azure/iot-operations/connect-to-cloud/howto-configure-destination-fabric):
+
+{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2023/11/22/aio/destinations.png" %}
+
+So let's enhance our above pipeline to this:
+
+{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2023/11/22/aio/pipeline-edited.png" %}
+
+Filter stage only selects messages coming from `thermostat`:
+
+```sql
+.payload.dataSetWriterName == "thermostat"
+```
+
+Transform stage selects only `temperature` element:
+  
+```sql
+.payload |= .payload.temperature
+```
+
+And I only send `.payload` to the external endpoint.
+This way I get messages like this:
+
+```json
+{
+  "SourceTimestamp": "2023-11-22T13:08:54.3203304Z",
+  "Value": 408414
+}
+```
+
+All of this I managed to do directly from the Azure IoT Operations portal.
+Pretty powerful right?
 
 ---
 
