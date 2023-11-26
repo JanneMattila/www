@@ -9,8 +9,11 @@ tags: appdev advent-of-code aoc fun
 [Advent of Code](https://adventofcode.com/) 2023 is starting in just a few days.
 25 days of coding puzzles to solve. Are you ready to collect all the stars?
 
-My Advent of Code 2022 view:
 {% include imageEmbed.html link="/assets/posts/2023/11/27/advent-of-code/2022.png" %}
+
+[Eric Wastl](https://twitter.com/ericwastl) creator of Advent of Code tweeted this reminder:
+
+{% include xEmbed.html id="ericwastl/status/1728538324967489672" %}
 
 I started participating in 2019 and have been hooked ever since. 
 I don't need chocolate advent calendars because I have something much better every day in December.
@@ -68,6 +71,9 @@ How cool is that!
 ## Are you ready?
 
 If you haven't yet participated in Advent of Code, I highly recommend it.
+Grab your favorite programming language and start solving puzzles.
+You can also use this as an opportunity to learn a new language or
+improve your skills in a language you already know.
 
 Go to [Advent of Code](https://adventofcode.com/) and sign up.
 See you there!
