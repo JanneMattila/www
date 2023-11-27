@@ -7,11 +7,11 @@ categories: appdev
 tags: appdev advent-of-code aoc fun
 ---
 [Advent of Code](https://adventofcode.com/) 2023 is starting in just a few days.
-25 days of coding puzzles to solve. Are you ready to collect all the stars?
+25 coding puzzles to solve in December. Are you ready to collect all the stars?
 
 {% include imageEmbed.html link="/assets/posts/2023/11/27/advent-of-code/2022.png" %}
 
-[Eric Wastl](https://twitter.com/ericwastl) creator of Advent of Code tweeted this reminder:
+[Eric Wastl](https://twitter.com/ericwastl) the creator of Advent of Code tweeted this reminder:
 
 {% include xEmbed.html id="ericwastl/status/1728538324967489672" %}
 
