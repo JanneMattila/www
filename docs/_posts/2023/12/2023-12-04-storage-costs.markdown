@@ -30,7 +30,7 @@ need to fetch them after they have been archived.
 That might mean that you package smaller files into larger files so that you
 can operate on smaller number of files. You can use as simple as `zip` to package those files.
 
-Example: You generate daily hundreds of thousands of small files that you need to archive.
+**Example:** You generate daily _hundreds of thousands of small files_ that you need to archive.
 Might make sense to package them to full daily archives before storing them to storage account.
 _If_ you need to fetch those to look into specific day, you can then fetch the whole archive in one go.
 
@@ -40,5 +40,8 @@ Here is example cost for `1000 GiB` file rehydration from `Archive` to `Hot` tie
 
 That of course impacts your archival strategy, if you need to rehydrate the data frequently
 and that suddenly comes your cost factor.
+
+> **As always**, undertand your requirements, data usage patterns, data volumes, and 
+> test your scenarios to see how much does it cost.
 
 I hope you find this useful!
