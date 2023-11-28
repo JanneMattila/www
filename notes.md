@@ -2,13 +2,12 @@
 
 ## Upcoming posts
 
-- Azure Storage costs for 500 TB
+- K8s & Docker desktop local API, Deprecations
+  - If you use old kubectl, then you might not have those capabilities introduced in newer versions
 - SNAT
   - Service Endpoints - Demo by using e.g., SQL without and UDR to NVA and Storage with Service Endpoint
 - Arc enabled servers - Onboarding using policy
   - Lock down each feature
-- K8s & Docker desktop local API, Deprecations
-  - If you use old kubectl, then you might not have those capabilities introduced in newer versions
 - PowerShell
   # https://www.scriptinglibrary.com/languages/powershell/powershell-text-to-speech/
   if ($null -eq $global:SpeechSynthesizer) {
