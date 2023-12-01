@@ -68,6 +68,14 @@ Or then you can connect from your local machine using [Azure CLI](https://learn.
 {% include imageEmbed.html link="/assets/posts/2023/11/22/aio/arc-ssh.png" %}
 {% include imageEmbed.html link="/assets/posts/2023/11/22/aio/arc-ssh2.png" %}
 
+Or then you can use RDP using `--rdp` option:
+
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/rdp.png" %}
+
+Then you can use the full RDP experience to connect to your machine:
+
+{% include imageEmbed.html link="/assets/posts/2023/11/22/aio/rdp2.png" %}
+
 You can also use [Windows Admin Center](https://learn.microsoft.com/en-us/windows-server/manage/windows-admin-center/azure/manage-arc-hybrid-machines) to connect to your Arc-enabled servers:
 {% include imageEmbed.html link="/assets/posts/2023/11/22/aio/arc-wac.png" %}
 
