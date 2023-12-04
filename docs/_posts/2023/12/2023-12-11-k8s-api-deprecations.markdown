@@ -90,7 +90,7 @@ aks_json=$(az aks create --resource-group $resource_group_name -n $aks_name \
 aks_api_server=$(echo $aks_json | jq -r .azurePortalFqdn)
 
 # "Azure Kubernetes Service AAD Server"
-# Search "6dae42f8-4368-4678-94ff-3960e28e3630" from Azure Active Directory
+# Search "6dae42f8-4368-4678-94ff-3960e28e3630" from Entra ID
 aks_api_server_accesstoken=$(az account get-access-token --resource "6dae42f8-4368-4678-94ff-3960e28e3630" --query accessToken -o tsv)
 
 # Study this access token in https://jwt.ms
