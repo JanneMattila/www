@@ -408,17 +408,28 @@ Therefore, as a reminder for myself, I have this in my deployment scripts:
 sudo az aks install-cli
 ```
 
-## Summary
+## Conclusion
 
 Create yourself a strategy to keep up with the Kubernetes versions.
+Plan and design how and when you do upgrades. **Do not** let it be one of those things
+that you "_do when you have time_".
 
-<!-- 
+Technically you need to upgrade your Kubernetes clusters at least once per year,
+but if that's the only time you do it, then you might be a bit rusty with the process.
+Also if your upgrade is delayed for some reason, then you might be in a situation
+that your start to fall out of support.
 
-Technically you need to upgrade your Kubernetes clusters at least once per year.
-But plan to do that more often.
+You can enable [auto-upgrades](https://learn.microsoft.com/en-us/azure/aks/auto-upgrade-cluster) for your Kubernetes clusters, but be careful with your API usage as shown above.
+You should still have a plan and testing process in place to ensure that your
+applications are working as expected after the upgrade.
 
-AKS API deprecated versions check
+Jumping multiple versions makes it also tricky to understand what has changed.
+Updating all the deployed extensions and Helm charts at the same time can be
+quite daunting task.
 
-Imagine jumping multiple versions and then trying to figure out what has changed
-and how that impacts your applications.
--->
+People also change roles and jobs, so you might not have the same people
+available to do the upgrade as you had when you did the previous upgrade.
+But it does help if you have documented the process and all the assets
+available in your source control.
+
+I hope you find this useful!
