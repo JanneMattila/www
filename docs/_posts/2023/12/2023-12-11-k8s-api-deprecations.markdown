@@ -1,6 +1,6 @@
 ---
 layout: posts
-title:  "Kubernetes API deprecations"
+title:  "Don't fall behind the Kubernetes changes"
 image: /assets/posts/2023/12/11/k8s-api-deprecations/archive-data-retrieval.png
 date:   2023-12-11 06:00:00 +0300
 categories: kubernetes
@@ -9,11 +9,51 @@ tags: kubernetes azure
 <!--
 - K8s & Docker desktop local API, Deprecations
   - If you use old kubectl, then you might not have those capabilities introduced in newer versions
+  - It doesn't necessarily mean that you get error message
 -->
 
-https://kubernetes.io/docs/reference/using-api/deprecation-guide/
+It's fair to say that Kubernetes evolves very fast. In order to understand how fast,
+I highly recommend that you read 
+[Kubernetes release cycle](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-release/release.md#the-release-cycle).
+In summary:
 
-https://github.com/JanneMattila/kubernetes-notes
+- ~3 releases per year
+- 3 most recent minor versions are supported at a time
+
+From that you can directly jump to [Azure Kubernetes Service (AKS) Kubernetes Release Calendar](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli#aks-kubernetes-release-calendar)
+to see the timelines for different Kubernetes versions.
+And next to it, you'll also find [AKS Components Breaking Changes by Version](https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli#aks-components-breaking-changes-by-version).
+
+Above just means, that you should be prepared to update your Kubernetes and
+prepare for the changes that come with it.
+
+---
+
+_What kind of changes are we then talking about that might impact you?_
+
+[Kubernetes](https://kubernetes.io/) has good documentation about how they evolve
+Kubernetes API to support new experimental features and at the same time they
+might remove some of the old features to enable fast development also in the future.
+At the end of the day, the more old stuff you carry over, the more energy it will take
+from you in the development which would slow down the innovation.
+
+You can read more about that in here:
+
+[Kubernetes Deprecation Policy](https://kubernetes.io/docs/reference/using-api/deprecation-policy/)
+
+Since evolving the API is so important, you should understand which APIs
+are going to be removed in which version. This is documented in here:
+
+[Kubernetes Deprecated API Migration Guide](https://kubernetes.io/docs/reference/using-api/deprecation-guide/)
+
+To make this API depreciation more concrete, 
+I'm going to now only focus to that topic in this blog post. 
+Given the above, I think better title for this post would be:
+
+## Don't fall behind the Kubernetes <u>API</u> changes
+
+Above you've learned that Kubernetes is evolving fast and that
+it's API-driven system in the background. 
 
 **Note**: Get yourself [Visual Studio Code](https://code.visualstudio.com/)
 and [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) extension.
@@ -109,3 +149,18 @@ curl -H "Authorization: Bearer $aks_api_server_accesstoken" https://$aks_api_ser
 {% include githubEmbed.html text="03-compute-setup.sh" link="JanneMattila/aks-workshop/blob/main/03-compute-setup.sh" %}
 
 {% include githubEmbed.html text="25-kubeconfig.sh" link="JanneMattila/aks-workshop/blob/main/25-kubeconfig.sh" %}
+
+```PowerShell
+kubectl api-versions
+
+kubectl explain deployment.v1beta1
+```
+<!-- 
+AKS API deprecated versions check
+-->
+
+{% include githubEmbed.html text="JanneMattila/kubernetes-notes" link="JanneMattila/kubernetes-notes" %}
+
+## Summary
+
+Create yourself a strategy to keep up with the Kubernetes versions.
