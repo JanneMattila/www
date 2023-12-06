@@ -1,7 +1,7 @@
 ---
 layout: posts
 title:  "Don't fall behind the Kubernetes changes"
-image: /assets/posts/2023/12/11/k8s-api-deprecations/archive-data-retrieval.png
+image: /assets/posts/2023/12/11/k8s-api-deprecations/http-paths.png
 date:   2023-12-11 06:00:00 +0300
 categories: kubernetes
 tags: kubernetes azure 
@@ -21,18 +21,18 @@ In summary:
 - 3 most recent minor versions are supported at a time
 
 From that you can directly jump to [Azure Kubernetes Service (AKS) Kubernetes Release Calendar](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli#aks-kubernetes-release-calendar)
-to see the timelines for different Kubernetes versions.
+to see the timelines for different Kubernetes versions and their support in AKS.
 And next to it, you'll also find [AKS Components Breaking Changes by Version](https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli#aks-components-breaking-changes-by-version).
 
-Above just means, that you should be prepared to update your Kubernetes and
-prepare for the changes that come with it.
+Above just means, that you should be prepared to update your Kubernetes clusters and
+you should be prepared for the changes that come with it.
 
 ---
 
 _What kind of changes are we then talking about that might impact you?_
 
 [Kubernetes](https://kubernetes.io/) has good documentation about how they evolve
-Kubernetes API to support new experimental features and at the same time they
+Kubernetes APIs to support new experimental features and at the same time they
 might remove some of the old features to enable fast development also in the future.
 At the end of the day, the more old stuff you carry over, the more energy it will take
 from you in the development which would slow down the innovation.
@@ -52,13 +52,27 @@ Given the above, I think better title for this post would be:
 
 ## Don't fall behind the Kubernetes <u>API</u> changes
 
-Above you've learned that Kubernetes is evolving fast and that
+I hope we can agree, that Kubernetes is evolving very fast and that
 it's API-driven system in the background. 
 
-**Note**: Get yourself [Visual Studio Code](https://code.visualstudio.com/)
-and [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) extension.
+_However_, many people do not think their Kubernetes API usage, since they are using
+`kubectl` to interact with their Kubernetes clusters.
+In the background, `kubectl` is using Rest API to interact with the Kubernetes API server.
 
-`PowerShell` example:
+Let me try to give you two concrete examples, how you can test and learn more about this yourself.
+
+### VS Code + REST Client extension + Docker Desktop
+
+First, let's use [Docker Desktop](https://www.docker.com/products/docker-desktop/) Kubernetes cluster
+for our testing. We'll use [Visual Studio Code](https://code.visualstudio.com/)
+and [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) extension
+to play with Kubernetes API.
+
+In order to successfully interact with Kubernetes API, you need to have
+proper credentials to access the API. In this case, we'll extract those from
+`kubectl` configuration and use those in our `REST Client` extension.
+
+Here is `PowerShell` example to pull these information out and then creating `rest-client.certificates` configuration:
 
 ```powershell
 $contextName = "docker-desktop"
@@ -84,42 +98,119 @@ $clientCertificateData > .vscode/client.crt
 }
 "@ > .vscode/settings.json
 
-Get-Content .vscode/settings.json
+code . # Open VS Code in current folder
+```
 
-@"
+Next, we'll create `k8s.http` file to interact with Kubernetes API:
+
+```powershell
 @endpoint = https://kubernetes.docker.internal:6443
 
 ### Fetch paths
 GET {{endpoint}}/ HTTP/1.1
 Content-Type: application/json; charset=utf-8
 
-### Fetch version
-GET {{endpoint}}/version HTTP/1.1
-Content-Type: application/json; charset=utf-8
-
-### Health endpoints
-GET {{endpoint}}/livez?verbose HTTP/1.1
-Content-Type: application/json; charset=utf-8
-
-### API resource list - v1
-GET {{endpoint}}/api/v1 HTTP/1.1
-Content-Type: application/json; charset=utf-8
-
 ### Fetch namespace list
 GET {{endpoint}}/api/v1/namespaces HTTP/1.1
 Content-Type: application/json; charset=utf-8
-@" > k8s.http
-
-code .
 ```
 
-Longer example of `k8s.http`:
+If we now run the first command, this is what we get:
+
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/12/11/k8s-api-deprecations/http-paths.png" %}
+
+If we fetch the list of namespaces (=`kubectl get namespaces`), we get this:
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/12/11/k8s-api-deprecations/http-ns.png" %}
+
+If we now want to create new namespace, we can do that with this command:
+
+```powershell
+### Create namespace "shiny"
+POST {{endpoint}}/api/v1/namespaces HTTP/1.1
+Content-Type: application/json; charset=utf-8
+
+{
+  "metadata": {
+    "name": "shiny"
+  }
+}
+```
+
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/12/11/k8s-api-deprecations/http-shiny.png" %}
+
+Above example maps 1:1 to YAML file that you would use with `kubectl`:
+
+```yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: shiny
+```
+
+`apiVersion` in the file is mapped to the url path `v1` and `kind` is mapped to `namespaces`.
+`kubectl` just converts this YAML to JSON and sends it to the Kubernetes API server.
+
+So it's clear that Kubernetes API is just a REST API and you can interact with it using
+any tool that can send HTTP requests.
+
+This does bring us to the API Deprecation example. 
+Let's take example from `1.16` timeframe:
+
+[Deprecated APIs Removed In 1.16: Here’s What You Need To Know](https://kubernetes.io/blog/2019/07/18/api-deprecations-in-1-16/)
+
+> The **v1.16** release will stop serving the following deprecated API versions 
+> in favor of newer and more stable API versions:
+> ...
+> - Deployment in the **extensions/v1beta1**, **apps/v1beta1**, and **apps/v1beta2** API versions is no longer served
+>   - Migrate to use the **apps/v1** API version, available since v1.9.
+
+If you still had YAML files referring to those old removed APIs like this:
+
+```yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: my-deployment
+# ...
+```
+
+Then you would get this error in the Rest call:
+
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/12/11/k8s-api-deprecations/http-404.png" %}
+
+Of course `kubectl` would give your more detailed error message:
+
+```bash
+error: resource mapping not found for name: "my-deployment" namespace: "demo-ns" from "demo.yaml":
+no matches for kind "Deployment" in version "extensions/v1beta1"
+ensure CRDs are installed first
+```
+
+Above would be easy to troubleshoot and understand, but what if you would have
+installed this via [Helm](https://helm.sh/) or some other mechanism and you would not know what is the exact YAML file causing these issue. You might have to spend significant amount of time to troubleshoot and fix the issue.
+
+Luckily, many Kubernetes foundational elements and their APIs are generally available and stable,
+so this should not happen so easily. 
+However, if you are using some of the more experimental or beta features,
+then be prepared for these kind of changes.
+
+Here are some example APIs that people have been using quite extensively even though they were still in beta:
+
+- [1.26](https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-26) and `HorizontalPodAutoscaler` **autoscaling/v2beta2** API Version
+- [1.22](https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-22) and `Ingress` and 
+**extensions/v1beta1** and **networking.k8s.io/v1beta1** API Versions
+
+---
+
+Longer version of the above `k8s.http` file can be found here:
 
 {% include githubEmbed.html text="k8s.http" link="JanneMattila/api-examples/blob/master/others/k8s.http" %}
 
-Other various API examples are part of that same repository:
+That same repository container API examples that you might find interesting:
 
 {% include githubEmbed.html text="JanneMattila/api-examples" link="JanneMattila/api-examples" %}
+
+### Bash + Curl + AKS API server
 
 Here is similar example with `Bash` and using AKS API server:
 
@@ -157,6 +248,9 @@ kubectl explain deployment.v1beta1
 ```
 <!-- 
 AKS API deprecated versions check
+
+Imagine jumping multiple versions and then trying to figure out what has changed
+and how that impacts your applications.
 -->
 
 {% include githubEmbed.html text="JanneMattila/kubernetes-notes" link="JanneMattila/kubernetes-notes" %}
