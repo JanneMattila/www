@@ -2,10 +2,8 @@
 
 ## Upcoming posts
 
-- K8s & Docker desktop local API, Deprecations
-  - If you use old kubectl, then you might not have those capabilities introduced in newer versions
+- IIS folder and many files
 - SNAT
-  - Service Endpoints - Demo by using e.g., SQL without and UDR to NVA and Storage with Service Endpoint
 - Arc enabled servers - Onboarding using policy
   - Lock down each feature
 - PowerShell
@@ -34,7 +32,6 @@
 - Network tester & Latency
   - SAP framework
 - webapp-update
-- IIS folder and many files
 - webapp-and-folders
 - Kubernetes probe demo
 - Network test scripts

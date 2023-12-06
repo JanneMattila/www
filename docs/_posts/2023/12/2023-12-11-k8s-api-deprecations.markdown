@@ -4,14 +4,8 @@ title:  "Don't fall behind the Kubernetes changes"
 image: /assets/posts/2023/12/11/k8s-api-deprecations/http-paths.png
 date:   2023-12-11 06:00:00 +0300
 categories: kubernetes
-tags: kubernetes azure 
+tags: kubernetes azure aks
 ---
-<!--
-- K8s & Docker desktop local API, Deprecations
-  - If you use old kubectl, then you might not have those capabilities introduced in newer versions
-  - It doesn't necessarily mean that you get error message
--->
-
 It's fair to say that Kubernetes evolves very fast. In order to understand how fast,
 I highly recommend that you read 
 [Kubernetes release cycle](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-release/release.md#the-release-cycle).
@@ -46,7 +40,7 @@ are going to be removed in which version. This is documented in here:
 
 [Kubernetes Deprecated API Migration Guide](https://kubernetes.io/docs/reference/using-api/deprecation-guide/)
 
-To make this API depreciation more concrete, 
+To make this API deprecation more concrete, 
 I'm going to now only focus to that topic in this blog post. 
 Given the above, I think better title for this post would be:
 
@@ -174,7 +168,7 @@ metadata:
 # ...
 ```
 
-Then you would get this error in the Rest call:
+Technically, above does map to this API endpoint:
 
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/12/11/k8s-api-deprecations/http-404.png" %}
 
@@ -210,6 +204,8 @@ That same repository container API examples that you might find interesting:
 
 {% include githubEmbed.html text="JanneMattila/api-examples" link="JanneMattila/api-examples" %}
 
+<br/>
+
 ### Bash + Curl + AKS API server
 
 Here is another example but this time with `Bash` and using AKS API server.
@@ -223,6 +219,10 @@ aks_json=$(az aks create --resource-group $resource_group_name -n $aks_name \
   -o json)
 aks_api_server=$(echo $aks_json | jq -r .azurePortalFqdn)
 ```
+
+You can also see API server directly in AKS Overview:
+
+{% include imageEmbed.html link="/assets/posts/2023/12/11/k8s-api-deprecations/aks.png" %}
 
 Then you can get access token to AKS API server by using `6dae42f8-4368-4678-94ff-3960e28e3630`
 as the target resource:
@@ -240,8 +240,6 @@ echo $aks_api_server
 You can find above Enterprise Application in Entra ID:
 
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/12/11/k8s-api-deprecations/entra-k8s.png" %}
-
-{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/12/11/k8s-api-deprecations/aks.png" %}
 
 Now you can test againt AKS API server:
 
@@ -407,6 +405,9 @@ Therefore, as a reminder for myself, I have this in my deployment scripts:
 ```bash
 sudo az aks install-cli
 ```
+
+That ensures that I have the latest `kubectl` version in use when
+working with AKS.
 
 ## Conclusion
 

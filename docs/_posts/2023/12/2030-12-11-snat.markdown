@@ -1,0 +1,32 @@
+---
+layout: posts
+title:  Hello SNAT my old friend
+image: /assets/posts/2023/12/11/k8s-api-deprecations/http-paths.png
+date:   2030-12-11 06:00:00 +0300
+categories: networking
+tags: networking azure aks appservice
+---
+<!--
+https://4lowtherabbit.github.io/blogs/2019/10/SNAT/
+
+Updates:
+- Metric is available
+
+Plan is VMs:
+- Apps are within VMs
+
+https://learn.microsoft.com/en-us/azure/azure-functions/manage-connections?tabs=csharp
+https://learn.microsoft.com/en-us/azure/architecture/antipatterns/improper-instantiation/
+https://github.com/projectkudu/kudu/wiki/Azure-Web-App-sandbox
+
+https://learn.microsoft.com/en-us/azure/load-balancer/load-balancer-outbound-connections#scenarios
+https://learn.microsoft.com/en-us/azure/virtual-network/vnet-integration-for-azure-services#compare-private-endpoints-and-service-endpoints
+https://learn.microsoft.com/en-us/azure/load-balancer/load-balancer-outbound-connections#port-exhaustion
+https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-intermittent-outbound-connection-errors#avoiding-the-problem
+
+AKS & Azure CNI
+
+Scenario:
+- 3rd party integration endpoint
+
+-->
