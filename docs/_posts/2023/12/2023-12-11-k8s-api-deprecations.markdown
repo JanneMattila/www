@@ -24,8 +24,8 @@ From that you can directly jump to [Azure Kubernetes Service (AKS) Kubernetes Re
 to see the timelines for different Kubernetes versions and their support in AKS.
 And next to it, you'll also find [AKS Components Breaking Changes by Version](https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli#aks-components-breaking-changes-by-version).
 
-Above just means, that you should be prepared to update your Kubernetes clusters and
-you should be prepared for the changes that come with it.
+Above just means, that you should be prepared to upgrade your Kubernetes clusters 
+_at least once per year_ you should be prepared for the changes that come with it.
 
 ---
 
@@ -265,6 +265,8 @@ curl -H "Authorization: Bearer $aks_api_server_accesstoken" https://$aks_api_ser
 }
 ```
 
+Fetch version information:
+
 ```bash
 curl -H "Authorization: Bearer $aks_api_server_accesstoken" https://$aks_api_server/version
 ```
@@ -283,6 +285,8 @@ curl -H "Authorization: Bearer $aks_api_server_accesstoken" https://$aks_api_ser
 }
 ```
 
+Here are some other examples:
+
 ```bash
 curl -H "Authorization: Bearer $aks_api_server_accesstoken" https://$aks_api_server/livez
 curl -H "Authorization: Bearer $aks_api_server_accesstoken" https://$aks_api_server/healthz
@@ -291,26 +295,34 @@ curl -H "Authorization: Bearer $aks_api_server_accesstoken" https://$aks_api_ser
 curl -H "Authorization: Bearer $aks_api_server_accesstoken" https://$aks_api_server/api/v1/namespaces
 ```
 
+AKS setup example can be found here:
+
 {% include githubEmbed.html text="03-compute-setup.sh" link="JanneMattila/aks-workshop/blob/main/03-compute-setup.sh" %}
 
+More examples about `curl` and AKS API server usage can be found here:
+
 {% include githubEmbed.html text="25-kubeconfig.sh" link="JanneMattila/aks-workshop/blob/main/25-kubeconfig.sh" %}
+
+You can use `kubectl` to see what kind of APIs are available:
 
 ```bash
 kubectl api-versions
 ```
+
+Here is example output:
 
 ```bash
 admissionregistration.k8s.io/v1
 apiextensions.k8s.io/v1
 apiregistration.k8s.io/v1
 apps/v1
-// abbreviated
+# abbreviated
 expansion.gatekeeper.sh/v1alpha1
 expansion.gatekeeper.sh/v1beta1
 flowcontrol.apiserver.k8s.io/v1beta1
 flowcontrol.apiserver.k8s.io/v1beta2
 metrics.k8s.io/v1beta1
-// abbreviated
+# abbreviated
 snapshot.storage.k8s.io/v1beta1
 status.gatekeeper.sh/v1beta1
 storage.k8s.io/v1
@@ -323,17 +335,52 @@ v1
 
 Notice that there are quite many `v1alpha1` and `v1beta1` APIs available.
 
+You can use `explain` describe fields and structure of various resources:
+
 ```bash
-kubectl explain deployment.v1beta1
+kubectl explain deployments --api-version=extensions/v1beta1
 ```
+
+Outputs:
+
+```text
+error: couldn't find resource for "extensions/v1beta1, Resource=deployments"
+```
+
+Here is example with available API version:
+
+```bash
+kubectl explain deployments --api-version=apps/v1
+```
+
+Outputs:
 
 ```bash
 GROUP:      apps
 KIND:       Deployment
 VERSION:    v1
 
-error: field "v1beta1" does not exist
+DESCRIPTION:
+    Deployment enables declarative updates for Pods and ReplicaSets.
+    
+# ...abbreviated
 ```
+
+You can use `Diagnose and solve problems` in AKS resource to see if 
+it has detected any deprecated APIs in use:
+
+{% include imageEmbed.html link="/assets/posts/2023/12/11/k8s-api-deprecations/aks-diagnose1.png" %}
+
+{% include imageEmbed.html link="/assets/posts/2023/12/11/k8s-api-deprecations/aks-diagnose2.png" %}
+
+Hopefully you'll see this text:
+
+> No usage of deprecated or soon to be deprecated APIs was found during the detection period
+
+To further help you, AKS has support for stopping upgrade if deprecated APIs are in use.
+See more details from here:
+
+[Stop Azure Kubernetes Service (AKS) cluster upgrades automatically on API breaking changes](https://learn.microsoft.com/en-us/azure/aks/stop-cluster-upgrade-api-breaking-changes)
 
 ### What about `kubectl` version then?
 
@@ -355,22 +402,23 @@ if something is not working as expected.
 **This has happened with real customers!** It's quite confusing if you expect to something
 to happen but it doesn't and you don't see any error messages.
 
+Therefore, as a reminder for myself, I have this in my deployment scripts:
 
 ```bash
 sudo az aks install-cli
 ```
 
+## Summary
 
+Create yourself a strategy to keep up with the Kubernetes versions.
 
 <!-- 
+
+Technically you need to upgrade your Kubernetes clusters at least once per year.
+But plan to do that more often.
+
 AKS API deprecated versions check
 
 Imagine jumping multiple versions and then trying to figure out what has changed
 and how that impacts your applications.
 -->
-
-{% include githubEmbed.html text="JanneMattila/kubernetes-notes" link="JanneMattila/kubernetes-notes" %}
-
-## Summary
-
-Create yourself a strategy to keep up with the Kubernetes versions.
