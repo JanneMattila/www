@@ -212,14 +212,22 @@ That same repository container API examples that you might find interesting:
 
 ### Bash + Curl + AKS API server
 
-Here is similar example with `Bash` and using AKS API server:
+Here is another example but this time with `Bash` and using AKS API server.
+
+First, create you AKS cluster like this:
 
 ```bash
 aks_json=$(az aks create --resource-group $resource_group_name -n $aks_name \
+ --enable-aad \
  # ....abbreviated but details in link below
   -o json)
 aks_api_server=$(echo $aks_json | jq -r .azurePortalFqdn)
+```
 
+Then you can get access token to AKS API server by using `6dae42f8-4368-4678-94ff-3960e28e3630`
+as the target resource:
+
+```bash
 # "Azure Kubernetes Service AAD Server"
 # Search "6dae42f8-4368-4678-94ff-3960e28e3630" from Entra ID
 aks_api_server_accesstoken=$(az account get-access-token --resource "6dae42f8-4368-4678-94ff-3960e28e3630" --query accessToken -o tsv)
@@ -227,9 +235,55 @@ aks_api_server_accesstoken=$(az account get-access-token --resource "6dae42f8-43
 # Study this access token in https://jwt.ms
 echo $aks_api_server_accesstoken
 echo $aks_api_server
+```
 
+You can find above Enterprise Application in Entra ID:
+
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/12/11/k8s-api-deprecations/entra-k8s.png" %}
+
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/12/11/k8s-api-deprecations/aks.png" %}
+
+Now you can test againt AKS API server:
+
+```bash
 curl -H "Authorization: Bearer $aks_api_server_accesstoken" https://$aks_api_server/
+```
+
+```json
+{
+  "paths": [
+    "/.well-known/openid-configuration",
+    "/api",
+    "/api/v1",
+    "/apis",
+    "/apis/",
+    "/apis/admissionregistration.k8s.io",
+    // abbreviated
+    "/readyz/shutdown",
+    "/version"
+  ]
+}
+```
+
+```bash
 curl -H "Authorization: Bearer $aks_api_server_accesstoken" https://$aks_api_server/version
+```
+
+```json
+{
+  "major": "1",
+  "minor": "25",
+  "gitVersion": "v1.25.11",
+  "gitCommit": "504ecd04507e7ae7e57f0ce186390097c8d76ed5",
+  "gitTreeState": "clean",
+  "buildDate": "2023-10-09T14:44:32Z",
+  "goVersion": "go1.19.10",
+  "compiler": "gc",
+  "platform": "linux/amd64"
+}
+```
+
+```bash
 curl -H "Authorization: Bearer $aks_api_server_accesstoken" https://$aks_api_server/livez
 curl -H "Authorization: Bearer $aks_api_server_accesstoken" https://$aks_api_server/healthz
 
@@ -241,11 +295,52 @@ curl -H "Authorization: Bearer $aks_api_server_accesstoken" https://$aks_api_ser
 
 {% include githubEmbed.html text="25-kubeconfig.sh" link="JanneMattila/aks-workshop/blob/main/25-kubeconfig.sh" %}
 
-```PowerShell
+```bash
 kubectl api-versions
+```
 
+```bash
+admissionregistration.k8s.io/v1
+apiextensions.k8s.io/v1
+apiregistration.k8s.io/v1
+apps/v1
+// abbreviated
+expansion.gatekeeper.sh/v1alpha1
+expansion.gatekeeper.sh/v1beta1
+flowcontrol.apiserver.k8s.io/v1beta1
+flowcontrol.apiserver.k8s.io/v1beta2
+metrics.k8s.io/v1beta1
+// abbreviated
+snapshot.storage.k8s.io/v1beta1
+status.gatekeeper.sh/v1beta1
+storage.k8s.io/v1
+storage.k8s.io/v1beta1
+templates.gatekeeper.sh/v1
+templates.gatekeeper.sh/v1alpha1
+templates.gatekeeper.sh/v1beta1
+v1
+```
+
+Notice that there are quite many `v1alpha1` and `v1beta1` APIs available.
+
+```bash
 kubectl explain deployment.v1beta1
 ```
+
+```bash
+GROUP:      apps
+KIND:       Deployment
+VERSION:    v1
+
+error: field "v1beta1" does not exist
+```
+
+```bash
+sudo az aks install-cli
+```
+
+[Version Skew Policy](https://kubernetes.io/releases/version-skew-policy/)
+
 <!-- 
 AKS API deprecated versions check
 
