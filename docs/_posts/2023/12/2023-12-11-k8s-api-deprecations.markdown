@@ -335,11 +335,32 @@ VERSION:    v1
 error: field "v1beta1" does not exist
 ```
 
+### What about `kubectl` version then?
+
+So far I have been highlighting that you should be aware of the Kubernetes API changes.
+However, same thing applies to `kubectl` version as well.
+
+There is document describing [version Skew Policy](https://kubernetes.io/releases/version-skew-policy/)
+between various Kubernetes components. For `kubectl` it says:
+
+> kubectl<br/>
+> kubectl is supported within one minor version (older or newer) of kube-apiserver.
+
+So if you are using `kubectl` version e.g., `1.12` and your Kubernetes cluster is `1.25`,
+then you might not have all the capabilities available in `kubectl` that you would have
+in `1.25` version. 
+And as I showed above, since it's just a REST API Client, then you might not even notice
+if something is not working as expected. 
+
+**This has happened with real customers!** It's quite confusing if you expect to something
+to happen but it doesn't and you don't see any error messages.
+
+
 ```bash
 sudo az aks install-cli
 ```
 
-[Version Skew Policy](https://kubernetes.io/releases/version-skew-policy/)
+
 
 <!-- 
 AKS API deprecated versions check
