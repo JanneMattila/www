@@ -18,7 +18,7 @@ From that you can directly jump to [Azure Kubernetes Service (AKS) Kubernetes Re
 to see the timelines for different Kubernetes versions and their support in AKS.
 And next to it, you'll also find [AKS Components Breaking Changes by Version](https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli#aks-components-breaking-changes-by-version).
 
-Above just means, that you should be prepared to upgrade your Kubernetes clusters 
+The above just means that you should be prepared to upgrade your Kubernetes clusters 
 _at least once per year_ you should be prepared for the changes that come with it.
 
 ---
@@ -26,28 +26,28 @@ _at least once per year_ you should be prepared for the changes that come with i
 _What kind of changes are we then talking about that might impact you?_
 
 [Kubernetes](https://kubernetes.io/) has good documentation about how they evolve
-Kubernetes APIs to support new experimental features and at the same time they
+Kubernetes to support new experimental features and at the same time they
 might remove some of the old features to enable fast development also in the future.
-At the end of the day, the more old stuff you carry over, the more energy it will take
-from you in the development which would slow down the innovation.
+At the end of the day, if you carry over old features from release to another,
+it will slow down the pace of new features and innovation.
 
-You can read more about that in here:
+You can read more about that here:
 
 [Kubernetes Deprecation Policy](https://kubernetes.io/docs/reference/using-api/deprecation-policy/)
 
 Since evolving the API is so important, you should understand which APIs
-are going to be removed in which version. This is documented in here:
+are going to be removed in which version. This is documented here:
 
 [Kubernetes Deprecated API Migration Guide](https://kubernetes.io/docs/reference/using-api/deprecation-guide/)
 
 To make this API deprecation more concrete, 
-I'm going to now only focus to that topic in this blog post. 
-Given the above, I think better title for this post would be:
+I’m going to focus on that topic in this blog post.
+Given the above, I think a better title for this post would be:
 
 ## Don't fall behind the Kubernetes <u>API</u> changes
 
-I hope we can agree, that Kubernetes is evolving very fast and that
-it's API-driven system in the background. 
+I hope we can agree that Kubernetes is evolving very fast and that
+it's an API-driven system in the background. 
 
 _However_, many people do not think their Kubernetes API usage, since they are using
 `kubectl` to interact with their Kubernetes clusters.
@@ -116,7 +116,7 @@ If we now run the first command, this is what we get:
 If we fetch the list of namespaces (=`kubectl get namespaces`), we get this:
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/12/11/k8s-api-deprecations/http-ns.png" %}
 
-If we now want to create new namespace, we can do that with this command:
+If we now want to create a new namespace, we can do that with this command:
 
 ```powershell
 ### Create namespace "shiny"
@@ -158,7 +158,7 @@ Let's take example from `1.16` timeframe:
 > - Deployment in the **extensions/v1beta1**, **apps/v1beta1**, and **apps/v1beta2** API versions is no longer served
 >   - Migrate to use the **apps/v1** API version, available since v1.9.
 
-If you still had YAML files referring to those old removed APIs like this:
+If you still had YAML files referring to those old and removed APIs like this:
 
 ```yaml
 apiVersion: extensions/v1beta1
@@ -168,11 +168,11 @@ metadata:
 # ...
 ```
 
-Technically, above does map to this API endpoint:
+Technically, the above does map to this API endpoint:
 
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/12/11/k8s-api-deprecations/http-404.png" %}
 
-Of course `kubectl` would give your more detailed error message:
+Of course, `kubectl` would give your more detailed error message:
 
 ```bash
 error: resource mapping not found for name: "my-deployment" namespace: "demo-ns" from "demo.yaml":
@@ -180,13 +180,13 @@ no matches for kind "Deployment" in version "extensions/v1beta1"
 ensure CRDs are installed first
 ```
 
-Above would be easy to troubleshoot and understand, but what if you would have
-installed this via [Helm](https://helm.sh/) or some other mechanism and you would not know what is the exact YAML file causing these issue. You might have to spend significant amount of time to troubleshoot and fix the issue.
+Above would be easy to troubleshoot and understand, but what if you 
+installed this via [Helm](https://helm.sh/) or some other mechanism and you would not know what is the exact YAML file causing these issue. You might have to spend a significant amount of time to troubleshoot and fix the issue.
 
 Luckily, many Kubernetes foundational elements and their APIs are generally available and stable,
 so this should not happen so easily. 
 However, if you are using some of the more experimental or beta features,
-then be prepared for these kind of changes.
+then be prepared for these kinds of changes.
 
 Here are some example APIs that people have been using quite extensively even though they were still in beta:
 
@@ -200,7 +200,7 @@ Longer version of the above `k8s.http` file can be found here:
 
 {% include githubEmbed.html text="k8s.http" link="JanneMattila/api-examples/blob/master/others/k8s.http" %}
 
-That same repository container API examples that you might find interesting:
+That same repository contains API examples that you might find interesting:
 
 {% include githubEmbed.html text="JanneMattila/api-examples" link="JanneMattila/api-examples" %}
 
@@ -210,7 +210,7 @@ That same repository container API examples that you might find interesting:
 
 Here is another example but this time with `Bash` and using AKS API server.
 
-First, create you AKS cluster like this:
+First, create your AKS cluster like this:
 
 ```bash
 aks_json=$(az aks create --resource-group $resource_group_name -n $aks_name \
@@ -237,11 +237,11 @@ echo $aks_api_server_accesstoken
 echo $aks_api_server
 ```
 
-You can find above Enterprise Application in Entra ID:
+You can find the above Enterprise Application in Entra ID:
 
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/12/11/k8s-api-deprecations/entra-k8s.png" %}
 
-Now you can test againt AKS API server:
+Now you can test against AKS API server:
 
 ```bash
 curl -H "Authorization: Bearer $aks_api_server_accesstoken" https://$aks_api_server/
@@ -297,7 +297,7 @@ AKS setup example can be found here:
 
 {% include githubEmbed.html text="03-compute-setup.sh" link="JanneMattila/aks-workshop/blob/main/03-compute-setup.sh" %}
 
-More examples about `curl` and AKS API server usage can be found here:
+More examples of `curl` and AKS API server usage can be found here:
 
 {% include githubEmbed.html text="25-kubeconfig.sh" link="JanneMattila/aks-workshop/blob/main/25-kubeconfig.sh" %}
 
@@ -307,7 +307,7 @@ You can use `kubectl` to see what kind of APIs are available:
 kubectl api-versions
 ```
 
-Here is example output:
+Here is an example output:
 
 ```bash
 admissionregistration.k8s.io/v1
@@ -331,9 +331,9 @@ templates.gatekeeper.sh/v1beta1
 v1
 ```
 
-Notice that there are quite many `v1alpha1` and `v1beta1` APIs available.
+Notice that there are quite a lot of `v1alpha1` and `v1beta1` APIs available.
 
-You can use `explain` describe fields and structure of various resources:
+You can use `explain` command to describe fields and structure of various resources:
 
 ```bash
 kubectl explain deployments --api-version=extensions/v1beta1
@@ -345,7 +345,7 @@ Outputs:
 error: couldn't find resource for "extensions/v1beta1, Resource=deployments"
 ```
 
-Here is example with available API version:
+Here is an example with available API version:
 
 ```bash
 kubectl explain deployments --api-version=apps/v1
@@ -382,8 +382,8 @@ See more details from here:
 
 ### What about `kubectl` version then?
 
-So far I have been highlighting that you should be aware of the Kubernetes API changes.
-However, same thing applies to `kubectl` version as well.
+So far, I have been highlighting that you should be aware of the Kubernetes API changes.
+However, the same thing applies to `kubectl` version as well.
 
 There is document describing [version Skew Policy](https://kubernetes.io/releases/version-skew-policy/)
 between various Kubernetes components. For `kubectl` it says:
@@ -391,13 +391,13 @@ between various Kubernetes components. For `kubectl` it says:
 > kubectl<br/>
 > kubectl is supported within one minor version (older or newer) of kube-apiserver.
 
-So if you are using `kubectl` version e.g., `1.12` and your Kubernetes cluster is `1.25`,
+So, if you are using `kubectl` version e.g., `1.12` and your Kubernetes cluster is `1.25`,
 then you might not have all the capabilities available in `kubectl` that you would have
 in `1.25` version. 
 And as I showed above, since it's just a REST API Client, then you might not even notice
 if something is not working as expected. 
 
-**This has happened with real customers!** It's quite confusing if you expect to something
+**This has happened with real customers!** It's quite confusing if you expect something
 to happen but it doesn't and you don't see any error messages.
 
 Therefore, as a reminder for myself, I have this in my deployment scripts:
@@ -417,16 +417,16 @@ that you "_do when you have time_".
 
 Technically you need to upgrade your Kubernetes clusters at least once per year,
 but if that's the only time you do it, then you might be a bit rusty with the process.
-Also if your upgrade is delayed for some reason, then you might be in a situation
-that your start to fall out of support.
+Also, if your upgrade is delayed for some reason, then you might be in a situation
+where you start to fall out of support.
 
 You can enable [auto-upgrades](https://learn.microsoft.com/en-us/azure/aks/auto-upgrade-cluster) for your Kubernetes clusters, but be careful with your API usage as shown above.
 You should still have a plan and testing process in place to ensure that your
 applications are working as expected after the upgrade.
 
-Jumping multiple versions makes it also tricky to understand what has changed.
+Jumping multiple versions also makes it tricky to understand what has changed.
 Updating all the deployed extensions and Helm charts at the same time can be
-quite daunting task.
+quite a daunting task.
 
 People also change roles and jobs, so you might not have the same people
 available to do the upgrade as you had when you did the previous upgrade.
