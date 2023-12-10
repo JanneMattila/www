@@ -10,7 +10,7 @@ Just two weeks ago I wrote about
 [Advent of Code 2023]({% post_url 2023/11/2023-11-27-advent-of-code %})
 and mentioned that I don't typically do visualizations.
 
-But day 10 was so fun puzzle that I had to do it!
+But [day 10 part 2](https://adventofcode.com/2023/day/10) was so fun puzzle that I had to do it!
 
 First, here is the start state of the puzzle:
 
