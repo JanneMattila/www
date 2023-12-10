@@ -144,7 +144,7 @@ metadata:
 `apiVersion` in the file is mapped to the url path `v1` and `kind` is mapped to `namespaces`.
 `kubectl` just converts this YAML to JSON and sends it to the Kubernetes API server.
 
-So it's clear that Kubernetes API is just a REST API and you can interact with it using
+So, it's clear that Kubernetes API is just a REST API, and you can interact with it using
 any tool that can send HTTP requests.
 
 This does bring us to the API Deprecation example. 
@@ -172,6 +172,8 @@ Technically, the above does map to this API endpoint:
 
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2023/12/11/k8s-api-deprecations/http-404.png" %}
 
+However, since that API endpoint is not available anymore then you would get `404 page not found` error.
+
 Of course, `kubectl` would give your more detailed error message:
 
 ```bash
@@ -181,7 +183,9 @@ ensure CRDs are installed first
 ```
 
 Above would be easy to troubleshoot and understand, but what if you 
-installed this via [Helm](https://helm.sh/) or some other mechanism and you would not know what is the exact YAML file causing these issue. You might have to spend a significant amount of time to troubleshoot and fix the issue.
+installed this via [Helm](https://helm.sh/) or some other mechanism and you would not know what 
+the exact YAML file is causing this issue. 
+You might have to spend a significant amount of time to troubleshooting and fix the issue.
 
 Luckily, many Kubernetes foundational elements and their APIs are generally available and stable,
 so this should not happen so easily. 
@@ -398,7 +402,7 @@ And as I showed above, since it's just a REST API Client, then you might not eve
 if something is not working as expected. 
 
 **This has happened with real customers!** It's quite confusing if you expect something
-to happen but it doesn't and you don't see any error messages.
+to happen but it doesn't, and you don't see any error messages.
 
 Therefore, as a reminder for myself, I have this in my deployment scripts:
 
