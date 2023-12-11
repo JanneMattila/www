@@ -4,7 +4,7 @@ title:  "Don't fall behind the Kubernetes changes"
 image: /assets/posts/2023/12/11/k8s-api-deprecations/http-paths.png
 date:   2023-12-11 06:00:00 +0300
 categories: kubernetes
-tags: kubernetes azure aks
+tags: kubernetes azure aks operations
 ---
 It's fair to say that Kubernetes evolves very fast. In order to understand how fast,
 I highly recommend that you read 
