@@ -1,6 +1,6 @@
 ---
 layout: posts
-title:  "My Advent of Code 2023 summary and visualizations"
+title:  "My Advent of Code 2023 visualizations"
 image: /assets/posts/2023/12/27/advent-of-code/aoc-2023-day23.png
 date:   2023-12-28 06:00:00 +0300
 categories: appdev
@@ -10,13 +10,13 @@ tags: appdev advent-of-code aoc fun
 25 days of intense coding puzzles behind us.
 I'm sure every participant learned something new and I can assure you that I did.
 
-Before Advent of Code 2023 started I wrote about it
+Before Advent of Code 2023 started, I wrote about it
 [in this blog]({% post_url 2023/11/2023-11-27-advent-of-code %})
 and mentioned that I haven't done many visualizations for my solutions
 over the years.
 
-But this year I took a another approach and tried to build visualization if I had
-good idea how to visualize my solution.
+This year I took a another approach and tried to build as many visualizations
+as time permitted.
 
 So, here are my visualizations for Advent of Code 2023:
 
@@ -121,7 +121,7 @@ To show level of the visualizations from the community, here's
 
 {% include youtubeEmbed.html id="vb7JcjZs_GM" %}
 
-### Summary
+### In closing
 
 Huge appreciation to [Eric Wastl](https://twitter.com/ericwastl) for creating such an amazing event.
 I can't even imagine how much work it takes to create all the puzzles and the stories.
