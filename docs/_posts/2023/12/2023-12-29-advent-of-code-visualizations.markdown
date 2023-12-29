@@ -1,28 +1,28 @@
 ---
 layout: posts
 title:  "My Advent of Code 2023 visualizations"
-image: /assets/posts/2023/12/27/advent-of-code/aoc-2023-day23.png
+image: /assets/posts/2023/12/29/advent-of-code/aoc-2023-day23.png
 date:   2023-12-28 06:00:00 +0300
 categories: appdev
 tags: appdev advent-of-code aoc fun
 ---
 [Advent of Code 2023](https://adventofcode.com/) is now over.
 25 days of intense coding puzzles behind us.
-I'm sure every participant learned something new and I can assure you that I did.
+I'm sure every participant learned something new, and I can assure you that I did.
 
 Before Advent of Code 2023 started, I wrote about it
 [in this blog]({% post_url 2023/11/2023-11-27-advent-of-code %})
 and mentioned that I haven't done many visualizations for my solutions
 over the years.
 
-This year I took a another approach and tried to build as many visualizations
+This year I took another approach and tried to build as many visualizations
 as time permitted.
 
 So, here are my visualizations for Advent of Code 2023:
 
 #### Day 11
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2023/12/28/advent-of-code/aoc-2023-day11.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2023/12/29/advent-of-code/aoc-2023-day11.png" %}
 
 #### Day 14
 
@@ -30,25 +30,25 @@ So, here are my visualizations for Advent of Code 2023:
 
 #### Day 16
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2023/12/28/advent-of-code/aoc-2023-day16.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2023/12/29/advent-of-code/aoc-2023-day16.png" %}
 
 {% include youtubeEmbed.html id="iPueaulpbNY" %}
 
 #### Day 17
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2023/12/28/advent-of-code/aoc-2023-day17.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2023/12/29/advent-of-code/aoc-2023-day17.png" %}
 
 {% include youtubeEmbed.html id="A3O6QSj8Qes" %}
 
 #### Day 18
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2023/12/28/advent-of-code/aoc-2023-day18.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2023/12/29/advent-of-code/aoc-2023-day18.png" %}
 
 {% include youtubeEmbed.html id="69n5d7wjE4w" %}
 
 #### Day 20
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2023/12/28/advent-of-code/aoc-2023-day20.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2023/12/29/advent-of-code/aoc-2023-day20.png" %}
 
 Snippet from the above [mermaid](https://mermaid.live/) diagram:
 
@@ -75,7 +75,7 @@ stateDiagram-v2
 
 #### Day 23
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2023/12/28/advent-of-code/aoc-2023-day23.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2023/12/29/advent-of-code/aoc-2023-day23.png" %}
 
 {% include youtubeEmbed.html id="KgpGITQ7oUk" %}
 
@@ -84,18 +84,18 @@ stateDiagram-v2
 [Mermaid](https://mermaid.live/) is a great tool for creating diagrams
 as seen in the above day 20 visualization.
 I tried to use it for day 25 as well but learned that there were too many
-data points to succesfully visualize my dataset using it.
+data points to successfully visualize my dataset using it.
 
 In the [discussions](https://www.reddit.com/r/adventofcode/comments/18qbsxs/2023_day_25_solutions/) I learned about
 [Graphviz](https://graphviz.org/) and then [GraphvizOnline](https://dreampuf.github.io/GraphvizOnline)
 which seemed to work just fine:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2023/12/28/advent-of-code/aoc-2023-day25-1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2023/12/29/advent-of-code/aoc-2023-day25-1.png" %}
 
 Zoomed in for the critical part:
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2023/12/28/advent-of-code/aoc-2023-day25-2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2023/12/29/advent-of-code/aoc-2023-day25-2.png" %}
 
-Here is snippet how you can also generate similar graphs:
+Here is a snippet on how you can also generate similar graphs:
 
 ```text
 graph G {
@@ -126,7 +126,7 @@ To show level of the visualizations from the community, here's
 Huge appreciation to [Eric Wastl](https://twitter.com/ericwastl) for creating such an amazing event.
 I can't even imagine how much work it takes to create all the puzzles and the stories.
 
-Now I have to go the previous events and try to solve those remaining
+Now I have to go to the previous events and try to solve those remaining
 52 puzzles that are still unsolved for me.
 
 See you next year!

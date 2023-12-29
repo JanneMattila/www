@@ -2,8 +2,10 @@
 
 ## Upcoming posts
 
+- Azure DevOps and picklist
 - IIS folder and many files
 - SNAT
+- Amazerrr
 - Arc enabled servers - Onboarding using policy
   - Lock down each feature
 - PowerShell
@@ -23,6 +25,10 @@
 - Demo failures
   - VMSS 1000 VMs
   - AKS debugging with bridge in auditorium and zooming too much
+- https://xyproblem.info/
+  - https://www.lean.org/lexicon-terms/5-whys/
+  - http://www.catb.org/esr/faqs/smart-questions.html
+  - https://en.wikipedia.org/wiki/Five_whys
 - GitHub Copilot
 - Azure Firewall & No network connectivity
 - AKS Edge Essentials
@@ -43,5 +49,4 @@
   - Monitor Spring Boot actuator health endpoint and report it to App Insights
 - Azure Functions and SFTP
 - Web Navigator
-- Amazerrr
 - Cluster with Azure AD Auth
