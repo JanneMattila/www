@@ -2,7 +2,7 @@
 layout: posts
 title:  "My Advent of Code 2023 visualizations"
 image: /assets/posts/2023/12/29/advent-of-code/aoc-2023-day23.png
-date:   2023-12-28 06:00:00 +0300
+date:   2023-12-29 06:00:00 +0300
 categories: appdev
 tags: appdev advent-of-code aoc fun
 ---
