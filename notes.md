@@ -2,7 +2,6 @@
 
 ## Upcoming posts
 
-- Azure DevOps and picklist
 - IIS folder and many files
 - SNAT
 - Amazerrr
