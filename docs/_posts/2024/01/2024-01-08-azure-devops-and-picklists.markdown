@@ -81,7 +81,7 @@ You can find this script here:
 {% include githubEmbed.html text="JanneMattila/some-questions-and-some-answers" link="JanneMattila/some-questions-and-some-answers/blob/master/q%26a/azure_devops.md#remove-unnecessary-picklists" %}
 
 I've on _purpose_ set that delete part to be commented out in the example script,
-so that if your testing, then it won't do anything unless you uncomment that part.
+so that if you're testing, then it won't do anything unless you uncomment that part.
 
 **Remember to be extra careful when deleting fields from your organization!**
 
