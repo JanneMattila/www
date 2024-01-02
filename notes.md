@@ -2,6 +2,27 @@
 
 ## Upcoming posts
 
+- Private endpoint DNS records x 2 -> delete causes problems!
+  - "Be careful when deleting private endpoints"
+  - Resources: Storage, Key vault
+  - https://github.com/MicrosoftDocs/azure-docs/issues/58044
+- Logic App Conversion
+- RayLib
+  - https://www.raylib.com/examples.html
+  - https://github.com/ChrisDill/Raylib-cs
+- Internet scam sites, DNS
+- Terraform
+- Network troubleshooting series
+  - Latency
+  - Bandwidth
+  - Private DNS
+    - No Custom DNS configured in VNET
+    - No Private DNS Zone linked to VNET hosting Custom DNS
+    - No A Record in Private DNS Zone
+    - No NSG rule allowing DNS traffic
+    - No DNS server configured in VNET
+    - No DNS server configured in VM
+    - No DNS server configured in AKS
 - IIS folder and many files
 - SNAT
 - Amazerrr
