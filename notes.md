@@ -6,6 +6,7 @@
   - "Be careful when deleting private endpoints"
   - Resources: Storage, Key vault
   - https://github.com/MicrosoftDocs/azure-docs/issues/58044
+- AAD Group sync
 - Logic App Conversion
 - RayLib
   - https://www.raylib.com/examples.html
