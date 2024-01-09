@@ -1,7 +1,7 @@
 ---
 layout: posts
-title:  Parsing Azure IP Ranges and Service Tags JSON file
-image: /assets/posts/2024/01/15/parsing-azure-ip-ranges-and-service-tags/nsg2.png
+title:  Using Azure IP Ranges and Service Tags JSON file
+image: /assets/posts/2024/01/15/using-azure-ip-ranges-and-service-tags/nsg2.png
 date:   2024-01-15 06:00:00 +0300
 categories: azure
 tags: azure management firewall
@@ -24,16 +24,24 @@ If you are using [Azure Firewall](https://learn.microsoft.com/en-us/azure/firewa
 then you can use these service tags directly in your firewall rules. 
 More information can be found [here](https://learn.microsoft.com/en-us/azure/firewall/service-tags).
 
-Example Azure Firewall rule:
+Example Azure Firewall rule using `AzureMonitor` service tag`:
 
-{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/01/15/parsing-azure-ip-ranges-and-service-tags/fw.png" %}
+{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/01/15/using-azure-ip-ranges-and-service-tags/fw.png" %}
 
-Example Network Security Group rule:
+You can use the same service tags also in
+[Network Security Groups](https://learn.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview):
 
-{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/01/15/parsing-azure-ip-ranges-and-service-tags/nsg.png" %}
+{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/01/15/using-azure-ip-ranges-and-service-tags/nsg.png" %}
 
-If you have some other firewall vendor, then you need to check if they support
-service tags directly e.g., [Palo Alto Networks & External Dynamic Lists (EDL)](https://docs.paloaltonetworks.com/resources/edl-hosting-service). 
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2024/01/15/using-azure-ip-ranges-and-service-tags/nsg2.png" %}
+
+Sservice tags are also supported in
+[User-defined routes](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview#user-defined):
+
+{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/01/15/using-azure-ip-ranges-and-service-tags/routetable.png" %}
+
+If you are using some other firewall, then you need to check if they support
+service tags directly e.g., [Palo Alto Networks & External Dynamic Lists (EDL)](https://docs.paloaltonetworks.com/resources/edl-hosting-service).
 
 If you don't have support for service tags in your firewall, then you need to use IP address prefixes directly.
 This is not ideal, since you need to update your firewall rules every time
@@ -48,7 +56,7 @@ Important things to highlight from the download page:
 > Please **download the new json file every week** and perform the necessary
 > changes at your site to correctly identify services running in Azure
 
-Okay let's test this out.
+Okay let's test this out. We'll use Application Insights as an example.
 
 First, let's look at connection string from one of my Application Insights resources
 (line breaks added for readability):
@@ -59,7 +67,8 @@ IngestionEndpoint=https://northeurope-2.in.applicationinsights.azure.com/;
 LiveEndpoint=https://northeurope.livediagnostics.monitor.azure.com/
 ```
 
-It contains two addresses connecting to `northeurope` region.
+It contains two addresses referring to `northeurope` region
+since my resource is deployed there.
 
 Let's see what IP addresses are behind those addresses.
 We can use my tool for that:
@@ -103,7 +112,7 @@ They are also part of the global `AzureMonitor` service tag but we're going to
 focus on the region-specific service tags.
 
 I've taken relevant pieces of the code from the above repository and
-compiled them into this script example.
+put them into this script example.
 It downloads the JSON file and then picks up the relevant IP address prefixes
 based on the service tag name and region name.
 
@@ -150,6 +159,6 @@ The previously mentioned addresses are on this list as expected.
 Now you need to schedule this script to be executed regularly and then update your firewall rules accordingly.
 Previously I've blogged about 
 [Automating maintenance tasks with Azure Functions and PowerShell]({% post_url 2023/10/2023-10-30-automating-maintenance-tasks-part1 %}),
-so that's definitely one option.
+so that's definitely one option to use for hosting this automation.
 
 I hope you find this useful!
