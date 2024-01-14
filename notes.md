@@ -53,6 +53,7 @@
 - GitHub Copilot
 - Azure Firewall & No network connectivity
 - AKS Edge Essentials
+ - This deployment has exceeded its 30 day trial period. For full update support and commercial use, please acquire license as per the methods described at https://aka.ms/aks-edge/licensing. The current End-User-License-Agreement only allows use for development or testing purposes. It does not allow commercial deployments and hence this cluster may not receive periodic updates and upgrades
 - Echo & Webhooks
 - API Examples
 - AKS Workshop
