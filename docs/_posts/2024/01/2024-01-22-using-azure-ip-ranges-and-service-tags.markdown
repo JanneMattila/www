@@ -1,8 +1,8 @@
 ---
 layout: posts
 title:  Using Azure IP Ranges and Service Tags JSON file
-image: /assets/posts/2024/01/15/using-azure-ip-ranges-and-service-tags/nsg2.png
-date:   2024-01-15 06:00:00 +0300
+image: /assets/posts/2024/01/22/using-azure-ip-ranges-and-service-tags/nsg2.png
+date:   2024-01-22 06:00:00 +0300
 categories: azure
 tags: azure management firewall
 ---
@@ -26,19 +26,19 @@ More information can be found [here](https://learn.microsoft.com/en-us/azure/fir
 
 Example Azure Firewall rule using `AzureMonitor` service tag`:
 
-{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/01/15/using-azure-ip-ranges-and-service-tags/fw.png" %}
+{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/01/22/using-azure-ip-ranges-and-service-tags/fw.png" %}
 
 You can use the same service tags also in
 [Network Security Groups](https://learn.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview):
 
-{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/01/15/using-azure-ip-ranges-and-service-tags/nsg.png" %}
+{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/01/22/using-azure-ip-ranges-and-service-tags/nsg.png" %}
 
-{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2024/01/15/using-azure-ip-ranges-and-service-tags/nsg2.png" %}
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2024/01/22/using-azure-ip-ranges-and-service-tags/nsg2.png" %}
 
 Sservice tags are also supported in
 [User-defined routes](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview#user-defined):
 
-{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/01/15/using-azure-ip-ranges-and-service-tags/routetable.png" %}
+{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/01/22/using-azure-ip-ranges-and-service-tags/routetable.png" %}
 
 If you are using some other firewall, then you need to check if they support
 service tags directly e.g., [Palo Alto Networks & External Dynamic Lists (EDL)](https://docs.paloaltonetworks.com/resources/edl-hosting-service).
