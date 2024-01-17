@@ -1,8 +1,8 @@
 ---
-layout: posts
-title:  Using Azure IP Ranges and Service Tags JSON file
+title: Using Azure IP Ranges and Service Tags JSON file
 image: /assets/posts/2024/01/22/using-azure-ip-ranges-and-service-tags/nsg2.png
-date:   2024-01-22 06:00:00 +0300
+date: 2024-01-22 06:00:00 +0300
+layout: posts
 categories: azure
 tags: azure management firewall
 ---

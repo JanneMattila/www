@@ -2,10 +2,6 @@
 
 ## Upcoming posts
 
-- Private endpoint DNS records x 2 -> delete causes problems!
-  - "Be careful when deleting private endpoints"
-  - Resources: Storage, Key vault
-  - https://github.com/MicrosoftDocs/azure-docs/issues/58044
 - AAD Group sync
 - Logic App Conversion
 - RayLib
