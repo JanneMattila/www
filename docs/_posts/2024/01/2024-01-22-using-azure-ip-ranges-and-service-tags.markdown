@@ -4,7 +4,7 @@ image: /assets/posts/2024/01/22/using-azure-ip-ranges-and-service-tags/nsg2.png
 date: 2024-01-22 06:00:00 +0300
 layout: posts
 categories: azure
-tags: azure management firewall
+tags: azure networking management firewall
 ---
 Sometimes you need to restrict traffic from your network
 to only allowlisted Azure IP addresses or to allowed services.
@@ -156,7 +156,7 @@ Example abbreviated output:
 
 The previously mentioned addresses are on this list as expected.
 
-Now you need to schedule this script to be executed regularly and then update your firewall rules accordingly.
+Now you need to schedule this script to be executed regularly and update your firewall rules accordingly.
 Previously I've blogged about 
 [Automating maintenance tasks with Azure Functions and PowerShell]({% post_url 2023/10/2023-10-30-automating-maintenance-tasks-part1 %}),
 so that's definitely one option to use for hosting this automation.
