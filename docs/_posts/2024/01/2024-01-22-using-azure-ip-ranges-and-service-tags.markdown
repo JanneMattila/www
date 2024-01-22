@@ -24,7 +24,7 @@ If you are using [Azure Firewall](https://learn.microsoft.com/en-us/azure/firewa
 then you can use these service tags directly in your firewall rules. 
 More information can be found [here](https://learn.microsoft.com/en-us/azure/firewall/service-tags).
 
-Example Azure Firewall rule using `AzureMonitor` service tag`:
+Example Azure Firewall rule using `AzureMonitor` service tag:
 
 {% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/01/22/using-azure-ip-ranges-and-service-tags/fw.png" %}
 
@@ -35,7 +35,7 @@ You can use the same service tags also in
 
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2024/01/22/using-azure-ip-ranges-and-service-tags/nsg2.png" %}
 
-Sservice tags are also supported in
+Service tags are also supported in
 [User-defined routes](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview#user-defined):
 
 {% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/01/22/using-azure-ip-ranges-and-service-tags/routetable.png" %}
