@@ -10,18 +10,19 @@ Using [Private Endpoints](https://learn.microsoft.com/en-us/azure/private-link/p
 is a great way to secure network level access to your Azure resources.
 It's well known and commonly used.
 
-But there is one, _luckily rare_, potential issue that you need to be aware of.
+In typical circumstances you should not have any problems with it.
+However, it's good to understand one specific, _luckily rare_, scenario which you really should avoid.
 Let me walk you through it.
 
 First, let's create a new storage account and enable Private Endpoint for it:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/01/29/multiple-private-endpoints/resources.png" %}
 
-We block public access:
+Let's block public access to it:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/01/29/multiple-private-endpoints/storage-networking-public.png" %}
 
-We create a private endpoint to specific subnet:
+Let's create a private endpoint to specific subnet:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/01/29/multiple-private-endpoints/storage-networking-private.png" %}
 
@@ -33,7 +34,7 @@ After that you have basics in place to enable private access to your storage acc
 
 Depending on your implementation, you might use deployment identity with permissions to
 add A-record to the Private DNS Zone
-or you might have custom automation built for this purpose ([example](https://github.com/MicrosoftDocs/azure-docs/issues/58044#issuecomment-1824286880))
+or you might have custom automation built for this purpose
 or you might be using
 [Private Link and DNS integration at scale](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/private-link-and-dns-integration-at-scale) approach.
 In the last option you're leveraging Azure Policies for preventing users from creating
@@ -45,8 +46,16 @@ It might also be unclear who is responsible for what in this kind of situation.
 
 If you now for _whatever reason_ end up creating **another private endpoint** to the same storage account,
 you might get yourself into trouble.
-For example: you might be thinking about enabling private access directly from different virtual network
-and you might not be thinking DNS as a shared resource.
+
+Some examples when this might happen:
+
+- You want to create another private endpoint to different virtual network,
+and **you forget that DNS is a shared resource**
+- You have automation in place for generating A-record to the
+Private DNS Zone, but you're too hasty in testing and you create
+another endpoint before automation has finished its job
+- You change some existing code or automation which causes name change and
+suddenly you have two private endpoints
 
 Let's see what happens if you create another private endpoint to the same storage account:
 
@@ -56,19 +65,19 @@ Azure Portal shows this message in the create dialog:
   
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/01/29/multiple-private-endpoints/warning.png" %}
 
-> Existing Private DNS Zones tied to a single service should not be
-> associated with two different Private Endpoints as it will not
+> Existing Private DNS Zones tied to a single service **should not be**
+> **associated with two different Private Endpoints** as it will not
 > be possible to properly resolve two different A-Records that point to the same service.
 > However, Private DNS Zones tied to multiple services would not face this resolution constraint.
 
 Above message is there every time when you are creating a private endpoint,
-so it can be easily ignored. And unfortunately, it's not very clear either.
+so you might ignore it easily. And unfortunately, the message is not very clear either.
 
 If you now look at the storage account networking settings, you'll see that there are two private endpoints:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/01/29/multiple-private-endpoints/two-pes.png" %}
 
-Private DNS zone has only one record:
+Private DNS zone still has only one record:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/01/29/multiple-private-endpoints/dns2.png" %}
 
@@ -85,7 +94,7 @@ The above happens since both private endpoints are linked to same record in priv
 and the cleanup process does not notice that there is still another private endpoint linked to
 the same record.
 
-If this would happen in production environment, you would not be able to resolve the private IP of
+If this happened in production environment, you would not be able to resolve the private IP of
 your storage account anymore and therefore would not be able to connect to it anymore. 
 Maybe needless to say, but this is not a good situation to be in.
 
@@ -98,6 +107,10 @@ with the improvement details.
 In short: after the improvement, it will delete the record from private DNS zone _only_
 when the IP of the A-record matches the IP of the private endpoint that is being deleted.
 Read more information from the GitHub issue.
+But even after the improvement you should avoid this situation.
+There is still 50% chance of failure,
+because you might delete that private endpoint which has the correct IP address. 
+And, again, you're left with private endpoint without matching A-record in the private DNS zone.
 
 ## Summary
 
@@ -106,7 +119,7 @@ Mainly because it might take time to understand why your access to the storage a
 This can be especially hard, if you don't have access to the Private DNS Zone or some other easy way to troubleshoot
 the name resolution in your setup.
 
-And just to clarify: This same issue can happen with any other resource that supports Private Endpoints.
-I just used storage account as an example.
+And just to clarify: **This same issue can happen with any other resource that supports Private Endpoints.**
+I just used a storage account as an example.
 
 I hope you find this useful!
