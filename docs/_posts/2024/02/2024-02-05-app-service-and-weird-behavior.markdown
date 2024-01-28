@@ -7,25 +7,25 @@ categories: azure
 tags: azure aspnet appservice cms
 ---
 I was troubleshooting incident over a year ago with Azure App Service.
-Customer was running a Content Management System (CMS) on the App Service
-and it started randomly do something really weird.
+Customer was running a Content Management System (CMS) on the App Service,
+and it started randomly doing something weird.
 Before this weird behavior, it has been running fine for years.
 
 When troubleshooting, I made all the usual questions:
 
 - Has something changed recently?
-- Have you deployed new version of the application?
+- Have you deployed a new version of the application?
 - Have you changed some configurations or settings?
 
 Nothing had really changed so we had to dig deeper.
 
 But as many times before, when applications have been running for a long time,
 you might end up having more and more data in your system.
-This can happen with databases and they start to become slower over time.
-You might be able to fix the situation with adding missing indexes but
-sometimes you need to study quite much more why performance decreases over time.
+This can happen with databases, and they start to become slower over time.
+You might be able to fix the situation by adding missing indexes but
+sometimes you need to study quite a lot more why performance decreases over time.
 
-In this particular case the problem wasn't database. 
+In this case the problem wasn't the database. 
 App Service ended up doing restarts and we didn't quite understand why.
 At first glance platform metrics or logs weren't indicating anything special to us.
 
@@ -89,14 +89,14 @@ After deploying the application and refreshing the FCN view, it shows me this:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/05/appservice-issue/webapp-fcn-0.png" %}
 
-That is preffy big list of things it is monitoring.
+That is pretty big list of things it is monitoring.
 
 Let's add some spices to the mix by adding two WebJobs to the application.
 
 - WebJob that creates folders and files under `wwwroot` folder
 - WebJob that fetches those pages
 
-Here is simple PowerShell script to create 50000 folders and files:
+Here is a simple PowerShell script to create 50000 folders and files:
 
 ```powershell
 $filePath = "C:\home\site\wwwroot"
@@ -124,7 +124,7 @@ We can now deploy those above scripts as WebJobs to the App Service and start th
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/05/appservice-issue/webjobs.png" %}
 
-If we now refresh the FCN view, we can see that it is monitoring even more things:
+If we now refresh the FCN view, we can see that it monitors even more things:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/05/appservice-issue/webapp-fcn-0-2.png" %}
 
@@ -138,7 +138,7 @@ this would be visible in the debugging view:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/05/appservice-issue/webapp-fcn-2.png" %}
 
 The above list does not expand anymore. 
-But if there are "overwhelming" amount of changes, it might restart the application.
+But if there are "overwhelming" number of changes, it might restart the application.
 
 Please read the above mentioned blogs for more details about the behavior and
 especially before you plan to do any changes to your application.
@@ -160,7 +160,7 @@ After deploying this change and restarting the application, we can see that FCN 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/05/appservice-issue/webapp-fcn-1.png" %}
 
 But that does come with the price. Now we need to restart the application
-every time we deploy new version of the application. This is because
+every time we deploy a new version of the application. This is because
 FCN is not monitoring changes in the application folder anymore.
 
 Disabling FCN hurts your local development experience as well because
@@ -169,7 +169,7 @@ Therefore, you most likely want to enable FCN in your local development setup.
 
 ---
 
-Few learnings from these kind of cases:
+Few learnings from these kinds of cases:
 
 - Learn to use _Diagnose and solve problems_ feature in the App Service:
 
@@ -181,7 +181,7 @@ Few learnings from these kind of cases:
 
 {% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/02/05/appservice-issue/diag.png" %}
 
-Originally I wrote about this topic in my notes:
+Originally, I wrote about this topic in my notes:
 
 {% include githubEmbed.html text="JanneMattila/webapp-and-folders/doc/fcn" link="JanneMattila/webapp-and-folders/blob/main/doc/fcn.md" %}
 
