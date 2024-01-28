@@ -3,6 +3,16 @@
 ## Upcoming posts
 
 - AAD Group sync
+- Entra ID Identity Governance and workflows
+- Maintenance task as Container App
+  - Cost, private vs. Func app
+- AppGw and dynamic KQL impact to rules
+- Func app
+  - Long running task
+  - Split to multiple functions, durable functions, etc.
+  - App Service Plan and WebJobs & Always On - https://learn.microsoft.com/en-us/azure/app-service/webjobs-create
+    - Basic SKU
+  
 - Logic App Conversion
 - RayLib
   - https://www.raylib.com/examples.html
