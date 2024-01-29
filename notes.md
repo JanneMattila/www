@@ -6,7 +6,15 @@
 - Entra ID Identity Governance and workflows
 - Maintenance task as Container App
   - Cost, private vs. Func app
+  - https://github.com/Azure/CloudShell
+  - https://mcr.microsoft.com/en-us/product/azure-powershell/about
+  - 
 - AppGw and dynamic KQL impact to rules
+- PowerShell & FileSystemWatcher
+  - https://devblogs.microsoft.com/powershell-community/a-reusable-file-system-event-watcher-for-powershell/
+  - https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/register-objectevent?view=powershell-7.4
+  - https://stackoverflow.com/questions/67824771/filewatcher-in-powershell-not-firing-events
+  - https://learn.microsoft.com/en-us/answers/questions/973077/powershell-file-watcher
 - Func app
   - Long running task
   - Split to multiple functions, durable functions, etc.
