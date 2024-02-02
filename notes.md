@@ -11,6 +11,8 @@
   - 
 - AppGw and dynamic KQL impact to rules
 - PowerShell & FileSystemWatcher
+  - https://jqlang.github.io/jq/
+  - Azure IoT jq development helper pwsh script, save and run jq
   - https://devblogs.microsoft.com/powershell-community/a-reusable-file-system-event-watcher-for-powershell/
   - https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/register-objectevent?view=powershell-7.4
   - https://stackoverflow.com/questions/67824771/filewatcher-in-powershell-not-firing-events
