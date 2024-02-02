@@ -25,6 +25,24 @@ tags: entra security azure
 
 {% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/02/17/entra-id-governance-and-lifecycle-workflows/disabled-user.png" %}
 
+Flow of the process:
+
+{% include mermaid.html text="
+sequenceDiagram
+    actor User
+    User->>+WebApp: Enable temporary employee(s)
+    Note right of WebApp: Use Application permissions
+    WebApp->>+Workflow: Start workflow
+    Workflow-->>-WebApp: Started
+    WebApp-->>-User: Employee(s) enabled
+" %}
+
+Users are selected using following filters:
+
+`startswith(department, 'TempEmployees')`
+
+`Workflow`
+
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/17/entra-id-governance-and-lifecycle-workflows/web1.png" %}
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/17/entra-id-governance-and-lifecycle-workflows/web2.png" %}
@@ -53,6 +71,8 @@ TBD: How to add custom extension Logic App
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/17/entra-id-governance-and-lifecycle-workflows/tasks5.png" %}
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/17/entra-id-governance-and-lifecycle-workflows/tasks6.png" %}
+
+More information about custom task extensions [here](https://learn.microsoft.com/en-us/entra/id-governance/lifecycle-workflow-extensibility).
 
 {% include githubEmbed.html text="JanneMattila/entra-demos" link="JanneMattila/entra-demos" %}
 
