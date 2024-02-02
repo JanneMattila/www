@@ -7,8 +7,11 @@ categories: entra
 tags: entra security azure
 ---
 
+[Microsoft Entra ID Governance](https://learn.microsoft.com/en-us/entra/id-governance/identity-governance-overview)
+
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/17/entra-id-governance-and-lifecycle-workflows/identity-governance.png" %}
 
+[Lifecycle workflows](https://learn.microsoft.com/en-us/entra/id-governance/what-are-lifecycle-workflows)
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/17/entra-id-governance-and-lifecycle-workflows/workflows.png" %}
 
@@ -50,3 +53,8 @@ TBD: How to add custom extension Logic App
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/17/entra-id-governance-and-lifecycle-workflows/tasks5.png" %}
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/17/entra-id-governance-and-lifecycle-workflows/tasks6.png" %}
+
+{% include githubEmbed.html text="JanneMattila/entra-demos" link="JanneMattila/entra-demos" %}
+
+_This post was done in collaboration with [Timo Hakala](https://www.linkedin.com/in/timo-hakala-7398ab5/)._
+_Credit for the idea and excellent test environment goes to him. Thank you!_
