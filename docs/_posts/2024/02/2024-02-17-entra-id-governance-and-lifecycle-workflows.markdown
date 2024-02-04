@@ -6,9 +6,10 @@ layout: posts
 categories: entra
 tags: entra security azure
 ---
-Many companies have requirement to enable temporary employee access various company resources.
-Sometimes, this process is handled via ticketing systems and long wait times
-can be very problematic to the business process.
+Many companies have requirement to enable temporary employee access to various company resources.
+Sometimes, this process is handled via ticketing systems and have a long wait times
+which can be very problematic to the business process.
+
 Access management can span from IT systems to physical building accesses and
 the need to enable this access can come very urgently.
 
@@ -36,14 +37,14 @@ Here is the demo setup:
   - They will get access to confidential IT systems and areas
     for the duration of their visit
 - Few ready-made business roles are defined
-- Granting access to these business roles is handled by end users from those departments
+- Granting access to these business roles is handled by end users from those business functions
   and not by any centralized function like IT department or support
 - Entra ID Group memberships are synchronized to the on-premises Active Directory groups
   - On-premises systems use these groups for access management
 
-Read more about group member synchronization [here](https://learn.microsoft.com/en-us/entra/identity/hybrid/cloud-sync/govern-on-premises-groups).
+Read more about group synchronization [here](https://learn.microsoft.com/en-us/entra/identity/hybrid/cloud-sync/govern-on-premises-groups).
 
-Here you can see a list of different workflows defining temporary employee accesses:
+Here you can see a list of different workflows:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/17/entra-id-governance-and-lifecycle-workflows/workflows2.png" %}
 
@@ -56,9 +57,9 @@ Workflow itself defines tasks which are executed when the workflow is started:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/17/entra-id-governance-and-lifecycle-workflows/workflows6.png" %}
 
-Now let's walk through the process of enabling temporary employees:
+Now let's walk through the process of enabling temporary employee:
 
-Urgent need to fill in for a sick nurse for half a day.
+There is a urgent need to fill in for a sick nurse for half a day.
 Luckily, a suitable temporary employee is quickly found: _Mike Jensen_.
 
 In the Active Directory, he is in _disabled_ state:
@@ -85,7 +86,7 @@ User selects the correct workflow and starts it for _Mike Jensen_:
 User could select multiple users and multiple workflows at once,
 if they would need to e.g., enable access for multiple temporary employees at once.
 
-In the workflow history view, you can see status of the workflow:
+In the workflow history view, you can see status of the started workflow:
 
 {% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/02/17/entra-id-governance-and-lifecycle-workflows/workflows4.png" %}
 
