@@ -2,13 +2,10 @@
 
 ## Upcoming posts
 
-- AAD Group sync
-- Entra ID Identity Governance and workflows
 - Maintenance task as Container App
   - Cost, private vs. Func app
   - https://github.com/Azure/CloudShell
   - https://mcr.microsoft.com/en-us/product/azure-powershell/about
-  - 
 - AppGw and dynamic KQL impact to rules
 - PowerShell & FileSystemWatcher
   - https://jqlang.github.io/jq/
@@ -22,7 +19,6 @@
   - Split to multiple functions, durable functions, etc.
   - App Service Plan and WebJobs & Always On - https://learn.microsoft.com/en-us/azure/app-service/webjobs-create
     - Basic SKU
-  
 - Logic App Conversion
 - RayLib
   - https://www.raylib.com/examples.html
