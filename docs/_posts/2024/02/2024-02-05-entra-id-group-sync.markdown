@@ -47,9 +47,10 @@ If you're starting your script development, I recommend you to read my post
 [VS Code and faster script development]({% post_url 2023/08/2023-08-28-vs-code-and-faster-script-development %}). It contains some good tips on how to develop PowerShell scripts faster.
 
 I work with developers quite often and I've noticed many of them don't
-optimize the workflow when arrays are involved. They much rather
-execute entire script and then wait for the result and troubleshoot
-the issues.
+optimize their development workflow when arrays are involved. They much rather
+execute entire script and then wait for the results to come and troubleshoot
+any potential issues.
+
 I've said many times that if you follow my tips in the above-mentioned post, 
 you can develop your entire script without taking your hands off the keyboard.
 You can call it REPL (Read-Eval-Print Loop) style development if you want.
