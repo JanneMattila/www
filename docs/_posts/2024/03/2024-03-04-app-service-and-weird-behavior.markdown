@@ -1,7 +1,7 @@
 ---
 title: CMS in Azure App Service and weird behavior
-image: /assets/posts/2024/02/05/appservice-issue/webapp-create.png
-date: 2024-02-05 06:00:00 +0300
+image: /assets/posts/2024/03/04/appservice-issue/webapp-create.png
+date: 2024-03-04 06:00:00 +0300
 layout: posts
 categories: azure
 tags: azure aspnet appservice cms
@@ -73,7 +73,7 @@ Before going to the solution, let's first understand what happened.
 
 I'll create App Service with ASP.NET V4.8 as the runtime stack:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/05/appservice-issue/webapp-create.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/03/04/appservice-issue/webapp-create.png" %}
 
 Then I'll deploy my test application from here:
 
@@ -87,7 +87,7 @@ It displays detailed debugging information about FCN configuration in the simple
 
 After deploying the application and refreshing the FCN view, it shows me this:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/05/appservice-issue/webapp-fcn-0.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/03/04/appservice-issue/webapp-fcn-0.png" %}
 
 That is pretty big list of things it is monitoring.
 
@@ -122,11 +122,11 @@ for ($i = 1; $i -lt 50001; $i++) {
 
 We can now deploy those above scripts as WebJobs to the App Service and start them:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/05/appservice-issue/webjobs.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/03/04/appservice-issue/webjobs.png" %}
 
 If we now refresh the FCN view, we can see that it monitors even more things:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/05/appservice-issue/webapp-fcn-0-2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/03/04/appservice-issue/webapp-fcn-0-2.png" %}
 
 So, indeed it's expanding that list of things it is monitoring.
 This is the default behavior.
@@ -135,7 +135,7 @@ FCN can be configured using [fcnMode](https://learn.microsoft.com/en-us/dotnet/a
 If you run the above test using `Single` as the FCN mode, then 
 this would be visible in the debugging view:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/05/appservice-issue/webapp-fcn-2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/03/04/appservice-issue/webapp-fcn-2.png" %}
 
 The above list does not expand anymore. 
 But if there are "overwhelming" number of changes, it might restart the application.
@@ -157,7 +157,7 @@ This can be done by adding `fcnMode="Disabled"` configuration to the `web.config
 
 After deploying this change and restarting the application, we can see that FCN monitoring is disabled:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/05/appservice-issue/webapp-fcn-1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/03/04/appservice-issue/webapp-fcn-1.png" %}
 
 But that does come with the price. Now we need to restart the application
 every time we deploy a new version of the application. This is because
@@ -173,13 +173,13 @@ Few learnings from these kinds of cases:
 
 - Learn to use _Diagnose and solve problems_ feature in the App Service:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/05/appservice-issue/webapp-diagnose.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/05/appservice-issue/webapp-diagnose2.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/05/appservice-issue/webapp-diagnose3.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/03/04/appservice-issue/webapp-diagnose.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/03/04/appservice-issue/webapp-diagnose2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/03/04/appservice-issue/webapp-diagnose3.png" %}
 
 - Use diagnostic settings to push logs to Log Analytics, so that you can easily query them:
 
-{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/02/05/appservice-issue/diag.png" %}
+{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/03/04/appservice-issue/diag.png" %}
 
 Originally, I wrote about this topic in my notes:
 
