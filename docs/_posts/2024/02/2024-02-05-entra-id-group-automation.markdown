@@ -1,6 +1,6 @@
 ---
-title: Entra ID Group Sync
-image: /assets/posts/2024/02/05/entra-id-group-sync/groups.png
+title: Entra ID Group automation with PowerShell
+image: /assets/posts/2024/02/05/entra-id-group-automation/groups.png
 date: 2024-02-05 06:00:00 +0300
 layout: posts
 categories: azure
@@ -10,7 +10,7 @@ Quite a common requirement from customers
 is to do some kind of automation of Entra ID groups.
 They are, after all, the key cornerstone of the access control to many systems.
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/05/entra-id-group-sync/groups.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/05/entra-id-group-automation/groups.png" %}
 
 Of course, my go-to solution is to use PowerShell for these kinds of tasks.
 PowerShell is so powerful and it's super-fast to create these automation scripts with it.
@@ -96,7 +96,7 @@ At high level it does following:
 Related to this topic, you might be interested in learning more about
 [Govern on-premises Active Directory based apps (Kerberos) using Microsoft Entra ID Governance (Preview)](https://learn.microsoft.com/en-us/entra/identity/hybrid/cloud-sync/govern-on-premises-groups).
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/05/entra-id-group-sync/cloudsync.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/02/05/entra-id-group-automation/cloudsync.png" %}
 
 This enables you to synchronize your Entra ID groups with on-premises Active Directory groups.
 You can now manage and automate group management directly from the cloud.
