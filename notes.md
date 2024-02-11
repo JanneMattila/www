@@ -2,11 +2,16 @@
 
 ## Upcoming posts
 
+- AppGw and dynamic KQL impact to rules
+- AppGw and Easy Auth
 - Maintenance task as Container App
   - Cost, private vs. Func app
   - https://github.com/Azure/CloudShell
   - https://mcr.microsoft.com/en-us/product/azure-powershell/about
-- AppGw and dynamic KQL impact to rules
+- Export Azure Resource templates to git repo daily
+- AppGw export IPs and do reverse lookup to locations, report view
+- AKS and YARP
+- NSG and ongoing connections behavior
 - PowerShell & FileSystemWatcher
   - https://jqlang.github.io/jq/
   - Azure IoT jq development helper pwsh script, save and run jq
