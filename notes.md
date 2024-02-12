@@ -9,9 +9,12 @@
   - https://github.com/Azure/CloudShell
   - https://mcr.microsoft.com/en-us/product/azure-powershell/about
 - Export Azure Resource templates to git repo daily
+- NSG and ongoing connections behavior
+  - https://learn.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview
+  - https://learn.microsoft.com/en-us/azure/firewall/long-running-sessions
+- Container apps and DNS
 - AppGw export IPs and do reverse lookup to locations, report view
 - AKS and YARP
-- NSG and ongoing connections behavior
 - PowerShell & FileSystemWatcher
   - https://jqlang.github.io/jq/
   - Azure IoT jq development helper pwsh script, save and run jq
