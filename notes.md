@@ -12,6 +12,12 @@
 - NSG and ongoing connections behavior
   - https://learn.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview
   - https://learn.microsoft.com/en-us/azure/firewall/long-running-sessions
+- Azure PowerShell & ResourceId vs. Rest API
+  - Invoke-AzVMRunCommand `
+    -ResourceId "/subscriptions/...urceGroups/vm2_group/providers/Microsoft.Compute/virtualMachines/vm2" `
+    -CommandId 'RunPowerShellScript' `
+    -ScriptPath 'vm-script.ps1' `
+    -Debug
 - Container apps and DNS
 - AppGw export IPs and do reverse lookup to locations, report view
 - AKS and YARP
