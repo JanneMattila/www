@@ -4,7 +4,7 @@ image: /assets/posts/2024/02/26/do-you-see-value-in-azure-policy-evaluator/ape.p
 date: 2024-02-26 06:00:00 +0300
 layout: posts
 categories: azure
-tags: azure management governance
+tags: azure policy management governance
 ---
 [Azure Policy](https://learn.microsoft.com/en-us/azure/governance/policy/overview)
 is a powerful tool for enforcing governance and compliance at-scale in Azure. 
