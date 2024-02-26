@@ -54,7 +54,7 @@ Would we see more policies and with smaller deployment scopes?
 Maybe we could see policies created for smaller scope e.g., single app, 
 since it would be fast and straight forward process with low risk.
 
-But Azure Policy development doesn't have to be any different from traditional software development.
+Azure Policy development doesn't have to be any different from traditional software development.
 We could implement a tool that would allow us to
 develop and test policies in a similar way as we develop and test .NET code.
 This would allow us to have a much faster feedback loop and
