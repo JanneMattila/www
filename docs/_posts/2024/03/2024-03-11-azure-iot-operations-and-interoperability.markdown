@@ -166,7 +166,7 @@ Now we have **verified** that you can connect directly to the applications runni
 
 ---
 
-Next test is a bit more complex. I'll illustrate it with diagram:
+Next test is a bit more complex. I'll illustrate it with the diagram:
 
 {% include mermaid.html text="
 sequenceDiagram
@@ -219,6 +219,47 @@ _Finally_, we're approaching the title of the post.
 Naturally, Azure IoT Operations data processing pipelines can take advantage of the above capability.
 You can invoke HTTP endpoints running in Windows Host or containerized applications.
 
+Let's create a simple example about this using
+[HTTP endpoint source in the pipeline](https://learn.microsoft.com/en-us/azure/iot-operations/process-data/howto-configure-datasource-http):
+
+{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/03/11/azure-iot-operations-and-interoperability/pipeline1.png" %}
+
+Here is the HTTP endpoint source configuration:
+
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2024/03/11/azure-iot-operations-and-interoperability/pipeline2.png" %}
+
+URL is using DNS available inside Kubernetes:
+
+```
+http://webapp-network-tester-demo.demos.svc.cluster.local/api/commands
+```
+
+Data format is `Raw` and request body is this:
+
+```
+HTTP POST "http://192.168.0.1:8080/api/commands"
+INFO HOSTNAME
+```
+
+This is the same example that we did earlier in this post.
+
+I've set the request internal to `1m`, so I get data echoed once per every minute.
+
+Here's the output:
+
+```
+-> Start: HTTP POST "http://192.168.0.1:8080/api/commands"
+-> Start: INFO HOSTNAME
+HOSTNAME: WIN-OS3VAQEPSH7
+<- End: INFO HOSTNAME 0,03ms
+<- End: HTTP POST "http://192.168.0.1:8080/api/commands" 4.61ms
+```
+
+Above **verifies** that you can use same interoperability capabilities
+in the Azure IoT Operations data processing pipelines.
+
+You can of course similarly connect directly to Windows Host as we did above
+or even have multiple rest API calls in the same pipeline:
 
 {% include mermaid.html text="
 sequenceDiagram
@@ -230,6 +271,8 @@ sequenceDiagram
     Linux->>+Pipeline: Response
 " %}
 
+All the capabilities are there, it's just up to you to use them.
+
 ## Conclusion
 
 Just to be clear:
@@ -237,3 +280,5 @@ Just to be clear:
 > Interoperability is capability of AKS Edge Essentials and
 > we can take advantage of it in our custom applications and
 > Azure IoT Operations data processing pipelines.
+
+I hope you find this useful!
