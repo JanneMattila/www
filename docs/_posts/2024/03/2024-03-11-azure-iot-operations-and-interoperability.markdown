@@ -1,7 +1,7 @@
 ---
 layout: posts
 title: Azure IoT Operations and interoperability between Windows and Linux
-image: /assets/posts/2024/03/11/azure-iot-operations-and-interoperability/http-paths.png
+image: /assets/posts/2024/03/11/azure-iot-operations-and-interoperability/pipeline1.png
 date:   2024-03-11 06:00:00 +0300
 categories: azure
 tags: azure iot
