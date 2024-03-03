@@ -2,6 +2,8 @@
 
 ## Upcoming posts
 
+- AppService and Private Endpoint and DNS
+  - Web app network tester
 - AppGw and dynamic KQL impact to rules
 - AppGw and Easy Auth
 - Maintenance task as Container App

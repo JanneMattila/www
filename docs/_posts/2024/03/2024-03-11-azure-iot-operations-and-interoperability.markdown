@@ -33,7 +33,7 @@ I can now deploy my _custom applications_ into my  Kubernetes, and
 my preferred way of managing the deployments is GitOps.
 Here is my GitOps configuration used in my demo environment:
 
-{% include githubEmbed.html text="JanneMattila/aks-ee-gitops" link="https://github.com/JanneMattila/aks-ee-gitops" %}
+{% include githubEmbed.html text="JanneMattila/aks-ee-gitops" link="JanneMattila/aks-ee-gitops" %}
 
 It also includes my [webapp-network-tester](https://github.com/JanneMattila/webapp-network-tester)
 too which I've already blogged few times earlier. Read more about it
@@ -66,24 +66,30 @@ container based applications.
 
 How can we then connect these different components together?
 
-## Azure IoT Operations and data processing pipeline
+**Easily**, since this has been designed to be interoperable.
+Let me show this in practice with a demo:
 
-Finally, we're landing into my 
+`webapp-network-tester` is running **both** in _Windows Host_ and inside AKS EE in _Linux container_.
 
+If I now RDP to the Windows Host and open a browser, I can access the webapp running in Windows Host:
 
-Azure IoT Operations pipeline can also take advantage of the above setup.
-You can invoke HTTP endpoints running in Windows or Linux.
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2024/03/11/azure-iot-operations-and-interoperability/localhost.png" %}
 
-[Expose Kubernetes services to external devices](https://learn.microsoft.com/en-us/azure/aks/hybrid/aks-edge-howto-expose-service)
+I started my application with following command, so it's running in port `8080` and listening on all interfaces:
 
-{% include mermaid.html text="
-sequenceDiagram
-    actor User
-    User->>+Windows: Use webapp
-    Windows->>+Linux: Port forward
-    Linux-->>-Windows: Response
-    Windows-->>-User: Response
-" %}
+```powershell
+dotnet run --urls="http://+:8080"
+```
+
+Therefore, I can access it using the IP address of the Windows Host:
+
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2024/03/11/azure-iot-operations-and-interoperability/localhost2.png" %}
+
+I can also reach the app directly from my laptop in the same network by using that machines IP address:
+
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2024/03/11/azure-iot-operations-and-interoperability/remote-local.png" %}
+
+In my server, I can use `kubectl` to get the information about the exposed services from Kubernetes:
 
 ```bash
 $ kubectl get service -n demos
@@ -92,16 +98,127 @@ k8s-probe-demo               LoadBalancer   10.43.103.13    192.168.0.4   80:319
 webapp-network-tester-demo   LoadBalancer   10.43.216.203   192.168.0.5   80:31379/TCP   105d
 ```
 
-Since I want to expose `webapp-network-tester-demo`, then I'll select the IP `192.168.0.5` and port `80` to be exposed to the outside world.
+Reason for seeing `EXTERNAL-IP` is that I've just used the `LoadBalancer` type of service in my Kubernetes configuration:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-network-tester-demo
+  namespace: demos
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+  selector:
+    app: webapp-network-tester-demo
+```
+
+Since I'm only interested about `webapp-network-tester-demo`, I'll pick the IP `192.168.0.5` and port `80`
+from the above list and put them into browser:
+
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2024/03/11/azure-iot-operations-and-interoperability/remote-remote.png" %}
+
+Why is that showing white background and others are not? At the time of writing this post,
+it's using older version of the image (as you can see from my GitOps configuration).
+You can find the latest version from here:
+
+{% include dockerEmbed.html text="JanneMattila/webapp-network-tester" link="r/jannemattila/webapp-network-tester" %}
+
+So okay, we've now **verified** that you can connect directly to the applications running inside AKS EE from the Windows Host.
+
+---
+
+Next I want to expose this containerized application to the other users in the same network.
+Here's the diagram to illustrate the setup:
+
+{% include mermaid.html text="
+sequenceDiagram
+    actor User
+    note right of User: User is in the same network<br/>as the Windows machine
+    User->>Windows: Use webapp
+    Windows->>Linux: Port forward
+    Linux-->>Windows: Response
+    Windows-->>User: Response
+" %}
+
+You can follow these [instructions](https://learn.microsoft.com/en-us/azure/aks/hybrid/aks-edge-howto-expose-service)
+and here's the summary what I did:
 
 ```powershell
 New-NetFirewallRule -DisplayName "aks-ee-svc" -Direction Inbound -Protocol TCP -LocalPort 80,443 -Action Allow
 netsh interface portproxy add v4tov4 listenport=80 listenaddress=0.0.0.0 connectport=80 connectaddress=192.168.0.5
 ```
 
+Above enables port `80` and `443` in the Windows Firewall and then sets up port forwarding from the Windows Host to the Kubernetes service. 
+
+Firewall rule has been created:
+
 {% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/03/11/azure-iot-operations-and-interoperability/fw.png" %}
 
+Now I can access that application running inside AKS EE from my laptop in the same network:
+
 {% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/03/11/azure-iot-operations-and-interoperability/remote.png" %}
+
+You can use this setup to expose web user interfaces for Operators or other users in your network.
+
+Now we have **verified** that you can connect directly to the applications running inside AKS EE from the Windows Host and also from the rest of the machines in the same network.
+
+---
+
+Next test is a bit more complex. I'll illustrate it with diagram:
+
+{% include mermaid.html text="
+sequenceDiagram
+    actor User
+    User->>Windows: Invoke Rest API
+    Windows->>Linux: Port forward
+    Linux->>Windows App: Invoke Rest API
+    Windows App-->>Linux: Response
+    Linux-->>Windows: Response
+    Windows-->>User: Response
+" %}
+
+Now we want test that the application running inside AKS EE is able to invoke a REST API running in the Windows Host.
+We can use our test tool to do this.
+Here is the test in [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) extension format:
+
+```
+### Invoke Rest API
+POST http://192.168.68.68/api/commands HTTP/1.1
+
+HTTP POST http://192.168.0.1:8080/api/commands
+INFO HOSTNAME
+```
+
+We post to our exposed service in the Windows Host and then that application will do another
+post to the address of the application running in Windows Host. Payload will be `INFO HOSTNAME`
+which means that output of this call chain should be the the hostname of the Windows Host.
+
+Here's the output of that test:
+
+```
+-> Start: HTTP POST http://192.168.0.1:8080/api/commands
+-> Start: INFO HOSTNAME
+HOSTNAME: WIN-OS3VAQEPSH7
+<- End: INFO HOSTNAME 0,07ms
+<- End: HTTP POST http://192.168.0.1:8080/api/commands 9.40ms
+```
+
+Above **verifies** that you can connect from applications running inside AKS EE to applications
+running int the Windows Host.
+
+All the above tests verify that the interoperability between Windows Host and AKS EE is working as expected
+and that is pretty powerful capability.
+You can now use this capability to plan your edge software architecture better.
+
+## Azure IoT Operations and data processing pipeline
+
+_Finally_, we're approaching the title of the post.
+
+Naturally, Azure IoT Operations data processing pipelines can take advantage of the above capability.
+You can invoke HTTP endpoints running in Windows Host or containerized applications.
+
 
 {% include mermaid.html text="
 sequenceDiagram
