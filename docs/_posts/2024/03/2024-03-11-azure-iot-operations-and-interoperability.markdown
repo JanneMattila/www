@@ -228,7 +228,7 @@ Here is the HTTP endpoint source configuration:
 
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2024/03/11/azure-iot-operations-and-interoperability/pipeline2.png" %}
 
-URL is using DNS available inside Kubernetes:
+URL is using DNS name available inside Kubernetes:
 
 ```
 http://webapp-network-tester-demo.demos.svc.cluster.local/api/commands
@@ -241,9 +241,20 @@ HTTP POST "http://192.168.0.1:8080/api/commands"
 INFO HOSTNAME
 ```
 
-This is the same example that we did earlier in this post.
+We want to achieve following integration:
 
-I've set the request internal to `1m`, so I get data echoed once per every minute.
+{% include mermaid.html text="
+sequenceDiagram
+    Pipeline->>Linux: Invoke Rest API
+    Linux->>Windows: Invoke Rest API
+    Windows-->>Linux: Response
+    Linux-->>Pipeline: Response
+" %}
+
+Above is very similar to the test we did earlier in the post.
+
+I've set the request internal to `1m` in the pipeline,
+so I get data echoed to my external web app once per every minute.
 
 Here's the output:
 
@@ -258,7 +269,7 @@ HOSTNAME: WIN-OS3VAQEPSH7
 Above **verifies** that you can use same interoperability capabilities
 in the Azure IoT Operations data processing pipelines.
 
-You can of course similarly connect directly to Windows Host as we did above
+You can, of course, similarly connect directly to Windows Host as we did above
 or even have multiple rest API calls in the same pipeline:
 
 {% include mermaid.html text="
@@ -271,7 +282,7 @@ sequenceDiagram
     Linux->>+Pipeline: Response
 " %}
 
-All the capabilities are there, it's just up to you to use them.
+All the required capabilities are there, it's just up to you to use them.
 
 ## Conclusion
 
@@ -280,5 +291,7 @@ Just to be clear:
 > Interoperability is capability of AKS Edge Essentials and
 > we can take advantage of it in our custom applications and
 > Azure IoT Operations data processing pipelines.
+
+This is powerful and provides flexibility to your edge software architecture.
 
 I hope you find this useful!
