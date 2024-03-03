@@ -27,6 +27,12 @@ Let's remind ourselves about the components that I have in my demo environment:
 3. [Azure IoT Operations](https://learn.microsoft.com/en-us/azure/iot-operations/get-started/overview-iot-operations) is deployed into this Kubernetes
  - It's running in Linux containers but AKS EE does support Windows containers as well
 
+[Arc Jumpstart Resources](https://azurearcjumpstart.com/)
+
+ {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/03/11/azure-iot-operations-and-interoperability/aksee1.png" %}
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/03/11/azure-iot-operations-and-interoperability/aksee2.png" %}
+
 ## Custom applications
 
 I can now deploy my _custom applications_ into my  Kubernetes, and
