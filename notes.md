@@ -169,9 +169,6 @@ https://github.com/jch/html-pipeline#dependencies
   - https://github.com/Azure/CloudShell
   - https://mcr.microsoft.com/en-us/product/azure-powershell/about
 - Export Azure Resource templates to git repo daily
-- NSG and ongoing connections behavior
-  - https://learn.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview
-  - https://learn.microsoft.com/en-us/azure/firewall/long-running-sessions
 - Azure PowerShell & ResourceId vs. Rest API
   - Invoke-AzVMRunCommand `
     -ResourceId "/subscriptions/...urceGroups/vm2_group/providers/Microsoft.Compute/virtualMachines/vm2" `
