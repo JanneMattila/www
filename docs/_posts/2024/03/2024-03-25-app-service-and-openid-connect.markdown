@@ -133,7 +133,7 @@ what was wrong in my configuration:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/03/25/app-service-and-openid-connect/easyauth-diag2.png" %}
 
-Easy Auth Error/Warnings:
+Easy Auth Errors/Warnings:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/03/25/app-service-and-openid-connect/easyauth-diag.png" %}
 
