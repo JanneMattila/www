@@ -10,15 +10,14 @@ tags: azure appservice easyauth salesforce
 is one of those services that has a lot of features and capabilities.
 It's _the go-to service_ for hosting web applications, REST APIs, and mobile backends.
 
-One of the features is built-in [authentication](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization)
-support. This built-in feature is often referred to as _Easy Auth_.
-
-It has support for many [identity providers](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization#identity-providers)
-and if you have _OpenID Connect_ capable identity provider, you can use it as well.
+One of the built-in features is [authentication](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization).
+It's often referred to by the name _Easy Auth_.
+It supports many [identity providers](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization#identity-providers)
+including any _OpenID Connect_ capable identity provider.
 
 In this post, I'll show how to configure your App Service to use
-[SalesForce](https://www.salesforce.com/) as an identity provider to your App Service.
-You can follow the official documentation, on how to 
+[SalesForce](https://www.salesforce.com/) as the identity provider.
+Read more from the documentation about how to
 [configure your App Service or Azure Functions app to sign in using an OpenID Connect provider](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-openid-connect).
 
 Here's a high-level overview of App Service authentication process:
@@ -38,7 +37,7 @@ sequenceDiagram
 " %}
 
 _Easy Auth_ is especially handy if you don't want to use any custom code to handle the authentication
-or you have older application that you just want to publish to you end users and 
+or have older application that you just want to publish to you end users and 
 quickly enable e.g. Entra ID authentication.
 
 You can start the configuration process by navigating to your App Service and then
@@ -64,20 +63,30 @@ I navigated to my developer instance:
 I followed the documentation and created a new _Connected App_ called _Azure App Service_.
 These are the most important settings that I configured:
 
-- _Callback URL_ to match my App Service URL: `https://....azurewebsites.net/.auth/login/SalesForce/callback`
-- Selected OAuth scopes to include: `openid`, `profile`, `email` (as [required](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-openid-connect#-add-provider-information-to-your-application) by App Service)
+- _Callback URL_ to match my App Service URL:
+```
+https://....azurewebsites.net/.auth/login/SalesForce/callback
+```
+- [Required](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-openid-connect#-add-provider-information-to-your-application) OAuth scopes: 
+  - `openid`
+  - `profile`
+  - `email` 
+
+Here's my configuration:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/03/25/app-service-and-openid-connect/sf2.png" %}
 
-Then I copied _Consumer Key_ and _Consumer Secret_:
+I copied also _Consumer Key_ and _Consumer Secret_:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/03/25/app-service-and-openid-connect/sf-managed-apps2.png" %}
 
-I took a note of the _Document URL_ as well from the [documentation](https://help.salesforce.com/s/articleView?id=sf.remoteaccess_oauth_endpoints.htm&type=5):
+I took a note of the _Document URL_ based on the [documentation](https://help.salesforce.com/s/articleView?id=sf.remoteaccess_oauth_endpoints.htm&type=5):
 
 ```
 https://jannemattila....develop.lightning.force.com/.well-known/openid-configuration
 ```
+
+Your _Document URL_ should respond anonymously with the OpenID Connect configuration.
 
 After that, I went back to my App Service and filled in the required fields:
 
@@ -87,7 +96,7 @@ After that, I went back to my App Service and filled in the required fields:
 - Client Secret: _Consumer Secret_
 
 After saving the above configuration, I just opened that app service url and I got redirected to SalesForce login page.
-After succesful login, I got consent screen and then I was redirected back to my web app:
+After successful login, I got a consent screen and then I was redirected back to my web app:
 
 {% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/03/25/app-service-and-openid-connect/sf1.png" %}
 
@@ -137,6 +146,7 @@ Easy Auth Errors/Warnings:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/03/25/app-service-and-openid-connect/easyauth-diag.png" %}
 
-I had unnecessary configuration related to the _audience_ and that was causing the problem.
+I had unnecessary configuration related to the _audience_ and that was causing the problem because
+token validation failed.
 
 I hope you find this useful!

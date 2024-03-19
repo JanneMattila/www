@@ -164,6 +164,18 @@ https://github.com/jch/html-pipeline#dependencies
   - One target resource as private and other as public e.g., key vault
 - AppGw and dynamic KQL impact to rules
 - AppGw and Easy Auth
+- VNET Private Link Service
+  - Storage account
+  - AKS
+  - https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-overview#private-endpoint-properties
+  - https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-overview#private-link-resource
+  - Diagram:
+    - Provider hands over the resource id and subtype
+    - Consumer creates a private endpoint
+      - Add lock to prevent accidental deletion
+    - Provider approves
+- VNET transitive peering
+  - https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-faq#if-i-peer-vneta-to-vnetb-and-i-peer-vnetb-to-vnetc-does-that-mean-vneta-and-vnetc-are-peered
 - Maintenance task as Container App
   - Cost, private vs. Func app
   - https://github.com/Azure/CloudShell
