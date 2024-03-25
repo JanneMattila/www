@@ -1,6 +1,6 @@
 ---
 layout: posts
-title: App Service and OpenID Connect with SalesForce
+title: App Service and OpenID Connect with Salesforce
 image: /assets/posts/2024/03/25/app-service-and-openid-connect/auth.png
 date:   2024-03-25 06:00:00 +0300
 categories: azure
@@ -16,7 +16,7 @@ It supports many [identity providers](https://learn.microsoft.com/en-us/azure/ap
 including any _OpenID Connect_ capable identity provider.
 
 In this post, I'll show how to configure your App Service to use
-[SalesForce](https://www.salesforce.com/) as the identity provider.
+[Salesforce](https://www.salesforce.com/) as the identity provider.
 Read more from the documentation about how to
 [configure your App Service or Azure Functions app to sign in using an OpenID Connect provider](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-openid-connect).
 
@@ -53,7 +53,7 @@ It will then ask you to provide the _Document URL_,  _Client ID_ and _Client Sec
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/03/25/app-service-and-openid-connect/openid1.png" %}
 
-Since I'm using SalesForce as my OpenID Connect provider, I can follow the official documentation on how to
+Since I'm using Salesforce as my OpenID Connect provider, I can follow the official documentation on how to
 [create a Connected App](https://help.salesforce.com/s/articleView?id=sf.connected_app_create.htm&type=5)
 which then allows me to use it as identity provider.
 
@@ -95,7 +95,7 @@ After that, I went back to my App Service and filled in the required fields:
 - Client ID: _Consumer Key_
 - Client Secret: _Consumer Secret_
 
-After saving the above configuration, I just opened that app service url and I got redirected to SalesForce login page.
+After saving the above configuration, I just opened that app service url and I got redirected to Salesforce login page.
 After successful login, I got a consent screen and then I was redirected back to my web app:
 
 {% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/03/25/app-service-and-openid-connect/sf1.png" %}
@@ -136,7 +136,7 @@ I can further analyze that token in [jwt.ms](https://jwt.ms):
 }
 ```
 
-Of course, I did stumble a bit while configurating Connected app in SalesForce side,
+Of course, I did stumble a bit while configurating Connected app in Salesforce side,
 but  _Diagnose and solve problems_ feature in App Service helped me to understand
 what was wrong in my configuration:
 
