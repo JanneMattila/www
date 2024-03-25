@@ -24,6 +24,10 @@ hr {
     text-shadow: 2px 2px 2px gray;
 }
 
+.inner {
+    max-width: 640px;
+}
+
 .footer-text {
     text-align: center;
 }

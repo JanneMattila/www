@@ -159,11 +159,12 @@ https://github.com/jch/html-pipeline#dependencies
 -------------------------------------------------
 ```
 
+- AKS and Key Vault integration and updating secrets
+  - Event Grid to Webhook
+- Office 365 Group and Teams incoming webhook
 - AppService and Private Endpoint and DNS
   - Web app network tester
   - One target resource as private and other as public e.g., key vault
-- AppGw and dynamic KQL impact to rules
-- AppGw and Easy Auth
 - VNET Private Link Service
   - Storage account
   - AKS
