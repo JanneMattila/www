@@ -1,7 +1,7 @@
 ---
 layout: posts
 title: App Service and OpenID Connect with SalesForce
-image: /assets/posts/2024/03/25/app-service-and-openid-connect/http-paths.png
+image: /assets/posts/2024/03/25/app-service-and-openid-connect/auth.png
 date:   2024-03-25 06:00:00 +0300
 categories: azure
 tags: azure appservice easyauth salesforce
