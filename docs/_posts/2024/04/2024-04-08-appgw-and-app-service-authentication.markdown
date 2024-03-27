@@ -7,9 +7,15 @@ categories: azure
 tags: azure appgw
 ---
 
+[Azure IoT Operations]({% post_url 2023/11/2023-11-22-azure-iot-operations %})
+
 <!--
 
 -->
+
+https://learn.microsoft.com/en-us/azure/architecture/best-practices/host-name-preservation
+
+
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/resources.png" %}
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/a.png" %}

@@ -162,6 +162,7 @@ https://github.com/jch/html-pipeline#dependencies
 - Func and v6
 - AKS and Key Vault integration and updating secrets
   - Event Grid to Webhook
+- Azure DevOps and getting rid of the Personal Access Tokens
 - Office 365 Group and Teams incoming webhook
 - AppService and Private Endpoint and DNS
   - Web app network tester

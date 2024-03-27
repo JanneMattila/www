@@ -1,6 +1,6 @@
 ---
-title: Application Gateway and Web Application Firewall rule updater
-image: /assets/posts/2024/04/01/appgw-and-rule-updater/rules1.png
+title: Application Gateway and dynamic custom rules in Web Application Firewall
+image: /assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/waf2.png
 date: 2024-04-01 06:00:00 +0300
 layout: posts
 categories: azure
@@ -12,7 +12,8 @@ It has many [features](https://learn.microsoft.com/en-us/azure/application-gatew
 but in this post, I'll focus on the
 [Web Application Firewall (WAF)](https://learn.microsoft.com/en-us/azure/web-application-firewall/overview).
 
-More specifically, I'll focus on the [Custom rules](https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/custom-waf-rules-overview)
+More specifically, I'll focus on the
+[Custom rules](https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/custom-waf-rules-overview)
 and how they can be updated dynamically using automation.
 This goes hand in hand with the
 [rate-limiting](https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/rate-limiting-overview)
@@ -22,28 +23,31 @@ in WAF.
 
 ## Custom rules
 
-{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/customrules1.png" %}
+{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/customrules1.png" %}
 
-This is our demo scenario:
+Here is the scenario and the requirements for our application::
 
 - We have a web application running in Azure
   - It has "admin" section for internal users
     - Work from home users can access it from anywhere
-  - Majority of the external users are located in Finland and nearby countries
-    - Less than 5 % of usage is outside these countries
+    - Internal users are very important and they should always have access to the application
+  - Majority of the external users are from Finland or from the nearby countries
+    - Less than 5 % of the usage is outside these known countries
 - Web application is protected using Application Gateway and WAF
 
-Let's start by deploying a set of custom rules into the Application Gateway
-and see how those rules have been designed:
+---
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/customrules2.png" %}
+Let's start by deploying a set of custom rules into the Application Gateway
+and see how those rules have been designed to support those requirements that I've mentioned above:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/customrules2.png" %}
 
 `RuleAllowCorporateIPs` rule is set to _allow_ traffic from known Corporate IP ranges.
 This means that no matter what, internal users can connect to the application
 from the Office network or if they use VPN and it's configured this scenario in mind.
 
 `RuleGeoDeny` will _deny_ traffic from countries that are not in the _allowed country list_.
-This is not _enabled_ normally but can be enabled when needed.
+This is only set to _log_ normally but can be changed to _block_ when needed.
 After all, we know countries where majority of our users come from,
 but we can allow global access under normal circumstances.
 
@@ -55,26 +59,26 @@ The above rules are quite static, but they still provide capabilities that are i
 Let's test these in action. Let's add temporary rule `DenyAll` to _block all traffic_
 with priority after the `RuleAllowCorporateIPs` rule:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/customrules4.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/customrules4.png" %}
 
 `RuleAllowCorporateIPs` configuration:
 
-{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/corpip.png" %}
+{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/corpip.png" %}
 
 Since my IP address is in the known Corporate IP range, I can still access the application:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/200.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/200.png" %}
 
 If you try to access the application from outside the allowed Corporate IP range, you're blocked:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/403.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/403.png" %}
 
 Above error page is just example of [custom error page](https://learn.microsoft.com/en-us/azure/application-gateway/custom-error#supported-response-codes).
 You should design your own custom 403 page so that it provides relevant information to the user
 including how to contact customer support, relevant contact details etc.
 You can customize error pages by the response code:
 
-{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/customerrorpages.png" %}
+{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/customerrorpages.png" %}
 
 In the above `RuleAllowCorporateIPs` test, internal users were able to use the application even
 if later rule blocks the traffic.
@@ -83,21 +87,22 @@ if later rule blocks the traffic.
 
 Next, let's see what happens if I have more usage than allowed by the `RuleRateLimit`:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/appgw-ratelimit.gif" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/appgw-ratelimit.gif" %}
 
-Rate limiting is a good safety mechanism which blocks traffic if needed.
+If the usage was above the configured threshold, rate limiting started
+blocking traffic in order to protect our application.
+You can think of it as safety mechanism in this scenario.
 
 ---
 
 For the `RuleGeoDeny` rule we'll use slightly different approach
-since it's not enabled all the time.
-We can enable it if we notice that we're under attack. 
-It will block traffic coming from countries that are not
-in the _allowed country list_.
+since it's not set to block the traffic all the time.
+We can change it to block traffic it if we notice that we're under some kind of attack or suspicious activity.
+It will then block traffic coming from countries that are not in the _allowed country list_.
 
-You can enable or disable this rule either directly from the Azure Portal or by using automation.
+You can change this rule either directly from the Azure Portal or by using automation.
 
-Here is the script that can be used to enable or disable the `RuleGeoDeny` rule:
+Here is the script that can be used to change the action of the `RuleGeoDeny` rule:
 
 ```powershell
 Param (
@@ -111,8 +116,8 @@ Param (
     [int] $RulePriority = 50,
     
     [Parameter(Mandatory)]
-    [ValidateSet('Enabled', 'Disabled')]
-    [string] $State
+    [ValidateSet('Allow', 'Block', 'Log')]
+    [string] $Action
 )
 
 $ErrorActionPreference = "Stop"
@@ -124,38 +129,45 @@ if ($null -eq $existingRule) {
     throw "Could not find existing custom rule with priority $RulePriority."
 }
 
-$existingRule.State = $State
+$existingRule.Action = $Action
 Set-AzApplicationGatewayFirewallPolicy -InputObject $policy
 ```
 
 You can use the script like this:
 
 ```powershell
-# To enable the RuleGeoDeny rule:
-.\rule-geo-state.ps1 -State "Enabled"
+# To use RuleGeoDeny for blocking the traffic:
+.\rule-geo.ps1 -Action "Block"
 
-# To disable the RuleGeoDeny rule:
-.\rule-geo-state.ps1 -State "Disabled"
+# Only log the traffic but don't block:
+.\rule-geo.ps1 -Action "Log"
 ```
 
 We can use 
 [PowerShell script automation]({% post_url 2023/10/2023-10-30-automating-maintenance-tasks-part1 %})
-for handling this kind of automations.
+for running these kind of automations.
+
+This automation enables us to _narrow down the access_ and thus reduce the overall impact.
+It does mean that users outside the allowed countries won't be able to access the application,
+but it's a trade-off that we're willing to take to protect our application.
 
 ---
 
-Next, we'll do a more complex KQL query based rule update.
-This requires that we've enabled
-[Diagnostic logs](https://learn.microsoft.com/en-us/azure/application-gateway/application-gateway-diagnostics)
+Next, we'll do a more complex KQL query based custom rule update.
+This requires that we've enabled collecting of
+[logs](https://learn.microsoft.com/en-us/azure/application-gateway/application-gateway-diagnostics)
 for the Application Gateway:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/appgwdiag1.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/appgwdiag2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/appgwdiag1.png" %}
+
+Selecting _Resource specific_ tables as target for the logs:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/appgwdiag2.png" %}
 
 This allows us to use KQL to query the data coming from Application Gateway
 and define our own rules based on that data:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/kql.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/kql.png" %}
 
 Here is the _Resource specific_ table based query:
 
@@ -169,7 +181,7 @@ AGWAccessLogs
 | order by Requests
 ```
 
-Here is the _AzureDiagnostics_ table based query:
+Here is the _AzureDiagnostics_ table based query (if you selected that as target for the logs):
 
 ```sql
 AzureDiagnostics
@@ -184,42 +196,36 @@ AzureDiagnostics
 
 The above queries will return the IP addresses that have made more than 10 000 requests in the last 60 minutes:
 
-| IP             | Requests |
-| -------------- | -------- |
-| 4.xxx.yyy.zzz  | 451 811  |
-
-Output from query window:
-
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/kql2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/kql2.png" %}
 
 We can now use this information to add, update or delete our dynamic rule.
 
-Remember that the query can really be based on any data we have in our Log Analytics workspace:
+Remember that the query can really be based on _any data_ we have in our Log Analytics workspace:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/kql3.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/kql4.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/kql3.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/kql4.png" %}
 
-You can use various KQL functions e.g., [geo_info_from_ip_address](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/geo-info-from-ip-address-function) for creating as complex logic as you want:
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/kql-ip.png" %}
+You can use various KQL functions e.g., [geo_info_from_ip_address](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/geo-info-from-ip-address-function) for creating as complex logic as we want:
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/kql-ip.png" %}
 
-Here's an example query to use that function:
+Here's an example query using that from our firewall logs:
 
 ```sql
 AGWFirewallLogs
-| where Action == "Blocked" and RuleId == "RuleGeoDeny"
+| where RuleId == "RuleGeoDeny"
 | extend ip = trim_end(".", tostring(array_reverse(split(Message, " "))[0]))
 | extend location = geo_info_from_ip_address(ip)
 | project Country = tostring(location.country)
 | summarize Count=count() by Country
 ```
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/kqlgeo.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/kqlgeo.png" %}
 
 You could do _wild_ logic by using
 [geo_distance_2points](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/geo-distance-2points-function)
-and allowing traffic only from certain distance from your location
-(understanding the inaccuracies of IP based geolocation).
-But hey sky is the limit!
+and block traffic if the distance is above certain limit (keeping in mind the inaccuracies of IP based geolocation).
+
+You imagination is the limit to these automations!
 
 ---
 
@@ -296,15 +302,15 @@ Now we can use the script like this:
 If there are any IP addresses that have made over 10 000 requests in the last 60 minutes,
 the following rule will be added to the Application Gateway:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/waf2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/waf2.png" %}
 
 If the situation chances and there are no IP addresses that have made over 10 000 requests in the last 60 minutes, the rule will be removed:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/rules1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/rules1.png" %}
 
 Rule itself is simple, since it's just blocks specific IP addresses based on the query:
 
-{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/rules3.png" %}
+{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/rules3.png" %}
 
 In the above example, we've used the requirements of our application to design the rules
 in our Application Gateway and WAF.
@@ -319,7 +325,7 @@ the custom rules accordingly.
 ### Did you deploy **WAF V2**?
 
 Check that you're in WAF V2 Tier of the Application Gateway:
-{% include imageEmbed.html width="20%" height="20%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/appgwtier.png" %}
+{% include imageEmbed.html width="20%" height="20%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/appgwtier.png" %}
 If you see `Standard V2` then you don't have WAF enabled.
 
 ### Is your WAF deployment in [Detection mode](https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/ag-overview#waf-modes)?
@@ -333,11 +339,11 @@ Recommended
 [subnet size](https://learn.microsoft.com/en-us/azure/application-gateway/configuration-infrastructure#size-of-the-subnet)
 is `/24`:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/snet.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/snet.png" %}
 
 ### Have you enabled _auto scaling_ without setting max instances?
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/appgw125.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/appgw125.png" %}
 
 If you have DDOS
 [network protection](https://azure.microsoft.com/en-us/pricing/details/ddos-protection/)
@@ -372,13 +378,13 @@ From [Bot Protection Overview](https://learn.microsoft.com/en-us/azure/web-appli
 
 Remember to use the latest versions of the rule sets:
 
-{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/managedrulesets.png" %}
+{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/managedrulesets.png" %}
 
 ### Did you deploy Application Gateway and WAF directly from Azure portal?
 
 Please _please_ **please** use **Infrastructure-as-Code** to deploy the configuration.
 Why? It allows everybody to see all the changes using standard development tools and processes:
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/git.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/git.png" %}
 
 And some operations might adjust settings without you realizing those changes like mentioned
 [here](https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/application-gateway-crs-rulegroups-rules?tabs=drs21):
@@ -397,18 +403,18 @@ is a good way to test your setup.
 
 You can quickly create URL-based tests and run them against your application:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/loadtesting1.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/loadtesting2.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/loadtesting3.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/loadtesting4.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/loadtesting1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/loadtesting2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/loadtesting3.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/loadtesting4.png" %}
 
 You can use testing to see how your rules are working and if you're getting alerts as expected.
 You can use
 [metrics](https://learn.microsoft.com/en-us/azure/application-gateway/application-gateway-metrics)
 view to see how your Application Gateway has scaled during your testing:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/appgwscaling.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/appgwscaling2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/appgwscaling.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/appgwscaling2.png" %}
 
 After load testing, you should have a better idea how many instances your deployment would scale.
 
@@ -421,7 +427,7 @@ But that deserves its own post.
 
 Enable diagnostic settings:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/appgwdiag2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/appgwdiag2.png" %}
 
 Deploy ready-made workbooks for easing up the troubleshooting and analysis:
 
@@ -441,11 +447,11 @@ creating metric and log based alerts.
 
 Example of metric based alert on response status 403:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/metricsalert.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/metricsalert.png" %}
 
 If you have DDoS protection enabled, then you can use `Under DDoS attack or not` metric:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/metricsddos.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/metricsddos.png" %}
 
 And for the log based alerts, you can use any of the ideas presented in the above examples.
 
@@ -462,7 +468,7 @@ your entire solution. This might include services like
 and
 [Azure Firewall](https://learn.microsoft.com/en-us/azure/firewall/overview).
 
-The above example is taken from this GitHub repository:
+The above _dynamic custom rules example_ is taken from this GitHub repository:
 
 {% include githubEmbed.html text="JanneMattila/azure-application-gateway-demos/appgw-custom-rules" link="JanneMattila/azure-application-gateway-demos/tree/main/appgw-custom-rules" %}
 
