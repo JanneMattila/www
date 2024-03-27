@@ -80,8 +80,8 @@ You can customize error pages by the response code:
 
 {% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/customerrorpages.png" %}
 
-In the above `RuleAllowCorporateIPs` test, internal users were able to use the application even
-if later rule blocks the traffic.
+In the above `RuleAllowCorporateIPs` test, internal users coming from known IP addresses
+were able to use the application even if later rule blocks the traffic.
 
 ---
 
@@ -97,8 +97,8 @@ You can think of it as safety mechanism in this scenario.
 
 For the `RuleGeoDeny` rule we'll use slightly different approach
 since it's not set to block the traffic all the time.
-We can change it to block traffic it if we notice that we're under some kind of attack or suspicious activity.
-It will then block traffic coming from countries that are not in the _allowed country list_.
+We can change it to block traffic it if we notice that we're under some kind of attack or suspicious activity is ongoing.
+When enabled, it will block traffic coming from countries that are not in the _allowed country list_.
 
 You can change this rule either directly from the Azure Portal or by using automation.
 
@@ -136,7 +136,7 @@ Set-AzApplicationGatewayFirewallPolicy -InputObject $policy
 You can use the script like this:
 
 ```powershell
-# To use RuleGeoDeny for blocking the traffic:
+# Set RuleGeoDeny to block the traffic:
 .\rule-geo.ps1 -Action "Block"
 
 # Only log the traffic but don't block:
@@ -145,11 +145,13 @@ You can use the script like this:
 
 We can use 
 [PowerShell script automation]({% post_url 2023/10/2023-10-30-automating-maintenance-tasks-part1 %})
-for running these kind of automations.
+for running these kind of automations. Automation can run e.g., every 5 minutes to
+check if rules needs to be adjusted.
 
 This automation enables us to _narrow down the access_ and thus reduce the overall impact.
 It does mean that users outside the allowed countries won't be able to access the application,
-but it's a trade-off that we're willing to take to protect our application.
+but it's a trade-off that we're willing to take to protect our application availability
+to the majority of the users.
 
 ---
 
@@ -200,7 +202,8 @@ The above queries will return the IP addresses that have made more than 10 000 r
 
 We can now use this information to add, update or delete our dynamic rule.
 
-Remember that the query can really be based on _any data_ we have in our Log Analytics workspace:
+Remember that the query can really be based on _any data_ we have in our Log Analytics workspace
+or data we can bring using [externaldata](https://github.com/JanneMattila/some-questions-and-some-answers/blob/master/q%26a/kql.md#external-data) operator:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/kql3.png" %}
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/kql4.png" %}
@@ -208,7 +211,7 @@ Remember that the query can really be based on _any data_ we have in our Log Ana
 You can use various KQL functions e.g., [geo_info_from_ip_address](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/geo-info-from-ip-address-function) for creating as complex logic as we want:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/kql-ip.png" %}
 
-Here's an example query using that from our firewall logs:
+Here's an example query using that function with firewall logs:
 
 ```sql
 AGWFirewallLogs
@@ -225,12 +228,12 @@ You could do _wild_ logic by using
 [geo_distance_2points](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/geo-distance-2points-function)
 and block traffic if the distance is above certain limit (keeping in mind the inaccuracies of IP based geolocation).
 
-You imagination is the limit to these automations!
+You imagination is the limit in these kind of automations!
 
 ---
 
 For our demo purposes, let's use the above _simple rate limiting like query_ to add, update or delete the dynamic rule
-(here is abbreviated version of the script but full script is available in the GitHub repository):
+(here is abbreviated version of the script but full script is available in the GitHub repository mentioned later in this post):
 
 ```powershell
 Param (
