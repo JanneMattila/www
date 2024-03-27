@@ -159,6 +159,7 @@ https://github.com/jch/html-pipeline#dependencies
 -------------------------------------------------
 ```
 
+- Func and v6
 - AKS and Key Vault integration and updating secrets
   - Event Grid to Webhook
 - Office 365 Group and Teams incoming webhook

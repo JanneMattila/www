@@ -292,6 +292,8 @@ And this brings us to the next point:
 ### I've deployed the Application Gateway. Is my job done now?
 
 **No!** You need to plan ahead and make sure that you're prepared for the worst.
+Understand your requirements and your application so that you can design and implement
+the custom rules accordingly.
 
 ### Did you deploy **WAF V2**?
 
