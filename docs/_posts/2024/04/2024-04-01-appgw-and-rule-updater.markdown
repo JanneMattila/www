@@ -7,7 +7,7 @@ categories: azure
 tags: azure appgw
 ---
 [Azure Application Gateway](https://learn.microsoft.com/en-us/azure/application-gateway/overview)
-is a web traffic load balancer allowing you to secure access to your web applications.
+is a web traffic load balancer that allows you to secure access to your web applications.
 It has many [features](https://learn.microsoft.com/en-us/azure/application-gateway/features)
 but in this post, I'll focus on the
 [Web Application Firewall (WAF)](https://learn.microsoft.com/en-us/azure/web-application-firewall/overview).
@@ -33,7 +33,7 @@ This is our demo scenario:
     - Less than 5 % of usage is outside these countries
 - Web application is protected using Application Gateway and WAF
 
-Let's start by deploying set of custom rules into the Application Gateway
+Let's start by deploying a set of custom rules into the Application Gateway
 and see how those rules have been designed:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/customrules2.png" %}
@@ -44,13 +44,13 @@ from the Office network or if they use VPN and it's configured this scenario in 
 
 `RuleGeoDeny` will _deny_ traffic from countries that are not in the _allowed country list_.
 This is not _enabled_ normally but can be enabled when needed.
-After all, we know countries where majority of our users are coming from
+After all, we know countries where majority of our users come from,
 but we can allow global access under normal circumstances.
 
 `RuleRateLimit` will _limit_ the number of requests coming from a single IP address.
 This is set to a value well above the tested normal usage, so it won't affect normal users.
 
-Above rules are quite static but they still provide capabilities that are important in protecting our application.
+The above rules are quite static, but they still provide capabilities that are important in protecting our application.
 
 Let's test these in action. Let's add temporary rule `DenyAll` to _block all traffic_
 with priority after the `RuleAllowCorporateIPs` rule:
@@ -85,7 +85,7 @@ Next, let's see what happens if I have more usage than allowed by the `RuleRateL
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/appgw-ratelimit.gif" %}
 
-Rate limiting is good safety mechanism which blocks traffic if needed.
+Rate limiting is a good safety mechanism which blocks traffic if needed.
 
 ---
 
@@ -144,7 +144,7 @@ for handling this kind of automations.
 
 ---
 
-Next, we'll do more complex KQL query based rule update.
+Next, we'll do a more complex KQL query based rule update.
 This requires that we've enabled
 [Diagnostic logs](https://learn.microsoft.com/en-us/azure/application-gateway/application-gateway-diagnostics)
 for the Application Gateway:
@@ -182,7 +182,7 @@ AzureDiagnostics
 | order by Requests
 ```
 
-Above queries will return the IP addresses that have made more than 10 000 requests in the last 60 minutes:
+The above queries will return the IP addresses that have made more than 10 000 requests in the last 60 minutes:
 
 | IP             | Requests |
 | -------------- | -------- |
@@ -199,10 +199,31 @@ Remember that the query can really be based on any data we have in our Log Analy
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/kql3.png" %}
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/kql4.png" %}
 
-You can use various KQL functions e.g., [geo_info_from_ip_address](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/geo-info-from-ip-address-function) for creating as complex queries as you need:
+You can use various KQL functions e.g., [geo_info_from_ip_address](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/geo-info-from-ip-address-function) for creating as complex logic as you want:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/kql-ip.png" %}
 
-Now let's use the above query to add, update or delete the dynamic rule
+Here's an example query to use that function:
+
+```sql
+AGWFirewallLogs
+| where Action == "Blocked" and RuleId == "RuleGeoDeny"
+| extend ip = trim_end(".", tostring(array_reverse(split(Message, " "))[0]))
+| extend location = geo_info_from_ip_address(ip)
+| project Country = tostring(location.country)
+| summarize Count=count() by Country
+```
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/kqlgeo.png" %}
+
+You could do _wild_ logic by using
+[geo_distance_2points](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/geo-distance-2points-function)
+and allowing traffic only from certain distance from your location
+(understanding the inaccuracies of IP based geolocation).
+But hey sky is the limit!
+
+---
+
+For our demo purposes, let's use the above _simple rate limiting like query_ to add, update or delete the dynamic rule
 (here is abbreviated version of the script but full script is available in the GitHub repository):
 
 ```powershell
@@ -273,31 +294,31 @@ Now we can use the script like this:
 ```
 
 If there are any IP addresses that have made over 10 000 requests in the last 60 minutes,
-following rule will be added to the Application Gateway:
+the following rule will be added to the Application Gateway:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/waf2.png" %}
 
-If situation chances and there are no IP addresses that have made over 10 000 requests in the last 60 minutes, the rule will be removed:
+If the situation chances and there are no IP addresses that have made over 10 000 requests in the last 60 minutes, the rule will be removed:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/rules1.png" %}
 
-Rule itself is simple, since it's just block specific IP addresses based on the query:
+Rule itself is simple, since it's just blocks specific IP addresses based on the query:
 
 {% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/rules3.png" %}
 
-In the above example, we've used requirements of our applications to design the rules
+In the above example, we've used the requirements of our application to design the rules
 in our Application Gateway and WAF.
-And this brings us to the next point:
+And this brings us to the next very impontant points:
 
-### I've deployed the Application Gateway. Is my job done now?
+## I've deployed the Application Gateway.<br/>Is my job done now?
 
-**No!** You need to plan ahead and make sure that you're prepared for the worst.
+**No!** You need to plan and make sure that you're prepared for the worst.
 Understand your requirements and your application so that you can design and implement
 the custom rules accordingly.
 
 ### Did you deploy **WAF V2**?
 
-Check that you're in WAF V2 Tier of the Application Gateway deployed:
+Check that you're in WAF V2 Tier of the Application Gateway:
 {% include imageEmbed.html width="20%" height="20%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/appgwtier.png" %}
 If you see `Standard V2` then you don't have WAF enabled.
 
@@ -320,7 +341,7 @@ is `/24`:
 
 If you have DDOS
 [network protection](https://azure.microsoft.com/en-us/pricing/details/ddos-protection/)
-enabled, then you you only pay base pricing for your Application Gateway and not the higher WAF tier pricing
+enabled, then you only pay base price for your Application Gateway and not the higher WAF tier price
 **and** you're covered for the scale out costs:
 
 > If the resource is protected with Network Protection,
@@ -349,14 +370,14 @@ From [Bot Protection Overview](https://learn.microsoft.com/en-us/azure/web-appli
 > The bot mitigation ruleset list of known bad IP addresses **updates multiple**
 > **times per day** from the Microsoft Threat Intelligence feed to stay in sync with the bots.
 
-Remember to use latest versions of the rule sets:
+Remember to use the latest versions of the rule sets:
 
 {% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/managedrulesets.png" %}
 
 ### Did you deploy Application Gateway and WAF directly from Azure portal?
 
 Please _please_ **please** use **Infrastructure-as-Code** to deploy the configuration.
-Why? It allows to see all the changes using standard development tools and processes:
+Why? It allows everybody to see all the changes using standard development tools and processes:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/git.png" %}
 
 And some operations might adjust settings without you realizing those changes like mentioned
@@ -389,24 +410,44 @@ view to see how your Application Gateway has scaled during your testing:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/appgwscaling.png" %}
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/appgwscaling2.png" %}
 
+After load testing, you should have a better idea how many instances your deployment would scale.
+
+You can also test your application with
+[Azure Chaos Studio](https://learn.microsoft.com/en-us/azure/chaos-studio/chaos-studio-overview)
+to see how your application behaves under different conditions.
+But that deserves its own post.
+
 ### Did you remember to enable monitoring as shown earlier in this post?
 
 Enable diagnostic settings:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/appgwdiag2.png" %}
 
-Deploy ready-made workbooks from these locations:
+Deploy ready-made workbooks for easing up the troubleshooting and analysis:
 
 [Application Gateway WAF Triage Workbook](https://github.com/Azure/Azure-Network-Security/tree/master/Azure%20WAF/Workbook%20-%20AppGw%20WAF%20Triage%20Workbook)
 
 [Azure Monitor Workbook for WAF](https://github.com/Azure/Azure-Network-Security/tree/master/Azure%20WAF/Workbook%20-%20WAF%20Monitor%20Workbook)
 
 **Note:** At the time of writing, the workbooks are built for `AzureDiagnostics` table and not the newer
-`AGWAccessLogs`, `AGWFirewallLogs`, and `AGWPerformanceLogs` tables.
+resource specific tables `AGWAccessLogs`, `AGWFirewallLogs`, and `AGWPerformanceLogs`.
 
 ### Have you created alerts, so that you're notified if something is going on in your environment?
 
-TBA
+You should
+[monitor](https://learn.microsoft.com/en-us/azure/application-gateway/monitor-application-gateway)
+your Application Gateway by
+creating metric and log based alerts.
+
+Example of metric based alert on response status 403:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/metricsalert.png" %}
+
+If you have DDoS protection enabled, then you can use `Under DDoS attack or not` metric:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-rule-updater/metricsddos.png" %}
+
+And for the log based alerts, you can use any of the ideas presented in the above examples.
 
 ## Conclusion
 
@@ -414,11 +455,14 @@ Above guidance and even more can be found in the
 [Best practices for Azure Web Application Firewall (WAF) on Azure Application Gateway](https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/best-practices)
 including sending logs to Microsoft Sentinel etc. 
 
-Remember that there are also other networking
-related services e.g., Network Security Groups and Azure Firewall
-to cover security aspects of your solution.
+Remember that Application Gateway is _one_ component in your application architecture.
+There are other networking related services that you might need to use to build
+your entire solution. This might include services like
+[Network Security Groups](https://learn.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview)
+and
+[Azure Firewall](https://learn.microsoft.com/en-us/azure/firewall/overview).
 
-Above example is taken from this GitHub repository:
+The above example is taken from this GitHub repository:
 
 {% include githubEmbed.html text="JanneMattila/azure-application-gateway-demos/appgw-custom-rules" link="JanneMattila/azure-application-gateway-demos/tree/main/appgw-custom-rules" %}
 
