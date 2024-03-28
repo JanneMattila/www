@@ -159,10 +159,15 @@ https://github.com/jch/html-pipeline#dependencies
 -------------------------------------------------
 ```
 
+- ACS and SMTP email sending
+  - App registration rest api
+  - https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email-smtp/smtp-authentication
 - Func and v6
 - AKS and Key Vault integration and updating secrets
   - Event Grid to Webhook
 - Azure DevOps and getting rid of the Personal Access Tokens
+- Scan you app regs
+  - Windows Store Deployer - expires: 12/31/2299
 - Office 365 Group and Teams incoming webhook
 - AppService and Private Endpoint and DNS
   - Web app network tester
@@ -210,6 +215,13 @@ https://github.com/jch/html-pipeline#dependencies
   - https://www.raylib.com/examples.html
   - https://github.com/ChrisDill/Raylib-cs
 - Internet scam sites, DNS
+  - How old is the domain
+  - https://en.wikipedia.org/wiki/WHOIS
+  - https://github.com/flipbit/whois
+  - https://github.com/jsakamoto/WhoisClient.NET/
+  - https://www.whois.com/whois/
+  - http://flipbit.co.uk/2009/06/querying-whois-server-data-with-c.html
+  - Domain information
 - Terraform
 - Network troubleshooting series
   - Latency
@@ -222,7 +234,6 @@ https://github.com/jch/html-pipeline#dependencies
     - No DNS server configured in VNET
     - No DNS server configured in VM
     - No DNS server configured in AKS
-- IIS folder and many files
 - SNAT
 - Amazerrr
 - Arc enabled servers - Onboarding using policy
@@ -253,6 +264,7 @@ https://github.com/jch/html-pipeline#dependencies
 - AKS Edge Essentials
  - This deployment has exceeded its 30 day trial period. For full update support and commercial use, please acquire license as per the methods described at https://aka.ms/aks-edge/licensing. The current End-User-License-Agreement only allows use for development or testing purposes. It does not allow commercial deployments and hence this cluster may not receive periodic updates and upgrades
 - Echo & Webhooks
+- Sticky Notes
 - API Examples
 - AKS Workshop
 - Network tester & Latency

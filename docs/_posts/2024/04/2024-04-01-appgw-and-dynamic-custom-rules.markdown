@@ -81,7 +81,8 @@ You can customize error pages by the response code:
 {% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/customerrorpages.png" %}
 
 In the above `RuleAllowCorporateIPs` test, internal users coming from known IP addresses
-were able to use the application even if later rule blocks the traffic.
+were able to use the application even if later rule blocks the traffic.<br/>
+Note: This means that no further rules are evaluated for the internal users. This includes the managed rule sets.
 
 ---
 

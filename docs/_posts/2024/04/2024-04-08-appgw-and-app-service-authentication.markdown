@@ -9,19 +9,21 @@ tags: azure appgw
 I wrote about
 [Application Gateway and dynamic custom rules in Web Application Firewall]({% post_url 2024/04/2024-04-01-appgw-and-dynamic-custom-rules %})
 in my previous post. 
-In this post, I'll continue to build on those learning and connect dots with App Service authentication
+In this post, I'll continue to build on top of those learnings and connect dots with App Service authentication
 from which I also wrote recently
 [App Service and OpenID Connect with Salesforce]({% post_url 2024/03/2024-03-25-app-service-and-openid-connect %}).
 
 This time I have the following scenario:
 
-- Web application hosted in App Service
-- Application is protected by App Service authentication
-  - Entra ID as the identity provider
+- Two web application hosted in App Service
+  - First application `App` allows anonymous access
+  - Second application `AdminApp` is protected by App Service authentication
+    - Entra ID as the identity provider
+    - This should be reachable only at `/admin` and any other traffic should go to the first application
 - Application Gateway in front of the App Service
   - Managed rule sets are enabled in the Web Application Firewall
 
-High-level steps:
+High-level steps for our deployment:
 
 1. Create Entra ID App Registration
 2. Create pre-deployment DNS records
@@ -33,15 +35,60 @@ High-level steps:
   - A record for the domain pointing to the public IP of the Application Gateway
 6. Test the setup
 
+{% include mermaid.html postfix="1" text="
+graph TD
+    User -->|https://host/...|AppGw
+    AppGw -->|https://host/| App
+    AppGw -->|https://host/admin| AdminApp
+" %}
+
+
+{% include mermaid.html postfix="2" text="
+sequenceDiagram
+    actor User
+    participant AppGw
+    participant App
+    User->>AppGw: http://host/
+    AppGw->>AppGw: Redirect rule
+    AppGw->>User: Redirect to HTTPS
+    User->>AppGw: https://host/
+    AppGw->>App: Proxy request https://app/
+    App->>AppGw: Return content
+    AppGw->>User: Return content
+" %}
+
+{% include mermaid.html postfix="3" text="
+sequenceDiagram
+    participant Entra ID
+    actor User
+    participant AppGw
+    participant AdminApp
+    User->>AppGw: http://host/admin
+    AppGw->>AdminApp: Proxy request<br/>https://adminapp/admin
+    AdminApp->>AppGw: EasyAuth redirects to Entra ID
+    Note left of AdminApp: redirect_uri:<br/>https://host/admin/signin-oidc 
+    AppGw->>User: Redirect to Entra ID
+    User->>Entra ID: https://login.microsoftonline.com/...
+    Note right of Entra ID: Login
+    Entra ID->>User: Redirect to<br/>https://host/admin/signin-oidc
+    User->>AppGw: https://host/admin/signin-oidc
+    AppGw->>AdminApp: Proxy request<br/>https://adminapp/admin/signin-oidc
+    Note left of AdminApp: EasyAuth processes authentication
+    AdminApp->>AppGw: Return content
+    AppGw->>User: Return content
+" %}
+
 https://learn.microsoft.com/en-us/azure/architecture/best-practices/host-name-preservation
 
 https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization#considerations-for-using-built-in-authentication
+
+[Configure ASP.NET Core to work with proxy servers and load balancers](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-8.0)
 
 [Modifications to the request](https://learn.microsoft.com/en-us/azure/application-gateway/how-application-gateway-works#modifications-to-the-request)
 
 Here's a high-level overview of App Service authentication process:
 
-{% include mermaid.html text="
+{% include mermaid.html postfix="4" text="
 sequenceDiagram
     actor User
     User->>EasyAuth: Access web app<br/>as a anonymous user
@@ -61,10 +108,10 @@ sequenceDiagram
 
 ```powershell
 # Public fully qualified custom domain name
-$domain = "myapp.contoso.com"
+$domain = "myapp.jannemattila.com"
 
 # Create Azure AD app used in authentication
-$appPathIfNeeded = "/app1" # In this demo "app1" is the "secured" application
+$appPathIfNeeded = "/admin" # In this demo "admin" is the "secured" application
 $json = @"
 {
   "displayName": "$domain",
@@ -135,7 +182,7 @@ $customDomainVerificationId
 
 ```powershell
 # Public fully qualified custom domain name
-$domain = "myapp.contoso.com"
+$domain = "myapp.jannemattila.com"
 
 # Certificate password
 $certificatePasswordPlainText = "<your certificate password>"
@@ -148,7 +195,16 @@ Export-PfxCertificate -Cert $cert -FilePath cert.pfx -Password $certificatePassw
 
 ## 4. Deploy Azure infrastructure assets
 
+```powershell
+$result = .\deploy.ps1 `
+  -CertificatePassword $certificatePassword `
+  -ClientId $clientId `
+  -ClientSecret $clientSecret `
+  -CustomDomain $domain
 
+# Add this to A record into your DNS zone
+$result.Outputs.ip.value
+```
 
 ```powershell
 {
@@ -169,7 +225,7 @@ Export-PfxCertificate -Cert $cert -FilePath cert.pfx -Password $certificatePassw
         }
       ]
       matchValues: [
-        '/app1/.auth/login/aad/callback'
+        '/admin/.auth/login/aad/callback'
       ]
     }
   ]
@@ -184,6 +240,29 @@ Export-PfxCertificate -Cert $cert -FilePath cert.pfx -Password $certificatePassw
 
 ## 6. Test the setup
 
+First we need to test the HTTP to HTTPS redirection in Application Gateway:
+
+```powershell
+# Will redirect to HTTPS
+curl "http://$domain" --verbose
+curl "http://$domain/admin/" --verbose
+```
+
+Second we need to test the anonymous access:
+
+```powershell
+# Will return anonymous page content
+curl "https://$domain" --verbose --insecure
+curl "https://$domain/any/path/here" --verbose --insecure
+```
+
+And lastly, we start to test the App Service authentication:
+
+```powershell
+# Forces authentication
+curl "https://$domain/admin" --verbose --insecure
+```
+
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/appgw-kql.png" %}
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/backend-override-true.png" %}
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/redirect.png" %}
@@ -192,3 +271,9 @@ Export-PfxCertificate -Cert $cert -FilePath cert.pfx -Password $certificatePassw
 
 In this post, I showed how to combine App Service authentication with Application Gateway and Web Application Firewall.
 I used Entra ID as the identity provider and created a custom domain for the App Service.
+
+This was originally published in my GitHub repository:
+
+{% include githubEmbed.html text="JanneMattila/azure-application-gateway-demos/appgw-and-easyauth" link="JanneMattila/azure-application-gateway-demos/tree/main/appgw-and-easyauth" %}
+
+I hope you find this useful!

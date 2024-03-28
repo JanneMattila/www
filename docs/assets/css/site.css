@@ -87,6 +87,11 @@ hr {
     text-align: center;
 }
 
+.mermaid {
+    align-content: center;
+    cursor: zoom-in;
+}
+
 .carousel {
     cursor: pointer;
 }
@@ -111,6 +116,29 @@ hr {
     -ms-box-shadow: none;
     background-color: black;
     z-index: 9999;
+}
+
+.fullscreen-mermaid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    object-fit: contain;
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    -o-box-shadow: none;
+    -ms-box-shadow: none;
+    background-color: #f2f2f2;
+    z-index: 9999;
+    cursor: zoom-out;
 }
 
 .fullscreen-body {

@@ -6,6 +6,7 @@ class Carousel {
 
         console.log(this.imageNamePrefix);
 
+        this.elementName = elementName;
         this.carousel = document.getElementById(elementName);
 
         this.isOpened = false;
