@@ -25,7 +25,7 @@ in WAF.
 
 {% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/customrules1.png" %}
 
-Here is the scenario and the requirements for our application::
+Here is the scenario and the requirements of our application:
 
 - We have a web application running in Azure
   - It has "admin" section for internal users
@@ -82,7 +82,7 @@ You can customize error pages by the response code:
 
 In the above `RuleAllowCorporateIPs` test, internal users coming from known IP addresses
 were able to use the application even if later rule blocks the traffic.<br/>
-Note: This means that no further rules are evaluated for the internal users. This includes the managed rule sets.
+Note: This means that _no further rules are evaluated for the internal users_. This includes the managed rule sets.
 
 ---
 
@@ -349,10 +349,14 @@ is `/24`:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/appgw125.png" %}
 
-If you have DDOS
+If you have set the _maximum instance count_ to low number, then your Application Gateway
+won't scale up to the needed amount of instances and you might run into issues.
+
+_Did you know_ that if you have DDOS
 [network protection](https://azure.microsoft.com/en-us/pricing/details/ddos-protection/)
-enabled, then you only pay base price for your Application Gateway and not the higher WAF tier price
-**and** you're covered for the scale out costs:
+enabled, then you only pay base price for your Application Gateway and not the higher WAF tier price<br/>
+**and**<br/>
+you're covered for the scale out costs:
 
 > If the resource is protected with Network Protection,
 > any **scale out costs during a DDoS attack are covered** and
@@ -413,6 +417,8 @@ You can quickly create URL-based tests and run them against your application:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/loadtesting4.png" %}
 
 You can use testing to see how your rules are working and if you're getting alerts as expected.
+It literally takes 30 minutes to set up the test and run it. No excuses for not testing your setup!
+
 You can use
 [metrics](https://learn.microsoft.com/en-us/azure/application-gateway/application-gateway-metrics)
 view to see how your Application Gateway has scaled during your testing:
