@@ -211,9 +211,14 @@ Similarly, we can create the TXT record for the domain verification:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/txt.png" %}
 
-Now we're ready to deploy the Azure infrastructure assets.
+Next we can create certificate for the App Gateway.
 
 ## 3. Create certificate for App Gateway
+
+In this demo, I'm going to use self-signed certificate for the App Gateway but in real world scenario
+you would use a certificate from a trusted certificate authority.
+
+Here is the script to create the self-signed certificate for our domain (run script as administrator):
 
 ```powershell
 # Public fully qualified custom domain name
@@ -228,7 +233,14 @@ $cert = New-SelfSignedCertificate -certstorelocation cert:\localmachine\my -dnsn
 Export-PfxCertificate -Cert $cert -FilePath cert.pfx -Password $certificatePassword
 ```
 
+After executing the above script, you should have the `cert.pfx` file available for yourself.
+We'll place it next to our deployment files.
+
+Now we're ready to deploy the Azure infrastructure assets.
+
 ## 4. Deploy Azure infrastructure assets
+
+In our previous steps we've created assets that we now need to pass to our deployment script:
 
 ```powershell
 $result = .\deploy.ps1 `
@@ -241,35 +253,20 @@ $result = .\deploy.ps1 `
 $result.Outputs.ip.value
 ```
 
-```powershell
-{
-  priority: 10
-  name: 'RuleAllowEasyAuth'
-  action: 'Allow'
-  ruleType: 'MatchRule'
-  matchConditions: [
-    {
-      operator: 'EndsWith'
-      negationConditon: false
-      transforms: [
-        'Lowercase'
-      ]
-      matchVariables: [
-        {
-          variableName: 'RequestUri'
-        }
-      ]
-      matchValues: [
-        '/admin/.auth/login/aad/callback'
-      ]
-    }
-  ]
-}
-```
+After the deployment script has finished, you should have the public IP of the Application Gateway available.
+That we're going to use in next step.
+
+There are couple of things to note in the deployment script:
+- Platform certificate causes specific automation
+TBA
+
+Here are the deployed resources:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/resources.png" %}
 
 ## 5. Create post-deployment DNS records
+
+Now we can create the A record for the domain pointing to the public IP of the Application Gateway:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/a.png" %}
 
@@ -296,6 +293,32 @@ And lastly, we start to test the App Service authentication:
 ```powershell
 # Forces authentication
 curl "https://$domain/admin" --verbose --insecure
+```
+
+```powershell
+{
+  priority: 10
+  name: 'RuleAllowEasyAuth'
+  action: 'Allow'
+  ruleType: 'MatchRule'
+  matchConditions: [
+    {
+      operator: 'EndsWith'
+      negationConditon: false
+      transforms: [
+        'Lowercase'
+      ]
+      matchVariables: [
+        {
+          variableName: 'RequestUri'
+        }
+      ]
+      matchValues: [
+        '/admin/.auth/login/aad/callback'
+      ]
+    }
+  ]
+}
 ```
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/appgw-kql.png" %}
