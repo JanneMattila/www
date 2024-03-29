@@ -19,22 +19,7 @@ This time I have the following scenario:
   - First application `App` allows anonymous access
   - Second application `AdminApp` is protected by App Service authentication
     - Entra ID as the identity provider
-    - This should be reachable only at `/admin` and any other traffic should go to the first application
-- Application Gateway in front of the App Service
-  - Managed rule sets are enabled in the Web Application Firewall
-
-High-level steps for our deployment:
-
-1. Create Entra ID App Registration
-2. Create pre-deployment DNS records
-  - CNAME record for the domain pointing to the App Service
-  - TXT record for domain verification
-3. Create certificate for App Gateway
-4. Deploy Azure infrastructure assets
-5. Create post-deployment DNS records
-  - A record for the domain pointing to the public IP of the Application Gateway
-6. Test the setup
-
+    - This should be reachable only at `/admin` and any other traffic should go to the first application:
 {% include mermaid.html postfix="1" text="
 graph TD
     User -->|https://host/...|AppGw
@@ -42,7 +27,9 @@ graph TD
     AppGw -->|https://host/admin| AdminApp
 " %}
 
-
+- Application Gateway is in the front of the App Service
+  - Managed rule sets are enabled in the Web Application Firewall
+  - Redirects HTTP to HTTPS:
 {% include mermaid.html postfix="2" text="
 sequenceDiagram
     actor User
@@ -56,6 +43,10 @@ sequenceDiagram
     App->>AppGw: Return content
     AppGw->>User: Return content
 " %}
+
+<br/>
+Given the above scenario, the authentication flow should look like this:<br/>
+_Click diagram to expand_
 
 {% include mermaid.html postfix="3" text="
 sequenceDiagram
@@ -78,33 +69,53 @@ sequenceDiagram
     AppGw->>User: Return content
 " %}
 
-https://learn.microsoft.com/en-us/azure/architecture/best-practices/host-name-preservation
+## Deployment
 
-https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization#considerations-for-using-built-in-authentication
+In order to deploy our applications successfully behind reverse proxy scenario,
+there are a few things we need to understand:
+
+[Preserve the original HTTP host name between a reverse proxy and its back-end web application](https://learn.microsoft.com/en-us/azure/architecture/best-practices/host-name-preservation)
+
+[App Service and Authentication and authorization](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization)
 
 [Configure ASP.NET Core to work with proxy servers and load balancers](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-8.0)
 
-[Modifications to the request](https://learn.microsoft.com/en-us/azure/application-gateway/how-application-gateway-works#modifications-to-the-request)
+[Application Gateway and Modifications to the request](https://learn.microsoft.com/en-us/azure/application-gateway/how-application-gateway-works#modifications-to-the-request)
 
-Here's a high-level overview of App Service authentication process:
+From the above _good reading list_ we've learned following things:
 
-{% include mermaid.html postfix="4" text="
-sequenceDiagram
-    actor User
-    User->>EasyAuth: Access web app<br/>as a anonymous user
-    EasyAuth->>User: Redirect to<br/>authentication provider
-    User->>AuthProvider: Login
-    AuthProvider->>User: Redirect back to web app
-    User->>EasyAuth: Access web app<br/>as a authenticated user
-    Note right of EasyAuth: Add identity<br/>to HTTP headers
-    EasyAuth->>AppService: Request 
-    Note right of AppService: Access<br/>headers
-    AppService->>User: Response
-" %}
+- We need to preserve the original host name in the request to the App Service
+  - In practice this means that our App Service should be configured with same custom domain name as the Application Gateway
+- We need to make sure that our application works behind reverse proxy
+  - Application should work with `X-Forwarded-*` headers
+  - Our application should work when accessed using `/admin` path
+- Application Gateway adds `X-Original-Host` header to the backend request but does not insert `X-Forwarded-Host` header
+  - App Service authentication uses `X-Forwarded-Host` header to determine the redirect URL
+  - We need to create _rewrite rule_ in the Application Gateway to insert `X-Forwarded-Host` header to the backend requests 
+    **or** configure the App Service to use `X-Original-Host` header
+
+Here are the high-level steps for our deployment:
+
+1. Create Entra ID App Registration
+   - This will be used in the App Service authentication
+2. Create pre-deployment DNS records
+  - CNAME record for the domain pointing to the App Service
+  - TXT record for domain verification done by the App Service
+3. Create certificate for App Gateway
+4. Deploy Azure infrastructure assets
+5. Create post-deployment DNS records
+  - A record for the domain pointing to the public IP of the Application Gateway
+6. Test the setup
+
+Let's next go through these steps in more detail.
 
 ## 1. Create Entra ID App Registration
 
+I've written about
 [Entra ID Group automation with PowerShell]({% post_url 2024/02/2024-02-05-entra-id-group-automation %})
+which basically shows how I approach the Entra ID automation.
+
+I'll use the same approach here to create the App Registration for the Entra ID:
 
 ```powershell
 # Public fully qualified custom domain name
@@ -153,11 +164,29 @@ $clientSecretPlainText = $secret.secretText
 $clientSecret = ConvertTo-SecureString -String $clientSecretPlainText -Force -AsPlainText
 ```
 
+After executing the above script, you should have the `clientId` and `clientSecret` variables saved for yourself
+and following application deployed to the Entra ID:
+
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/myapp.png" %}
+
+We're going to use these values in our deployment later on.
 
 ## 2. Create pre-deployment DNS records
 
-```powershell	
+In our setup we have to now create the following DNS records:
+
+1. CNAME record for the domain pointing to the App Service
+2. TXT record for domain verification done by the App Service
+3. A record for the domain pointing to the public IP of the Application Gateway
+
+We cannot yet our A record because we don't have the public IP of the Application Gateway yet.
+That needs to be post deployment step.
+
+CNAME record we can create pre-deployment, because we set the domain name of the App Service in our deployment.
+App Service domain verification is something that we cannot set ourselves, but we can get the verification id
+using following script:
+
+```powershell
 # Get custom domain verification id
 $params = @{
   ResourceProviderName = "Microsoft.App"
@@ -174,9 +203,15 @@ $customDomainVerificationId
 # After deployment, create A record in your DNS zone -> $domain -> <public IP of AppGw>
 ```
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/txt.png" %}
+Now we're ready to create the CNAME record for the domain pointing to the App Service:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/cname.png" %}
+
+Similarly, we can create the TXT record for the domain verification:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/txt.png" %}
+
+Now we're ready to deploy the Azure infrastructure assets.
 
 ## 3. Create certificate for App Gateway
 
