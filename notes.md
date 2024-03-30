@@ -159,21 +159,28 @@ https://github.com/jch/html-pipeline#dependencies
 -------------------------------------------------
 ```
 
+- Scan you app regs
+  - Windows Store Deployer - expires: 12/31/2299
+  - Resource Graph query
+- Func and v6
 - ACS and SMTP email sending
   - App registration rest api
   - https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email-smtp/smtp-authentication
-- Func and v6
 - AKS and Key Vault integration and updating secrets
   - Event Grid to Webhook
+- Maintenance task as Container App
+  - Cost, private vs. Func app
+  - https://github.com/Azure/CloudShell
+  - https://mcr.microsoft.com/en-us/product/azure-powershell/about
 - Azure DevOps and getting rid of the Personal Access Tokens
-- Scan you app regs
-  - Windows Store Deployer - expires: 12/31/2299
+- Echo & Webhooks
 - Office 365 Group and Teams incoming webhook
 - AppService and Private Endpoint and DNS
   - Web app network tester
   - One target resource as private and other as public e.g., key vault
 - VNET Private Link Service
   - Storage account
+  - Resource Graph query to find out the exposes services
   - AKS
   - https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-overview#private-endpoint-properties
   - https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-overview#private-link-resource
@@ -184,10 +191,6 @@ https://github.com/jch/html-pipeline#dependencies
     - Provider approves
 - VNET transitive peering
   - https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-faq#if-i-peer-vneta-to-vnetb-and-i-peer-vnetb-to-vnetc-does-that-mean-vneta-and-vnetc-are-peered
-- Maintenance task as Container App
-  - Cost, private vs. Func app
-  - https://github.com/Azure/CloudShell
-  - https://mcr.microsoft.com/en-us/product/azure-powershell/about
 - Export Azure Resource templates to git repo daily
 - Azure PowerShell & ResourceId vs. Rest API
   - Invoke-AzVMRunCommand `
@@ -214,6 +217,7 @@ https://github.com/jch/html-pipeline#dependencies
 - RayLib
   - https://www.raylib.com/examples.html
   - https://github.com/ChrisDill/Raylib-cs
+  - SDL 2.0
 - Internet scam sites, DNS
   - How old is the domain
   - https://en.wikipedia.org/wiki/WHOIS
@@ -263,7 +267,6 @@ https://github.com/jch/html-pipeline#dependencies
 - Azure Firewall & No network connectivity
 - AKS Edge Essentials
  - This deployment has exceeded its 30 day trial period. For full update support and commercial use, please acquire license as per the methods described at https://aka.ms/aks-edge/licensing. The current End-User-License-Agreement only allows use for development or testing purposes. It does not allow commercial deployments and hence this cluster may not receive periodic updates and upgrades
-- Echo & Webhooks
 - Sticky Notes
 - API Examples
 - AKS Workshop

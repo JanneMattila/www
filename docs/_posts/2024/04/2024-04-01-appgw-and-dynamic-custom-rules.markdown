@@ -28,8 +28,9 @@ in WAF.
 Here is the scenario and the requirements of our application:
 
 - We have a web application running in Azure
-  - It has "admin" section for internal users
+  - It has "admin" section for internal usage scenarios
     - Work from home users can access it from anywhere
+    - This group of includes users from external companies e.g., outsourced customer service users
     - Internal users are very important and they should always have access to the application
   - Majority of the external users are from Finland or from the nearby countries
     - Less than 5 % of the usage is outside these known countries
@@ -43,6 +44,7 @@ and see how those rules have been designed to support those requirements that I'
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/customrules2.png" %}
 
 `RuleAllowCorporateIPs` rule is set to _allow_ traffic from known Corporate IP ranges.
+This includes known IP addresses of your service provider companies who are using the application.
 This means that no matter what, internal users can connect to the application
 from the Office network or if they use VPN and it's configured this scenario in mind.
 

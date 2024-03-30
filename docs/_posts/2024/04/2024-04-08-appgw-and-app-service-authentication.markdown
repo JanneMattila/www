@@ -54,7 +54,7 @@ sequenceDiagram
     actor User
     participant AppGw
     participant AdminApp
-    User->>AppGw: http://host/admin
+    User->>AppGw: https://host/admin
     AppGw->>AdminApp: Proxy request<br/>https://adminapp/admin
     AdminApp->>AppGw: EasyAuth redirects to Entra ID
     Note left of AdminApp: redirect_uri:<br/>https://host/admin/signin-oidc 

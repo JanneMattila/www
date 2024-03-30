@@ -1,0 +1,24 @@
+<blockquote id="daysUntil" style="display: none;">
+</blockquote>
+
+<script>
+    let today = Date.now();
+    let targetDate = Date.parse("{{ include.targetDate }}");
+
+    let diff = targetDate - today;
+    let days = Math.round(diff / (1000 * 3600 * 24));
+
+    console.log(days);
+    const element = document.getElementById("daysUntil");
+
+    if (days > 0) {
+        const element = document.getElementById("daysUntil");
+        element.innerText = "{{ include.textBefore }}" + days;
+        element.style.display = "";
+    }
+    else if ("{{ include.textAfter }}".length > 0) {
+        element.innerText = "{{ include.textAfter }}";
+        element.style.display = "";
+    }
+
+</script>
