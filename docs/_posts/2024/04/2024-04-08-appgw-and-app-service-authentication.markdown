@@ -26,7 +26,7 @@ graph TD
     AppGw -->|https://host/| App
     AppGw -->|https://host/admin| AdminApp
 " %}
-
+    - And yes, potentially `AdminApp` could be accessible via private network only, but in this scenario it was decided to use external access
 - Application Gateway is in the front of the App Service
   - Managed rule sets are enabled in the Web Application Firewall
   - Redirects HTTP to HTTPS:

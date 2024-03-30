@@ -27,11 +27,11 @@ in WAF.
 
 Here is the scenario and the requirements of our application:
 
-- We have a web application running in Azure
+- We have a public facing web application running in Azure
   - It has "admin" section for internal usage scenarios
     - Work from home users can access it from anywhere
-    - This group of includes users from external companies e.g., outsourced customer service users
-    - Internal users are very important and they should always have access to the application
+    - This includes users from external companies e.g., outsourced customer service users
+    - Internal users are very important, and they should always have access to the application
   - Majority of the external users are from Finland or from the nearby countries
     - Less than 5 % of the usage is outside these known countries
 - Web application is protected using Application Gateway and WAF
@@ -94,13 +94,13 @@ Next, let's see what happens if I have more usage than allowed by the `RuleRateL
 
 If the usage was above the configured threshold, rate limiting started
 blocking traffic in order to protect our application.
-You can think of it as safety mechanism in this scenario.
+You can think of it as a safety mechanism in this scenario.
 
 ---
 
-For the `RuleGeoDeny` rule we'll use slightly different approach
+For the `RuleGeoDeny` rule we'll use a slightly different approach
 since it's not set to block the traffic all the time.
-We can change it to block traffic it if we notice that we're under some kind of attack or suspicious activity is ongoing.
+We can change it to block traffic if we notice that we're under some kind of attack or suspicious activity is ongoing.
 When enabled, it will block traffic coming from countries that are not in the _allowed country list_.
 
 You can change this rule either directly from the Azure Portal or by using automation.
@@ -149,12 +149,12 @@ You can use the script like this:
 We can use 
 [PowerShell script automation]({% post_url 2023/10/2023-10-30-automating-maintenance-tasks-part1 %})
 for running these kind of automations. Automation can run e.g., every 5 minutes to
-check if rules needs to be adjusted.
+check if rules need to be adjusted.
 
-This automation enables us to _narrow down the access_ and thus reduce the overall impact.
+This automation enables us to _narrow down access_ and thus reduce the overall impact.
 It does mean that users outside the allowed countries won't be able to access the application,
 but it's a trade-off that we're willing to take to protect our application availability
-to the majority of the users.
+to most of the users.
 
 ---
 
@@ -231,12 +231,12 @@ You could do _wild_ logic by using
 [geo_distance_2points](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/geo-distance-2points-function)
 and block traffic if the distance is above certain limit (keeping in mind the inaccuracies of IP based geolocation).
 
-You imagination is the limit in these kind of automations!
+Your imagination is the limit in these kinds of automations!
 
 ---
 
 For our demo purposes, let's use the above _simple rate limiting like query_ to add, update or delete the dynamic rule
-(here is abbreviated version of the script but full script is available in the GitHub repository mentioned later in this post):
+(here is an abbreviated version of the script but full script is available in the GitHub repository mentioned later in this post):
 
 ```powershell
 Param (
@@ -310,7 +310,7 @@ the following rule will be added to the Application Gateway:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/waf2.png" %}
 
-If the situation chances and there are no IP addresses that have made over 10 000 requests in the last 60 minutes, the rule will be removed:
+If the situation changes and there are no IP addresses that have made over 10 000 requests in the last 60 minutes, the rule will be removed:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/rules1.png" %}
 
@@ -320,7 +320,7 @@ Rule itself is simple, since it's just blocks specific IP addresses based on the
 
 In the above example, we've used the requirements of our application to design the rules
 in our Application Gateway and WAF.
-And this brings us to the next very impontant points:
+And this brings us to the next very important points:
 
 ## I've deployed the Application Gateway.<br/>Is my job done now?
 
@@ -351,8 +351,8 @@ is `/24`:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/appgw125.png" %}
 
-If you have set the _maximum instance count_ to low number, then your Application Gateway
-won't scale up to the needed amount of instances and you might run into issues.
+If you have set the _maximum instance count_ to a low number, then your Application Gateway
+won't scale up to the needed number of instances and you might run into issues.
 
 _Did you know_ that if you have DDOS
 [network protection](https://azure.microsoft.com/en-us/pricing/details/ddos-protection/)
