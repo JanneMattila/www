@@ -26,7 +26,8 @@ graph TD
     AppGw -->|https://host/| App
     AppGw -->|https://host/admin| AdminApp
 " %}
-    - And yes, potentially `AdminApp` could be accessible via private network only, but in this scenario it was decided to use external access
+- `AdminApp` could be limited to be accessible from private network only, 
+  but it was decided to be used from internet
 - Application Gateway is in the front of the App Service
   - Managed rule sets are enabled in the Web Application Firewall
   - Redirects HTTP to HTTPS:
@@ -45,7 +46,7 @@ sequenceDiagram
 " %}
 
 <br/>
-Given the above scenario, the authentication flow should look like this:<br/>
+Here is the authentication flow for the above scenarios:<br/>
 _Click diagram to expand_
 
 {% include mermaid.html postfix="3" text="
@@ -89,7 +90,7 @@ From the above _good reading list_ we've learned following things:
 - We need to make sure that our application works behind reverse proxy
   - Application should work with `X-Forwarded-*` headers
   - Our application should work when accessed using `/admin` path
-- Application Gateway adds `X-Original-Host` header to the backend request but does not insert `X-Forwarded-Host` header
+- Application Gateway adds `X-Original-Host` header to the backend request but it does not insert `X-Forwarded-Host` header
   - App Service authentication uses `X-Forwarded-Host` header to determine the redirect URL
   - We need to create _rewrite rule_ in the Application Gateway to insert `X-Forwarded-Host` header to the backend requests 
     **or** configure the App Service to use `X-Original-Host` header
@@ -103,7 +104,7 @@ Here are the high-level steps for our deployment:
   - TXT record for domain verification done by the App Service
 3. Create certificate for App Gateway
 4. Deploy Azure infrastructure assets
-5. Create post-deployment DNS records
+5. Create post-deployment DNS record
   - A record for the domain pointing to the public IP of the Application Gateway
 6. Test the setup
 
@@ -121,8 +122,8 @@ I'll use the same approach here to create the App Registration for the Entra ID:
 # Public fully qualified custom domain name
 $domain = "myapp.jannemattila.com"
 
-# Create Azure AD app used in authentication
-$appPathIfNeeded = "/admin" # In this demo "admin" is the "secured" application
+# Create Entra ID app used in authentication
+$appPath = "/admin" # In this demo "admin" is the "secured" application
 $json = @"
 {
   "displayName": "$domain",
@@ -143,7 +144,7 @@ $json = @"
       "enableIdTokenIssuance": true
     },
     "redirectUris": [
-      "https://$domain$appPathIfNeeded/.auth/login/aad/callback"
+      "https://$domain$appPath/.auth/login/aad/callback"
     ]
   }
 }
@@ -205,11 +206,12 @@ $customDomainVerificationId
 
 Now we're ready to create the CNAME record for the domain pointing to the App Service:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/cname.png" %}
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/cname.png" %}
 
-Similarly, we can create the TXT record for the domain verification:
+Similarly, we can create the TXT record for the domain verification
+identifier we got from the previous script:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/txt.png" %}
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/txt.png" %}
 
 Next we can create certificate for the App Gateway.
 
@@ -256,19 +258,23 @@ $result.Outputs.ip.value
 After the deployment script has finished, you should have the public IP of the Application Gateway available.
 That we're going to use in next step.
 
-There are couple of things to note in the deployment script:
-- Platform certificate causes specific automation
-TBA
+Our deployment is using
+[App Service managed certificate](https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate?tabs=apex#create-a-free-managed-certificate)
+which requires a bit more complex Bicep code.
+There is good background for this topic in the Bicep repository discussions:
+
+{% include githubEmbed.html text="Azure/bicep/discussions/5006" link="Azure/bicep/discussions/5006" %}
 
 Here are the deployed resources:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/resources.png" %}
 
-## 5. Create post-deployment DNS records
+## 5. Create post-deployment DNS record
 
-Now we can create the A record for the domain pointing to the public IP of the Application Gateway:
+Before we can add A record to our DNS Zone, we have to remove the previous CNAME record.
+After that we're ready to create the A record with the public IP of the Application Gateway:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/a.png" %}
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/a.png" %}
 
 ## 6. Test the setup
 
@@ -280,6 +286,15 @@ curl "http://$domain" --verbose
 curl "http://$domain/admin/" --verbose
 ```
 
+Both should redirect the traffic to HTTPS.
+
+If you have been testing with CNAMEd domain, 
+you might need to flush the DNS resolver cache before you the your A record updated to your machine:
+
+```powershell
+ipconfig /flushdns
+```
+
 Second we need to test the anonymous access:
 
 ```powershell
@@ -288,6 +303,13 @@ curl "https://$domain" --verbose --insecure
 curl "https://$domain/any/path/here" --verbose --insecure
 ```
 
+We're using `--insecure` in the above commands because we're using self-signed certificate.
+If you open URL in the browser, you'll see the certificate error:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/certerror.png" %}
+
+You have to use **Advanced > Continue to the website** to proceed.
+
 And lastly, we start to test the App Service authentication:
 
 ```powershell
@@ -295,35 +317,102 @@ And lastly, we start to test the App Service authentication:
 curl "https://$domain/admin" --verbose --insecure
 ```
 
+You should get `401 Unauthorized` with redirect to the Entra ID login.
+
+When you try to run that process in your browser, you should get to this error page:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/autherror.png" %}
+
+If you use browser developer tools and analyze the flow, everything looks good.
+
+Let's analyze our Application Gateway firewall logs:
+
+```sql
+AGWFirewallLogs
+| where Action == "Blocked"
+```
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/firewalllogs1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/firewalllogs2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/firewalllogs3.png" %}
+
+We can quickly see that our Web Application Firewall is blocking the request.
+See more details about [managed rulesets](https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/application-gateway-crs-rulegroups-rules).
+
+The rule `949110` is actually _special_ rule since it blocks if the
+[anomaly scoring](https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/application-gateway-crs-rulegroups-rules?tabs=drs21#anomaly-scoring)
+is too high.
+If you look carefully the above logs, then you noticed following text there:
+
+> **Inbound Anomaly Score Exceeded (Total Score: 6)**
+
+Let's continue our digging by executing following query:
+
+```sql
+AGWFirewallLogs
+| where RequestUri == "/admin/.auth/login/aad/callback"
+```
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/firewalllogs4.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/firewalllogs5.png" %}
+
+So the interesting rules are actually:
+
+- [920230 - Multiple URL Encoding Detected](https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/application-gateway-crs-rulegroups-rules?tabs=drs21#anomaly-scoring:~:text=Abuse%20Attack%20Attempt-,920230,-Multiple%20URL%20Encoding)
+- [942430 - Restricted SQL Character Anomaly Detection (args): # of special characters exceeded (12)](https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/application-gateway-crs-rulegroups-rules?tabs=drs21#anomaly-scoring:~:text=SQL%20Injection%20Attack-,942430,-Restricted%20SQL%20Character)
+
+We have now few options to fix these [false positives](https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/web-application-firewall-troubleshoot#fixing-false-positives):
+
+Create exclusions to the managed rule sets for `920230` and `942430` rules for URL `/admin/.auth/login/aad/callback`
+
 ```powershell
-{
-  priority: 10
-  name: 'RuleAllowEasyAuth'
-  action: 'Allow'
-  ruleType: 'MatchRule'
-  matchConditions: [
-    {
-      operator: 'EndsWith'
-      negationConditon: false
-      transforms: [
-        'Lowercase'
-      ]
-      matchVariables: [
-        {
-          variableName: 'RequestUri'
-        }
-      ]
-      matchValues: [
-        '/admin/.auth/login/aad/callback'
-      ]
-    }
-  ]
+exclusions: [
+  {
+    matchVariable: 'RequestArgKeys'
+    selector: '/admin/.auth/login/aad/callback'
+    selectorMatchOperator: 'EndsWith'
+    exclusionManagedRuleSets: [
+      {
+        ruleSetType: 'Microsoft_DefaultRuleSet'
+        ruleSetVersion: '2.1'
+
+        ruleGroups: [
+          {
+            ruleGroupName: 'PROTOCOL-ENFORCEMENT'
+            rules: [
+              {
+                ruleId: '920230'
+              }
+            ]
+          }
+          {
+            ruleGroupName: 'SQLI'
+            rules: [
+              {
+                ruleId: '942440'
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
 }
 ```
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/appgw-kql.png" %}
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/backend-override-true.png" %}
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/redirect.png" %}
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/admin.png" %}
+
+## Troubleshooting tips
+
+TBA:
+- Check redirect url
+- Check app service diagnostic
+- Check browser developer tools
 
 ## Conclusion
 
