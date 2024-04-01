@@ -1,7 +1,7 @@
 ---
 layout: posts
 title: Network security groups and existing connections
-image: /assets/posts/2023/03/18/network-security-groups-and-existing-connections/nsg.png
+image: /assets/posts/2024/03/18/network-security-groups-and-existing-connections/nsg.png
 date: 2024-03-18 06:00:00 +0300
 categories: azure
 tags: azure networking

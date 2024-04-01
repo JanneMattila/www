@@ -4,7 +4,7 @@ image: /assets/posts/2024/04/08/appgw-and-app-service-authentication/resources.p
 date: 2024-04-08 06:00:00 +0300
 layout: posts
 categories: azure
-tags: azure appgw
+tags: azure appgw waf easyauth appservice
 ---
 I wrote about
 [Application Gateway and dynamic custom rules in Web Application Firewall]({% post_url 2024/04/2024-04-01-appgw-and-dynamic-custom-rules %})
@@ -265,6 +265,12 @@ There is good background for this topic in the Bicep repository discussions:
 
 {% include githubEmbed.html text="Azure/bicep/discussions/5006" link="Azure/bicep/discussions/5006" %}
 
+TBD:
+- Anonymous web app and C# code to manage the reverse proxy
+  - If you have access to source code
+- Admin web app and custom domain
+  - Only option if you cannot change the code
+
 Here are the deployed resources:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/resources.png" %}
@@ -345,6 +351,8 @@ is too high.
 If you look carefully the above logs, then you noticed following text there:
 
 > **Inbound Anomaly Score Exceeded (Total Score: 6)**
+
+We need to analyze the logs to see what is causing the high anomaly score.
 
 Let's continue our digging by executing following query:
 

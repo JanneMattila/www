@@ -1,10 +1,10 @@
 ---
 title: Application Gateway and dynamic custom rules in Web Application Firewall
-image: /assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/waf2.png
+image: /assets/posts/2024/04/01/appgw-and-dynamic-custom-rules/customrules1.png
 date: 2024-04-01 06:00:00 +0300
 layout: posts
 categories: azure
-tags: azure appgw
+tags: azure appgw waf
 ---
 [Azure Application Gateway](https://learn.microsoft.com/en-us/azure/application-gateway/overview)
 is a web traffic load balancer that allows you to secure access to your web applications.
@@ -16,7 +16,7 @@ More specifically, I'll focus on the
 [Custom rules](https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/custom-waf-rules-overview)
 and how they can be updated dynamically using automation.
 This goes hand in hand with the
-[rate-limiting](https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/rate-limiting-overview)
+[rate limiting](https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/rate-limiting-overview)
 which is fairly
 [new feature](https://azure.microsoft.com/en-us/updates/general-availability-ratelimit-rules-for-application-gateway-web-application-firewall/)
 in WAF.

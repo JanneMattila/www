@@ -1,7 +1,7 @@
 ---
 layout: posts
 title:  "\"Microsoft Defender for Cloud has detected suspicious activity in your environment\""
-image: /assets/posts/2023/11/13/defender-suspicious-activity/alert-list.png
+image: /assets/posts/2023/11/13/defender-suspicious-activity/alerts-list.png
 date:   2023-11-13 06:00:00 +0300
 categories: azure
 tags: azure security defender
