@@ -30,7 +30,7 @@
         <section id="main_content" class="inner">
             {{ content }}
 
-            {% assign postsByYearAndMonth = site.posts | where_exp: 'post', 'post.date > site.time' |
+            {% assign postsByYearAndMonth = site.posts | sort:"date" | where_exp: 'post', 'post.date > site.time' |
             group_by_exp:"post", "post.date | date: '%Y %B'" %}
             {% for postPerTime in postsByYearAndMonth %}
             <h1>{{ postPerTime.name }}</h1>
