@@ -27,7 +27,7 @@ graph TD
     AppGw -->|https://host/admin| AdminApp
 " %}
 - `AdminApp` could be limited to be accessible from private network only, 
-  but it was decided to be directly usable from internet
+  but it was decided to be directly usable from internet with seperate path and authentication
 - Application Gateway is in the front of the App Service
   - Managed rule sets are enabled in the Web Application Firewall
   - Capabilities of Application gateway are used extensively e.g., redirects HTTP to HTTPS:
@@ -44,11 +44,11 @@ sequenceDiagram
     App->>AppGw: Return content
     AppGw->>User: Return content
 " %}
-- Extra bonus: DNS is handled by separate team, so we have to ask them to do the changes for us pre- and post-deployment
+- **Extra bonus**: DNS is handled by separate team, so we have to ask them to do the changes for us pre- and post-deployment
 <br/>
 
 Here is the authentication flow for the above scenarios:<br/>
-_Click diagram to expand_
+_Click diagram to view in fullscreen_
 
 {% include mermaid.html postfix="3" text="
 sequenceDiagram
@@ -184,9 +184,8 @@ In our setup we have to now create the following DNS records:
 
 1. CNAME record for the domain pointing to the App Service
 2. TXT record for domain verification done by the App Service
-3. A record for the domain pointing to the public IP of the Application Gateway
 
-We cannot yet our A record because we don't have the public IP of the Application Gateway yet.
+We cannot yet create A record because we don't have the public IP of the Application Gateway available.
 That needs to be post deployment step.
 
 CNAME record we can create pre-deployment, because we set the domain name of the App Service in our deployment.
@@ -263,8 +262,8 @@ $result = .\deploy.ps1 `
 $result.Outputs.ip.value
 ```
 
-After the deployment script has finished, you should have the public IP of the Application Gateway available.
-That we're going to use in next step.
+After the deployment script has finished, we have the public IP of the Application Gateway available.
+We're going to use in next step.
 
 Our deployment is using
 [App Service managed certificate](https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate?tabs=apex#create-a-free-managed-certificate)
@@ -282,10 +281,9 @@ In our scenario, we've _on purpose_ different implementations for reverse proxy 
 This approach is also recommended in the Application Gateway backend pool settings:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/backend.png" %}
 
-Here is the link in the above image to [documentation](https://learn.microsoft.com/en-us/azure/architecture/best-practices/host-name-preservation).
-
-[Configure App Service with Application Gateway](https://learn.microsoft.com/en-us/azure/application-gateway/configure-web-app)
-
+Here is the link to the [documentation](https://learn.microsoft.com/en-us/azure/architecture/best-practices/host-name-preservation).
+Here is also step-by-step article how to 
+[Configure App Service with Application Gateway](https://learn.microsoft.com/en-us/azure/application-gateway/configure-web-app).
 
 Here are the deployed resources:
 
@@ -298,9 +296,11 @@ After that we're ready to create the A record with the public IP of the Applicat
 
 {% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/a.png" %}
 
+Now we're ready to test the setup.
+
 ## 6. Test the setup
 
-First we need to test the HTTP to HTTPS redirection in Application Gateway:
+First we need to test HTTP to HTTPS redirection in Application Gateway:
 
 ```powershell
 # Will redirect to HTTPS
@@ -341,7 +341,8 @@ curl "https://$domain/admin" --verbose --insecure
 
 You should get `401 Unauthorized` with redirect to the Entra ID login.
 
-When you _try to run the login process in your browser_, you should end up into this error page:
+When you _try to run the login process in your browser_, you might end up into this error page,
+so our setup is not yet fully working as expected:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/autherror.png" %}
 
@@ -355,6 +356,9 @@ AGWFirewallLogs
 ```
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/firewalllogs1.png" %}
+
+There is single `Blocked` request in the logs. Let's analyze it further:
+
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/firewalllogs2.png" %}
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/firewalllogs3.png" %}
 
@@ -390,7 +394,7 @@ So the interesting rules are actually:
 - [920230 - Multiple URL Encoding Detected](https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/application-gateway-crs-rulegroups-rules?tabs=drs21#anomaly-scoring:~:text=Abuse%20Attack%20Attempt-,920230,-Multiple%20URL%20Encoding)
 - [942430 - Restricted SQL Character Anomaly Detection (args): # of special characters exceeded (12)](https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/application-gateway-crs-rulegroups-rules?tabs=drs21#anomaly-scoring:~:text=SQL%20Injection%20Attack-,942430,-Restricted%20SQL%20Character)
 
-We have now few options to fix these [false positives](https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/web-application-firewall-troubleshoot#fixing-false-positives).
+We have to now fix these [false positives](https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/web-application-firewall-troubleshoot#fixing-false-positives).
 
 In this implementation, we're going to create exclusions for rules:
 
@@ -435,6 +439,7 @@ exclusions: [
 }
 ```
 
+When that is done, we can test the setup again, and you should see EasyAuth headers available for your application:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/admin.png" %}
 
@@ -445,7 +450,7 @@ In your implementation, you might stumble into some issues. Here are few tips to
 ### App Service authentication isues
 
 If you're having issues with App Service authentication, you might want to start by analyzing with browser developer tools
-and pay special attention to the _redirec url:
+and pay special attention to the _redirect url_:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/redirect.png" %}
 
@@ -470,7 +475,7 @@ _Diagnose and solve problems_ and then _Investigate EasyAuth errors_:
 
 ### Reverse proxy issues:
 
-You try to handle to handle reverse proxy scenario in your application the code but it still
+You try to handle reverse proxy scenario in your application the code but it still
 leaks the original host name out:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/name1.png" %}
@@ -546,7 +551,7 @@ You might get following output when accessing `/admin` path:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/path1.png" %}
 
 Application code actually resorted to the 404 handler since it didn't find content for that page.
-If you expected following mapping:
+This might happen if you expected following automatic  mapping of the path:
 
 ```text
 https://myapp.jannemattila.com/admin -> https://adminapp.azurewebsites.net/
@@ -554,12 +559,15 @@ https://myapp.jannemattila.com/admin -> https://adminapp.azurewebsites.net/
 
 Options to fix this issue:
 
-Option 1: Merge these two apps to one
+**Option 1: Merge these two apps to one**
 
 On purpose I've separated these two apps to show how you can handle different scenarios.
 But if you don't have need to have separate apps, then you don't have to handle the path at all.
+_Sometimes_ this is valid option.
 
-Option 2: Handle the path in your application code
+**Option 2: Handle the path in your application code**
+
+This is framework specific but in ASP.NET Core you can use `UsePathBase`:
 
 ```csharp
 // Abbreviated code
@@ -569,11 +577,49 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 }
 ```
 
-Your application knows to operate correctly and returns the content for the `/admin` path:
+And for your static assets your might need to do certain tricks as well e.g., 
+javascript assets with fixed paths. Here are some options to think and test:
+
+[The Document Base URL element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base):
+
+```html
+<base href="/admin/">
+```
+
+In `cshtml` files you can use `Url.Content` to get the root path:
+
+```html
+<script>
+    var WebApp = WebApp || {};
+    WebApp.Root = "@Url.Content("~/")";
+
+    console.log(`WebApp.Root: ${WebApp.Root}`);
+</script>
+```
+
+That can be used to build other paths in your application e.g., SignalR hub connection in javascript:
+
+```javascript
+// Abbreviated code
+let hubRoute = `${WebApp.Root}Echo`;
+let connection = new signalR.HubConnectionBuilder()
+    .withUrl(hubRoute)
+    .withAutomaticReconnect()
+    .withHubProtocol(protocol)
+    .build();
+```
+
+After implementing these changes, your application should work correctly from `/admin` path:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/path3.png" %}
 
-Option 3: Rewrite rule in Application Gateway:
+**Option 3: Rewrite rule in Application Gateway**
+
+You can use Application Gateway to rewrite the path before it's sent to the backend app.
+See more details from the documentation:
+[Rewrite HTTP headers and URL with Application Gateway](https://learn.microsoft.com/en-us/azure/application-gateway/rewrite-http-headers-url).
+
+Here is how you can rewrite the path in the Application Gateway:
 
 ```powershell
 {
@@ -599,23 +645,22 @@ Now backend app is receiving the request without the `/admin` path:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/path2.png" %}
 
-But you easily might leak out the original path in the response and they might be hard to rewrite in the Application Gateway:
+But you can easily leak out the original path in the response and they might be hard to rewrite in the Application Gateway:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/path4.png" %}
 
-Option 4: Virtual directories in App Service
+**Option 4: Virtual directories in App Service**
 
 _This is not recommended option_ but _technically_ you can use virtual directories in App Service.
 Of course this option is not available unless you use Windows and
-deploy your code directly to the App Service (in another words if you use containers this is not even option)..
+deploy your code directly to the App Service (in another words if you use containers this is not even option).
 
-But from the above options, I would recommend to handle the path in the application code
-if you need to expose your application from different paths.
+But do pay attention to this and test it carefully so that you don't get suprises.
 
 ## Conclusion
 
 In this post, I showed how to combine App Service authentication with Application Gateway and Web Application Firewall.
-I used Entra ID as the identity provider and created a custom domain for the App Service.
+I tried to cover different aspects related to this scenario so you can easily adapt this to your own needs.
 
 This was originally published in my GitHub repository:
 

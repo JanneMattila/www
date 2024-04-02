@@ -1,4 +1,6 @@
 <blockquote id="daysUntil" style="display: none;">
+    <p id="daysUntilText"></p>
+    <p><b id="daysUntilNumber"></b></p>
 </blockquote>
 
 <script>
@@ -9,16 +11,17 @@
     let days = Math.round(diff / (1000 * 3600 * 24));
 
     console.log(days);
-    const element = document.getElementById("daysUntil");
+    const elementDiv = document.getElementById("daysUntil");
 
     if (days > 0) {
-        const element = document.getElementById("daysUntil");
-        element.innerText = "{{ include.textBefore }}" + days;
-        element.style.display = "";
+        document.getElementById("daysUntilText").innerText = "{{ include.textBefore }}";
+        document.getElementById("daysUntilNumber").innerText = days;
     }
     else if ("{{ include.textAfter }}".length > 0) {
-        element.innerText = "{{ include.textAfter }}";
-        element.style.display = "";
+        document.getElementById("daysUntilText").innerText = "{{ include.textAfter }}";
+        document.getElementById("daysUntilNumber").style.display = "none";
     }
+
+    elementDiv.style.display = "";
 
 </script>

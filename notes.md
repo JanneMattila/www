@@ -201,6 +201,7 @@ https://github.com/jch/html-pipeline#dependencies
 - Container apps and DNS
 - AppGw export IPs and do reverse lookup to locations, report view
 - AKS and YARP
+- Application Insights and telemetry initializer, otel
 - PowerShell & FileSystemWatcher
   - https://jqlang.github.io/jq/
   - Azure IoT jq development helper pwsh script, save and run jq

@@ -1,7 +1,7 @@
 ---
 title: Application Gateway and privatelink
 image: /assets/posts/2024/04/15/appgw-and-privatelink/appgw.png
-date: 2024-04-15 06:00:00 +0300
+date: 2030-12-31 06:00:00 +0300
 layout: posts
 categories: azure
 tags: azure appgw
