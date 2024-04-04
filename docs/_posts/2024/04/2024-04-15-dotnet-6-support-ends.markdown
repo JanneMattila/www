@@ -42,7 +42,9 @@ But hey wait, this also includes _all other services and places_ where you have 
 in _any_ cloud and on-premises.
 This includes things like Azure App Service or _any container_ solution using [.NET 6 or 7](https://hub.docker.com/_/microsoft-dotnet-sdk). 
 
-What about PowerShell then?
+What about PowerShell then? It's
+[linked to .NET version](https://learn.microsoft.com/en-us/powershell/scripting/install/powershell-support-lifecycle?view=powershell-7.4#release-history)
+after all.
 [PowerShell End-of-support dates](https://learn.microsoft.com/en-us/powershell/scripting/install/powershell-support-lifecycle?view=powershell-7.4#powershell-end-of-support-dates)
 shows the following:
 
@@ -53,8 +55,12 @@ That means I need to remember to update my various [PowerShell script automation
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/15/dotnet-6-support-ends/powershell.png" %}
 
-I'm looking at you [7.4 preview](https://azure.microsoft.com/en-us/updates/public-preview-powershell-74-support-for-azure-functions/):
+[PowerShell 7.4 Preview](https://azure.microsoft.com/en-us/updates/public-preview-powershell-74-support-for-azure-functions/)
+is new but I'm already looking forward to it:
+
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/15/dotnet-6-support-ends/powershell2.png" %}
+
+---
 
 Let's look up some helper scripts that you can take into use to study your environment.
 Here is a PowerShell script that lists all Azure App Services and their configurations:
