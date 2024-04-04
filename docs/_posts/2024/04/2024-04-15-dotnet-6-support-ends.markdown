@@ -128,6 +128,10 @@ resources
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/15/dotnet-6-support-ends/queryresults.png" %}
 
+See
+[Azure Resource Graph Explorer for Microsoft.Web resources](https://techcommunity.microsoft.com/t5/apps-on-azure-blog/azure-resource-graph-explorer-for-microsoft-web-resources/ba-p/3798295)
+for more good examples.
+
 The above script and resource graph query are modified from the ones used to find out which Azure App Services were using PHP:
 
 {% include githubEmbed.html text="JanneMattila/webapp-php-linux-azure-sql" link="JanneMattila/webapp-php-linux-azure-sql" %}
@@ -137,19 +141,46 @@ If I study the above scan results, I can see that it's **not so easy to identify
 Clearly `POWERSHELL|7.2` and `DOTNETCORE|7.0` are easy ones to identify but what about
 container images e.g., `DOCKER|jannemattila/webapp-myip:1.1.4`?
 
+It makes this topic more complex since many tools **report these in reactive manner and not proactively**.
+
+Let me quickly show what I mean by importing _super old_ a .NET 2.2.401 image to Azure Container Registry:
+
 ```bash
-az acr import -n $acr_name -t "bad/dotnet/core/sdk:2.2.401" --source "mcr.microsoft.com/dotnet/core/sdk:2.2.401" 
+az acr import \
+  -n $acr_name \
+  -t "bad/dotnet/core/sdk:2.2.401" \
+  --source "mcr.microsoft.com/dotnet/core/sdk:2.2.401" 
 ```
 
+And then I can see the image in Azure Container Registry:
+
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/15/dotnet-6-support-ends/acr1.png" %}
+
+It starts to show me information about the vulnerabilities etc.:
+
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/15/dotnet-6-support-ends/acr2.png" %}
+
+It does help me to identify the old images and their vulnerabilities
+but it does not really help looking for near future end of support dates.
+
+Obviously, I can solve the mystery of the `DOCKER|jannemattila/webapp-myip:1.1.4` by looking at the Dockerfile:
+
+{% include githubEmbed.html text="JanneMattila/webapp-myip" link="JanneMattila/webapp-myip/blob/b2c8713f430174fa76136daa4872584f012e7157/src/WebApp/Dockerfile#L4" %}
+
+So _ouch_, I need to update this one to .NET 8 as well.
 
 ## Conclusion
 
-We should now update these .NET 6 and .NET 7 apps to .NET 8. This gives use some time since it is supported still:
+As I wrote into
+[Preparing for Azure services retirements]({% post_url 2023/09/2023-09-25-preparing-for-azure-services-retirements %})
+post, it's good to have a plan in place to monitor these topics regularly
+so that it doesn't come as an surprise.
+
+And for our .NET 6 and .NET 7 apps, we need to upgrade them to .NET 8.
+This gives use some time since it is supported still:
 
 {% include daysUntil.html postfix="3" targetDate="2026-11-10" textBefore="Days until .NET 8 support ends: " textAfter=".NET 8 support ends 10 November 2026" %}
 
-I have now a bit of work to do to update my apps. I hope you update yours.
+I have now a bit of work to do to update my apps. I hope you check your own apps.
 
 I hope you find this useful!
