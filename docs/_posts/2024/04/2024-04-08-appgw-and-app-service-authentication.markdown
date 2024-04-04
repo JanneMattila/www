@@ -649,13 +649,16 @@ But you can easily leak out the original path in the response and they might be 
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/path4.png" %}
 
-**Option 4: Virtual directories in App Service**
+**Option 4: Virtual applications and directories in App Service**
 
-_This is not recommended option_ but _technically_ you can use virtual directories in App Service.
-Of course this option is not available unless you use Windows and
-deploy your code directly to the App Service (in another words if you use containers this is not even option).
+_This is not recommended option_ but _technically_ you can use virtual applications and directories in App Service.
+Of course this option is only available in Windows and
+if deploy your code directly to the App Service (so not even technically possible is using Linux or containers).
+There is excellent write-up about this in [Stack Overflow](https://stackoverflow.com/a/74948250).
 
-But do pay attention to this and test it carefully so that you don't get suprises.
+---
+
+So please do test these options and see which one fits your needs the best.
 
 ## Conclusion
 

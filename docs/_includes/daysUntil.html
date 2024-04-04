@@ -1,27 +1,30 @@
-<blockquote id="daysUntil" style="display: none;">
-    <p id="daysUntilText"></p>
-    <p><b id="daysUntilNumber"></b></p>
+{% assign elementPostfix = include.postfix | default: '1' %}
+
+<blockquote id="daysUntil{{ elementPostfix }}" style="display: none;">
+    <p id="daysUntilText{{ elementPostfix }}"></p>
+    <p><b id="daysUntilNumber{{ elementPostfix }}"></b></p>
 </blockquote>
 
 <script>
-    let today = Date.now();
-    let targetDate = Date.parse("{{ include.targetDate }}");
+    {
+        let today = Date.now();
+        let targetDate = Date.parse("{{ include.targetDate }}");
 
-    let diff = targetDate - today;
-    let days = Math.round(diff / (1000 * 3600 * 24));
+        let diff = targetDate - today;
+        let days = Math.round(diff / (1000 * 3600 * 24));
 
-    console.log(days);
-    const elementDiv = document.getElementById("daysUntil");
+        console.log(days);
+        const elementDiv = document.getElementById("daysUntil{{ elementPostfix }}");
 
-    if (days > 0) {
-        document.getElementById("daysUntilText").innerText = "{{ include.textBefore }}";
-        document.getElementById("daysUntilNumber").innerText = days;
+        if (days > 0) {
+            document.getElementById("daysUntilText{{ elementPostfix }}").innerText = "{{ include.textBefore }}";
+            document.getElementById("daysUntilNumber{{ elementPostfix }}").innerText = days;
+        }
+        else if ("{{ include.textAfter }}".length > 0) {
+            document.getElementById("daysUntilText{{ elementPostfix }}").innerText = "{{ include.textAfter }}";
+            document.getElementById("daysUntilNumber{{ elementPostfix }}").style.display = "none";
+        }
+
+        elementDiv.style.display = "";
     }
-    else if ("{{ include.textAfter }}".length > 0) {
-        document.getElementById("daysUntilText").innerText = "{{ include.textAfter }}";
-        document.getElementById("daysUntilNumber").style.display = "none";
-    }
-
-    elementDiv.style.display = "";
-
 </script>
