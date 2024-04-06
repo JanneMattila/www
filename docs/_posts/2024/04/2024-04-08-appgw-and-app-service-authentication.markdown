@@ -450,7 +450,7 @@ In your implementation, you might stumble into some issues. Here are a few tips 
 ### App Service authentication issues
 
 If you're having issues with App Service authentication, you might want to start by analyzing with browser developer tools
-and pay special attention to the _redirect url_:
+and pay special attention to the `redirect_uri`:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/08/appgw-and-app-service-authentication/redirect.png" %}
 
@@ -536,8 +536,8 @@ rewriteRuleSets: [
 After you've added the rewrite rule, you should see the `X-Forwarded-Host` header in your application:
 
 ```
-X-Forwarded-Host: contoso00000000031.azurewebsites.net
-X-ORIGINAL-HOST: contoso00000000031.azurewebsites.net
+X-Forwarded-Host: myapp.jannemattila.com
+X-ORIGINAL-HOST: myapp.jannemattila.com
 ```
 
 **Important note**: ASP.NET _eats_ `X-Forwarded-Host` header if it's using it so you might not see
