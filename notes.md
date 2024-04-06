@@ -159,21 +159,14 @@ https://github.com/jch/html-pipeline#dependencies
 -------------------------------------------------
 ```
 
-- Scan you app regs
-  - Windows Store Deployer - expires: 12/31/2299
-  - Resource Graph query
-- Func and v6
 - ACS and SMTP email sending
   - App registration rest api
   - https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email-smtp/smtp-authentication
-- AKS and Key Vault integration and updating secrets
-  - Event Grid to Webhook
 - Maintenance task as Container App
   - Cost, private vs. Func app
   - https://github.com/Azure/CloudShell
   - https://mcr.microsoft.com/en-us/product/azure-powershell/about
 - Azure DevOps and getting rid of the Personal Access Tokens
-- Echo & Webhooks
 - Office 365 Group and Teams incoming webhook
 - AppService and Private Endpoint and DNS
   - Web app network tester

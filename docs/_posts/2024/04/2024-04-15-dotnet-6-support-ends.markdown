@@ -40,7 +40,7 @@ These timelines are best explained and illustrated with diagram in this blog pos
 
 But hey wait, this also includes _all other services and places_ where you have deployed .NET 6 or 7 code
 in _any_ cloud and on-premises.
-This includes things like Azure App Service or _any container_ solution using [.NET 6 or 7](https://hub.docker.com/_/microsoft-dotnet-sdk). 
+This includes things like Azure App Service, Static web apps, IIS or _any container_ solution using [.NET 6 or 7](https://hub.docker.com/_/microsoft-dotnet-sdk). 
 
 What about PowerShell then? It's
 [linked to .NET version](https://learn.microsoft.com/en-us/powershell/scripting/install/powershell-support-lifecycle?view=powershell-7.4#release-history)
@@ -179,7 +179,7 @@ So _ouch_, I need to update this one to .NET 8 as well.
 
 As I wrote into
 [Preparing for Azure services retirements]({% post_url 2023/09/2023-09-25-preparing-for-azure-services-retirements %})
-post, it's good to have a plan in place to monitor these topics regularly
+post, it's good to have a plan in place to follow these topics regularly
 so that it doesn't come as an surprise.
 
 And for our .NET 6 and .NET 7 apps, we need to upgrade them to .NET 8.

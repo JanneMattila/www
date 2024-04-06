@@ -7,6 +7,15 @@ categories: azure
 tags: azure appgw
 ---
 
+{% include mermaid.html postfix="1" text="
+sequenceDiagram
+    actor User
+    participant KeyVault
+    participant App
+    User->>KeyVault: Update key
+    App->>KeyVault: Pull for updates<br/>e.g., every 5 minutes
+" %}
+
 _Click diagram to view in fullscreen_
 
 {% include mermaid.html postfix="1" text="
@@ -54,12 +63,14 @@ spec:
           objectVersion: ""
     tenantId: "${tenant_id}"
   # These are optional. If not provided, then no K8s secret will be created.
+  # OPTIONAL->
   secretObjects:
   - data:
     - key: mysecret1
       objectName: secret1
     secretName: app-secret
     type: Opaque
+  # <-OPTIONAL
 ```
 
 ```console
@@ -97,3 +108,7 @@ $ watch -n 1 cat /mnt/secrets-store/secret1 /mnt/secrets-volume/mysecret1
   }
 }
 ```
+
+https://github.com/kubernetes-sigs/secrets-store-csi-driver/issues/298
+
+TBA: Echo & Webhooks
