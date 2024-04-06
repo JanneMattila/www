@@ -26,8 +26,8 @@ graph TD
     AppGw -->|https://host/| AnonymousApp
     AppGw -->|https://host/admin| AdminApp
 " %}
-- `AdminApp` could be limited to be accessible from private network only, 
-  but it was decided to be directly usable from internet with seperate path and authentication
+- `AdminApp` could be limited to private network only, 
+  but it was decided to be directly accessible from internet with seperate path and authentication
 - Application Gateway is in the front of the App Service
   - Managed rule sets are enabled in the Web Application Firewall
   - Capabilities of Application gateway are used extensively e.g., redirects HTTP to HTTPS:
