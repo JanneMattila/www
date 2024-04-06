@@ -14,8 +14,7 @@ because I personally have received the following email about it:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/15/dotnet-6-support-ends/actionrequiredemail.png" %}
 
-I have, _of course_, quite many Azure Functions in use and now would be good time to start planning
-the migration to newer .NET versions:
+I have, _of course_, quite a lot of Azure Functions in use and now would be good time to analyze this topic a bit:
 
 {% include daysUntil.html postfix="1" targetDate="2024-11-12" textBefore="Days until .NET 6 support ends: " textAfter=".NET 6 support has already ended 12 November 2024" %}
 
@@ -38,7 +37,11 @@ These timelines are best explained and illustrated with diagram in this blog pos
 
 [.NET 7 will reach End of Support on May 14, 2024](https://devblogs.microsoft.com/dotnet/dotnet-7-end-of-support/)
 
-But hey wait, this also includes _all other services and places_ where you have deployed .NET 6 or 7 code
+So, your upgrade path should be to **.NET 8**. 
+
+---
+
+**But hey wait**, this also includes _all other services and places_ where you have deployed .NET 6 or 7 code
 in _any_ cloud and on-premises.
 This includes things like Azure App Service, Static web apps, IIS or _any container_ solution using [.NET 6 or 7](https://hub.docker.com/_/microsoft-dotnet-sdk). 
 
@@ -116,7 +119,7 @@ $apps | Export-CSV "apps.csv" -Delimiter ";" -Force
 start "apps.csv" # Open Excel
 ```
 
-I can then glance quickly to see what am I running there:
+I can then glance quickly to see what I am running there:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/15/dotnet-6-support-ends/versions.png" %}
 
@@ -147,7 +150,7 @@ If I study the above scan results, I can see that it's **not so easy to identify
 Clearly `POWERSHELL|7.2` and `DOTNETCORE|7.0` are easy ones to identify but what about
 container images e.g., `DOCKER|jannemattila/webapp-myip:1.1.4`?
 
-It makes this topic more complex since many tools **report these in reactive manner and not proactively**.
+It makes this topic more complex since many tools **report these in a reactive manner and not proactively**.
 
 Let me quickly show what I mean by importing _super old_ a .NET 2.2.401 image to Azure Container Registry:
 
@@ -166,7 +169,7 @@ It starts to show me information about the vulnerabilities etc.:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/15/dotnet-6-support-ends/acr2.png" %}
 
-It does help me to identify the old images and their vulnerabilities
+It does help me to identify the old images and their vulnerabilities,
 but it does not really help looking for near future end of support dates.
 
 Obviously, I can solve the mystery of the `DOCKER|jannemattila/webapp-myip:1.1.4` by looking at the Dockerfile:
@@ -182,11 +185,11 @@ As I wrote into
 post, it's good to have a plan in place to follow these topics regularly
 so that it doesn't come as an surprise.
 
-And for our .NET 6 and .NET 7 apps, we need to upgrade them to .NET 8.
-This gives use some time since it is supported still:
+Now it's a good time to start looking for using .NET 8. 
+It then gives you then a lot more time to think about other upgrades in the future:
 
 {% include daysUntil.html postfix="3" targetDate="2026-11-10" textBefore="Days until .NET 8 support ends: " textAfter=".NET 8 support ends 10 November 2026" %}
 
-I have now a bit of work to do to update my apps. I hope you check your own apps.
+I now have a bit of work to do to update my apps. I hope you check and update yours.
 
 I hope you find this useful!
