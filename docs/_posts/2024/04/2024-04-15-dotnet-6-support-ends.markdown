@@ -6,11 +6,11 @@ layout: posts
 categories: azure
 tags: azure appgw
 ---
-I have previously wrote about
+I  previously wrote about
 [Preparing for Azure services retirements]({% post_url 2023/09/2023-09-25-preparing-for-azure-services-retirements %}).
 
 And now, it's time to remind everybody about the upcoming end of support for .NET 6,
-because I personally have received the following email about it:
+because I received the following email about it:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/15/dotnet-6-support-ends/actionrequiredemail.png" %}
 
@@ -37,12 +37,13 @@ These timelines are best explained and illustrated with diagram in this blog pos
 
 [.NET 7 will reach End of Support on May 14, 2024](https://devblogs.microsoft.com/dotnet/dotnet-7-end-of-support/)
 
-So, your upgrade path should be to **.NET 8**. 
+So, your upgrade path from .NET 7 should be to .NET 8 and
+from .NET 6 to .NET 8 or then to .NET 9 when it becomes available. 
 
 ---
 
-**But hey wait**, this also includes _all other services and places_ where you have deployed .NET 6 or 7 code
-in _any_ cloud and on-premises.
+**But hey wait**, this also includes _all other services and places_ where you have deployed .NET 6 or 7 code.
+This means  _any_ cloud and on-premises environments.
 This includes things like Azure App Service, Static web apps, IIS or _any container_ solution using [.NET 6 or 7](https://hub.docker.com/_/microsoft-dotnet-sdk). 
 
 What about PowerShell then? It's
@@ -119,7 +120,7 @@ $apps | Export-CSV "apps.csv" -Delimiter ";" -Force
 start "apps.csv" # Open Excel
 ```
 
-I can then glance quickly to see what I am running there:
+I can quickly see what I am running there:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/15/dotnet-6-support-ends/versions.png" %}
 
@@ -184,6 +185,8 @@ As I wrote into
 [Preparing for Azure services retirements]({% post_url 2023/09/2023-09-25-preparing-for-azure-services-retirements %})
 post, it's good to have a plan in place to follow these topics regularly
 so that it doesn't come as an surprise.
+Better to have it as part of your regular meeting agendas
+e.g., quarterly production readiness reviews in order to not miss these.
 
 Now it's a good time to start looking for using .NET 8. 
 It then gives you then a lot more time to think about other upgrades in the future:
