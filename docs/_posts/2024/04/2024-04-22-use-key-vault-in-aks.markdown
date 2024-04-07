@@ -1,6 +1,6 @@
 ---
-title: Using Key Vault with Azure Kubernetes Service
-image: /assets/posts/2024/04/22/using-key-vault-with-aks/keyvault.png
+title: Use Key Vault in Azure Kubernetes Service
+image: /assets/posts/2024/04/22/use-key-vault-in-aks/keyvault.png
 date: 2024-04-22 06:00:00 +0300
 layout: posts
 categories: azure
@@ -39,14 +39,14 @@ az aks create -g $resource_group_name -n $aks_name \
  --enable-oidc-issuer \
  --enable-workload-identity \
  # Enable auto rotation of secrets
-  --enable-secret-rotation \
-  # Poll interval for secret rotation
-  --rotation-poll-interval 2m \
-  # ...
+ --enable-secret-rotation \
+ # Poll interval for secret rotation
+ --rotation-poll-interval 2m \
+ # ...
 ```
 
 Couple of things to note here:
-- It's _add-on_ for AKS, which means that it's upgraded automatically when AKS is upgraded.
+- It's [add-on](https://learn.microsoft.com/en-us/azure/aks/integrations#add-ons) for AKS, which means that it's upgraded automatically when AKS is upgraded.
 - It's does support polling for updates, with a configurable interval.
 
 See more information about
@@ -89,11 +89,14 @@ spec:
 There are plenty of details there but main points are:
 
 - `${keyvault_name}` is the name of your Key Vault
-- `${aks_keyvault_client_id}` is the client ID of configured identity
+- `${aks_keyvault_client_id}` is the client ID of configured identity for connecting to Key Vault
 
-At the bottom there is `secretObjects` section, which is optional.
-If that is provided, then the secrets are _also_ stored in Kubernetes secrets.
+At the bottom there is `secretObjects` section, which is _optional_.
+If that is provided, then the secrets are _also_ stored as Kubernetes secrets.
 
+First, let's deploy the above without the `secretObjects` section:
+
+Second, let's deploy the above with the `secretObjects` section:
 
 ```console
 $ kubectl exec -it busybox-secrets-store-inline-wi -n secrets-app -- sh
@@ -103,12 +106,15 @@ $ cat /mnt/secrets-volume/mysecret1
 $ watch -n 1 cat /mnt/secrets-store/secret1 /mnt/secrets-volume/mysecret1
 ```
 
-App has to also monitor for file updates.
+From [documentation](https://learn.microsoft.com/en-us/azure/aks/csi-secrets-store-configuration-options#enable-and-disable-auto-rotation):
 
+> The application **needs to watch for the file change** from the volume mounted by the CSI driver.
+
+This might be tricky, if the application is not built this in mind.
 
 _Click diagram to view in fullscreen_
 
-{% include mermaid.html postfix="1" text="
+{% include mermaid.html postfix="2" text="
 sequenceDiagram
     actor User
     participant KeyVault
@@ -123,11 +129,11 @@ sequenceDiagram
     Secret->>App: Update secret
 " %}
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/using-key-vault-with-aks/keyvault.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/use-key-vault-in-aks/keyvault.png" %}
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/using-key-vault-with-aks/newsecret.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/use-key-vault-in-aks/newsecret.png" %}
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/using-key-vault-with-aks/events.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/use-key-vault-in-aks/events.png" %}
 
 {% include dockerEmbed.html text="JanneMattila/echo" link="r/jannemattila/echo" %}
 
