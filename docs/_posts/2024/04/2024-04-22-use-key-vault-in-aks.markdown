@@ -4,7 +4,7 @@ image: /assets/posts/2024/04/22/use-key-vault-in-aks/keyvault.png
 date: 2024-04-22 06:00:00 +0300
 layout: posts
 categories: azure
-tags: azure appgw
+tags: azure keyvault aks
 ---
 
 [Azure Key Vault](https://learn.microsoft.com/en-us/azure/key-vault/general/basic-concepts)
