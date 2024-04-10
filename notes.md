@@ -159,6 +159,7 @@ https://github.com/jch/html-pipeline#dependencies
 -------------------------------------------------
 ```
 
+- https://github.com/JanneMattila/some-questions-and-some-answers/blob/master/q%26a/aad-scan-permissions.ps1
 - ACS and SMTP email sending
   - App registration rest api
   - https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email-smtp/smtp-authentication
