@@ -1,6 +1,6 @@
 ---
-title: Use Key Vault in Azure Kubernetes Service
-image: /assets/posts/2024/04/22/use-key-vault-in-aks/keyvault.png
+title: Utilizing Key Vault in Azure Kubernetes Service
+image: /assets/posts/2024/04/22/utilizing-key-vault-in-aks/keyvault.png
 date: 2024-04-22 06:00:00 +0300
 layout: posts
 categories: azure
@@ -8,9 +8,10 @@ tags: azure keyvault aks
 ---
 
 [Azure Key Vault](https://learn.microsoft.com/en-us/azure/key-vault/general/basic-concepts)
-is a excellent service for storing your various secrets,   so that you don't have to store them in your code.
+is a excellent service for storing your various secrets,
+so that you don't have to store them in your code.
 
-If you need to fetch those secrets from your application, then typically you follow this kind of pattern:
+If you would have to implement Key Vault integration yourself, then very like you would have to follow this kind of pattern:
 
 {% include mermaid.html postfix="1" text="
 sequenceDiagram
@@ -21,7 +22,6 @@ sequenceDiagram
     App->>KeyVault: Pull for updates<br/>e.g., every 5 minutes
 " %}
 
-
 Luckily, there are many ready-made integrations available for Azure services, such as:
 [Use Key Vault references as app settings in Azure App Service and Azure Functions](https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references).
 Similarly, there is a such integration for 
@@ -30,7 +30,7 @@ and in this post we'll play around with it.
 
 [Azure Key Vault provider for Secrets Store CSI Driver](https://learn.microsoft.com/en-us/azure/aks/csi-secrets-store-driver)
 is the key enabler for this integration.
-You can enable it when creating your AKS cluster:
+You can enable it when creating your AKS cluster or enable it later on:
 
 ```bash
 az aks create -g $resource_group_name -n $aks_name \
@@ -57,7 +57,7 @@ in the documentation.
 Let's directly jump into the code and see how it works.
 I have created the following Key Vault with a secret in it:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/use-key-vault-in-aks/keyvault.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/utilizing-key-vault-in-aks/keyvault.png" %}
 
 To start using the Secrets Store CSI Driver, you need to create a _SecretProviderClass_:
 
@@ -152,22 +152,22 @@ This is new value
 
 In the above command, we started watching the secret file for changes:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/use-key-vault-in-aks/scenario1-watch1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/utilizing-key-vault-in-aks/scenario1-watch1.png" %}
 
 In the background, I'll update the secret to the Key Vault.
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/use-key-vault-in-aks/newsecret.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/utilizing-key-vault-in-aks/newsecret.png" %}
 
 After a while, the secret is updated in the pod:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/use-key-vault-in-aks/scenario1-watch2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/utilizing-key-vault-in-aks/scenario1-watch2.png" %}
 
 It takes at maximum the `rotation-poll-interval` time to update the secret in the pod.
-So, you should get that value reflected in less than 2 minutes (which was the default rotation poll interval).
+So, you should get that value reflected in less than 2 minutes (which is the default rotation poll interval).
 
-You can also see this from the logs:
+You can also see this from the Key Vault audit logs:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/use-key-vault-in-aks/logs.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/utilizing-key-vault-in-aks/logs.png" %}
 
 For our second test, let's deploy the above _SecretProviderClass_ **with** the `secretObjects` section.
 Here is our updated pod deployment:
@@ -236,17 +236,17 @@ Let's start the watch for those two files:
 
 Watching the files:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/use-key-vault-in-aks/scenario2-watch1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/utilizing-key-vault-in-aks/scenario2-watch1.png" %}
 
 After updating the secret in the Key Vault, the secret store specific file is updated:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/use-key-vault-in-aks/scenario2-watch2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/utilizing-key-vault-in-aks/scenario2-watch2.png" %}
 
 And the Kubernetes secret is updated after that:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/use-key-vault-in-aks/scenario2-watch3.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/utilizing-key-vault-in-aks/scenario2-watch3.png" %}
 
-But as you can see, in this test the time difference between the updates was ~1 minute.
+But as you can see, in the above test, time difference between these two  updates was ~1 minute.
 
 The above can be illustrated using the following diagram:
 
@@ -266,15 +266,44 @@ sequenceDiagram
     Secret->>App: Update secret
 " %}
 
-From [documentation](https://learn.microsoft.com/en-us/azure/aks/csi-secrets-store-configuration-options#enable-and-disable-auto-rotation):
+From [Kubernetes Secrets](https://kubernetes.io/docs/concepts/configuration/secret/#:~:text=As%20a%20result%2C%20the%20total%20delay%20from%20the%20moment%20when%20the%20Secret%20is%20updated%20to%20the%20moment%20when%20new%20keys%20are%20projected%20to%20the%20Pod%20can%20be%20as%20long%20as%20the%20kubelet%20sync%20period%20%2B%20cache%20propagation%20delay) documentation:
 
-> The application **needs to watch for the file change** from the volume mounted by the CSI driver.
+> As a result, the total delay from the moment when the Secret is updated to the moment when new keys
+> are projected to the Pod **can be as long as the kubelet sync period + cache propagation delay**
 
-This might be tricky, if the application is not built this in mind.
+There is good blog post do describe this in more detail:
+[Why Kubernetes secrets take so long to update?](https://ahmet.im/blog/kubernetes-secret-volumes-delay/)
 
-## Key Vault events
+### Your responsibility
 
-Alternatively, you can 
+In the above tests, we were focusing on how the AKS fetches the secrets from the Key Vault
+and they landed into volumes as files.
+
+After that it's up to the application to take responsibility:
+
+> The application **needs to watch for the file changes**
+> from the volume mounted by the CSI driver
+> and update itself accordingly.
+
+The follow-up questions are:
+
+- Did you plan for this in your application?
+- Are you using **environment variables** for managing your variables and secrets?
+- Does you application framework support this kind of dynamic updates to configuration files?
+
+[Environment variables](https://learn.microsoft.com/en-us/azure/aks/csi-secrets-store-configuration-options#enable-and-disable-auto-rotation:~:text=Use%20the%20Kubernetes%20Secret%20for%20an%20environment%20variable)
+are tricky in the sense that they don't update while the process is running
+and then you need to resort to some kind of trick to update them e.g., [Reloader](https://github.com/stakater/Reloader).
+
+_Btw_... there is also interesting discussion about
+"_Don't rely on pod creation to mount to Kubernetes secrets_" in the following GitHub issue:
+
+{% include githubEmbed.html text="kubernetes-sigs/secrets-store-csi-driver/issues/298" link="kubernetes-sigs/secrets-store-csi-driver/issues/298" %}
+
+## Alternative solution: Key Vault events
+
+Alternatively, you can use Key Vault events to trigger updates to your application:
+
 {% include mermaid.html postfix="3" text="
 sequenceDiagram
     actor User
@@ -283,9 +312,26 @@ sequenceDiagram
     KeyVault->>Webhook: Push update
 " %}
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/use-key-vault-in-aks/events.png" %}
+Setting then up can be done from the Azure Portal:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/utilizing-key-vault-in-aks/events.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/utilizing-key-vault-in-aks/subscription1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/utilizing-key-vault-in-aks/subscription2.png" %}
+
+To use webhooks, you need to have a service that listens for the events.
+I have created a simple echo service for this purpose and it's available in Docker Hub:
 
 {% include dockerEmbed.html text="JanneMattila/echo" link="r/jannemattila/echo" %}
+
+If you want to implement your own webhook service, then you can use the following code as a starting point:
+
+{% include githubEmbed.html text="JanneMattila/Echo/EchoController" link="JanneMattila/Echo/blob/1c778672c8b1ea836a8db8be85394b2b40b5bac9/src/Echo/Controllers/EchoController.cs#L63-L71" %}
+
+Key Vault updates the webhook right after the secret is updated:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/utilizing-key-vault-in-aks/keyvaulttoecho.gif" %}
+
+Here is example of the event in [CloudEvents](https://cloudevents.io/) format that is sent to the webhook:
 
 ```json
 {
@@ -307,23 +353,21 @@ sequenceDiagram
 }
 ```
 
-https://kubernetes.io/docs/concepts/configuration/secret/
-
-> Note: A container using a Secret as a subPath volume mount does not receive automated Secret updates.
-
-> As a result, the total delay from the moment when the Secret is updated to the moment when new keys
-> are projected to the Pod **can be as long as the kubelet sync period + cache propagation delay**
-
-https://ahmet.im/blog/kubernetes-secret-volumes-delay/
-
-{% include githubEmbed.html text="kubernetes-sigs/secrets-store-csi-driver/issues/298" link="kubernetes-sigs/secrets-store-csi-driver/issues/298" %}
-
-{% include githubEmbed.html text="JanneMattila/aks-workshop" link="JanneMattila/aks-workshop" %}
-
-TBA: Echo & Webhooks
+Here are additional resources to get you started:
 
 [Webhooks, Automation runbooks, Logic Apps as event handlers for Azure Event Grid events](https://learn.microsoft.com/en-us/azure/event-grid/handler-webhooks)
 
 [Azure Key Vault as Event Grid source](https://learn.microsoft.com/en-us/azure/event-grid/event-schema-key-vault?tabs=cloud-event-schema)
 
 [Monitoring Key Vault with Azure Event Grid](https://learn.microsoft.com/en-us/azure/key-vault/general/event-grid-overview)
+
+## Conclusion
+
+In this post, we saw how to utilize Azure Key Vault in Azure Kubernetes Service.
+We also saw that updates are not instant and you need to understand how the system works.
+
+The longer version of the code is available in the GitHub repository:
+
+{% include githubEmbed.html text="JanneMattila/aks-workshop" link="JanneMattila/aks-workshop" %}
+
+I hope you find this useful!
