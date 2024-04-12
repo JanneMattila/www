@@ -169,6 +169,15 @@ You can also see this from the Key Vault audit logs:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/utilizing-key-vault-in-aks/logs.png" %}
 
+Follow-up question is: What if you deploy second pod... will you have twice as much `SecretGet` operations? 🤔
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/utilizing-key-vault-in-aks/logs2.png" %}
+
+As you can see, the answer is yes since you can see two different
+2 minute intervals in the logs.
+
+---
+
 For our second test, let's deploy the above _SecretProviderClass_ **with** the `secretObjects` section.
 Here is our updated pod deployment:
 
