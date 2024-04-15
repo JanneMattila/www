@@ -4,7 +4,7 @@ image: /assets/posts/2024/04/15/dotnet-6-support-ends/actionrequiredemail.png
 date: 2024-04-15 06:00:00 +0300
 layout: posts
 categories: azure
-tags: azure appgw
+tags: azure appdev
 ---
 I  previously wrote about
 [Preparing for Azure services retirements]({% post_url 2023/09/2023-09-25-preparing-for-azure-services-retirements %}).
