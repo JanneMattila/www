@@ -340,6 +340,8 @@ Key Vault updates the webhook right after the secret is updated:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/04/22/utilizing-key-vault-in-aks/keyvaulttoecho.gif" %}
 
+You can see the update reflected to the right-hand side tab in the browser showing `Echo: 1` after the secret is updated.
+
 Here is example of the event in [CloudEvents](https://cloudevents.io/) format that is sent to the webhook:
 
 ```json
@@ -369,6 +371,8 @@ Here are additional resources to get you started:
 [Azure Key Vault as Event Grid source](https://learn.microsoft.com/en-us/azure/event-grid/event-schema-key-vault?tabs=cloud-event-schema)
 
 [Monitoring Key Vault with Azure Event Grid](https://learn.microsoft.com/en-us/azure/key-vault/general/event-grid-overview)
+
+Implementing this kind of solution is more complex you need to roll up your sleeves and start coding to get it implemented.
 
 ## Conclusion
 
