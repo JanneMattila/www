@@ -1,12 +1,14 @@
 # $location = "West Central US"
-$location = "Central US EUAP"
+# $location = "Central US EUAP"
+$location = "swedencentral"
 # $location = "East US 2 EUAP"
 
+# Get the API versions for the virtualNetworks resource type
 ((Get-AzResourceProvider  -ProviderNamespace "Microsoft.Network").ResourceTypes | `
   Where-Object ResourceTypeName -eq "virtualNetworks").ApiVersions | `
   Format-Table
 
-$resourceGroupName = "rg-vnet"
+$resourceGroupName = "rg-vnet2"
 $vnetName = "vnet-app"
 $addressPrefix = "10.0.0.0/16"
 
@@ -48,7 +50,7 @@ $json
 
 $parameters = @{
   Method               = "PUT" # This is important!
-  ApiVersion           = "2023-09-01"
+  ApiVersion           = "2023-11-01"
   Name                 = $vnetName
   ResourceGroupName    = $resourceGroupName
   ResourceProviderName = "Microsoft.Network"
