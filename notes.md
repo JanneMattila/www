@@ -159,7 +159,12 @@ https://github.com/jch/html-pipeline#dependencies
 -------------------------------------------------
 ```
 
-- https://github.com/JanneMattila/azure-storage-demos/blob/main/perf%2Fnotes.md
+- AKS Identity
+  - In, Out
+  - Admin, User access
+  - Workload
+  - App login access
+ https://github.com/JanneMattila/azure-storage-demos/blob/main/perf%2Fnotes.md
 - ACS and SMTP email sending
   - App registration rest api
   - https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email-smtp/smtp-authentication
@@ -274,7 +279,6 @@ https://github.com/jch/html-pipeline#dependencies
 - TCP Network tests
 - Azure Policy
 - Azure Virtual WAN with secured virtual hub demo
-- AKS Identity
 - Endpoint availability monitoring to app insights
   - Monitor Spring Boot actuator health endpoint and report it to App Insights
 - Azure Functions and SFTP
