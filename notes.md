@@ -2,6 +2,7 @@
 
 ## Upcoming posts
 
+- Arc-enabled Kubernetes and Workload Identity
 - AKS Identity
   - In, Out
   - Admin, User access

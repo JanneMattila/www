@@ -1,10 +1,10 @@
 ---
 title: Automation PowerShell tasks with Container App Jobs
-image: /assets/posts/2024/05/13/automation-powershell-tasks-with-container-apps/job1.png
-date: 2024-05-13 06:00:00 +0300
+image: /assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/job1.png
+date: 2024-05-20 06:00:00 +0300
 layout: posts
 categories: azure
-tags: azure governance security
+tags: azure powershell container-apps automation
 ---
 I  previously wrote about
 [Automating maintenance tasks with Azure Functions and PowerShell]({% post_url 2023/10/2023-10-30-automating-maintenance-tasks-part1 %}).
@@ -19,11 +19,11 @@ In this post, I'll show you how to use Azure
 [Container App Jobs](https://learn.microsoft.com/en-us/azure/container-apps/jobs?tabs=azure-cli)
 to run PowerShell tasks.
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/automation-powershell-tasks-with-container-apps/job1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/job1.png" %}
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/automation-powershell-tasks-with-container-apps/architecture.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/architecture.png" %}
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/automation-powershell-tasks-with-container-apps/architecture2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/architecture2.png" %}
 
 - Maintenance task as Container App
   - Cost, private vs. Func app
@@ -79,13 +79,13 @@ https://hub.docker.com/r/jannemattila/azure-powershell-job
 
 https://github.com/JanneMattila/azure-container-apps-demos
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/automation-powershell-tasks-with-container-apps/explorer1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/explorer1.png" %}
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/automation-powershell-tasks-with-container-apps/explorer2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/explorer2.png" %}
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/automation-powershell-tasks-with-container-apps/share1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/share1.png" %}
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/automation-powershell-tasks-with-container-apps/share2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/share2.png" %}
 
 {% include dockerEmbed.html text="JanneMattila/azure-powershell-job" link="r/jannemattila/azure-powershell-job" %}
 
