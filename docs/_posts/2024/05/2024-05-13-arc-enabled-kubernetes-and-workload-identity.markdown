@@ -1,13 +1,17 @@
 ---
-title: Arc-enabled Kubernetes and Workload Identity
-image: /assets/posts/2024/05/13/arc-enabled-kubernetes-and-workload-identity/job1.png
+title: Arc-enabled Kubernetes and Microsoft Entra Workload ID
+image: /assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/arc1.png
 date: 2024-05-13 06:00:00 +0300
 layout: posts
 categories: azure
 tags: azure arc kubernetes identity
 ---
 
-[Azure AD Workload Identity](https://azure.github.io/azure-workload-identity/docs/)
+[Microsoft Entra Workload ID](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview?tabs=dotnet)
+(a.k.a. [Azure AD Workload Identity](https://azure.github.io/azure-workload-identity/docs/))
+enables you to use managed identities for your workloads running Kubernetes clusters.
+
+In this post, we'll see how to use wWorkload identity with Azure Arc-enabled Kubernetes.
 
 Here are the high-level steps for our deployment:
 
@@ -201,6 +205,10 @@ az connectedk8s connect \
   --location $location
 ```
 
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/arc1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/arc2.png" %}
+
+
 ## 4. Setup workload identity
 
 Now we're ready to setup workload identity by installing Mutating Admission Webhook.
@@ -272,6 +280,10 @@ eyJhbGciOiJSUzI1NiIsImtpZCI6Ik...m2vovF2B_XC3DiAHR40vJPLCRcTQ
 ```
 
 From the above tests, we can see that the managed identity is working and the federated token is available.
+It's important to analyze it in [jwt.ms](https://jwt.ms), so that you know that `iss` (issuer),
+namespace and `sub` (subject) are correct:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/jwt.png" %}
 
 We could use that in our scripts to login to Azure:
 
@@ -289,9 +301,42 @@ Connect-AzAccount -ServicePrincipal `
   -FederatedToken (Get-Content $env:AZURE_FEDERATED_TOKEN_FILE -Raw)
 ```
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-workload-identity/arc1.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-workload-identity/arc2.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-workload-identity/jwt.png" %}
+In C# we could use the following code to access Azure Key Vault:
+
+```csharp
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+
+var keyVaultName = "kvjanne..........";
+var kvUri = $"https://{keyVaultName}.vault.azure.net";
+var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
+KeyVaultSecret secret = client.GetSecret("secret1");
+Console.WriteLine($"Secret: {secret.Value}");
+```
+
+`DefaultAzureCredential` will internally use the workload identity (among other options): 
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/dotnet1.png" %}
+
+Inside that it will dig up the information from environment variables and use it to authenticate to Azure:
+
+```csharp
+internal class EnvironmentVariables
+{
+  public static string TenantId => 
+    Environment.GetEnvironmentVariable("AZURE_TENANT_ID"));
+
+  public static string ClientId => 
+    Environment.GetEnvironmentVariable("AZURE_CLIENT_ID"));
+
+  public static string AzureFederatedTokenFile => 
+    Environment.GetEnvironmentVariable("AZURE_FEDERATED_TOKEN_FILE");
+}
+```
+
+Read more about [Azure Identity client libraries](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview?tabs=dotnet#azure-identity-client-libraries) with Workload Identity.
+
+// TODO: TEST LIMITATIONS
 
 ## Conclusion
 
