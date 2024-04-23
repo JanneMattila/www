@@ -11,7 +11,9 @@ tags: azure arc kubernetes identity
 (a.k.a. [Azure AD Workload Identity](https://azure.github.io/azure-workload-identity/docs/))
 enables you to use managed identities for your workloads running Kubernetes clusters.
 
-In this post, we'll see how to use wWorkload identity with Azure Arc-enabled Kubernetes.
+In this post, we'll see how to use wWorkload identity with Azure Arc-enabled Kubernetes:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/architecture.png" %}
 
 Here are the high-level steps for our deployment:
 
