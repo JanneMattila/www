@@ -1,10 +1,10 @@
 ---
 title: Arc-enabled Kubernetes and Microsoft Entra Workload ID
-image: /assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/arc1.png
+image: /assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/jwt.png
 date: 2024-05-13 06:00:00 +0300
 layout: posts
 categories: azure
-tags: azure arc kubernetes identity
+tags: azure arc kubernetes identity entra
 ---
 
 [Microsoft Entra Workload ID](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview?tabs=dotnet)
@@ -172,11 +172,11 @@ Since we need to provide parameters to the api server, at least
 I couldn't find easy way to do this with Docker Desktop Kubernetes.
 We must pass `service-account-issuer`, `service-account-key-file`, 
 `service-account-signing-key-file`, `service-account-private-key-file` to the api server,
-so that it will know where to find the required signing keys etc..
+so that it will know where to find the required signing keys etc.
 
 We can use
-[kind](https://kind.sigs.k8s.io/)
-instead for this purpose since it's easy to setup.
+[Kubernetes in Docker (kind)](https://kind.sigs.k8s.io/)
+for this purpose since it's easy to setup.
 It works great with Docker Desktop. I just disabled the Docker Desktop Kubernetes and used `kind` instead.
 
 Here is how to install `kind`:
