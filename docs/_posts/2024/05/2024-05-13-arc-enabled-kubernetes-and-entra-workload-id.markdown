@@ -111,6 +111,16 @@ Generate discovery document by filling in the values to `openid-configuration.js
 }
 ```
 
+For reference, you can get the issuer URL of your AKS cluster from the Azure CLI with the following command:
+
+```console
+$ az aks show -n $aks_name -g $resource_group_name --query "oidcIssuerProfile.issuerUrl" -o tsv
+
+https://uksouth.oic.prod-aks.azure.com/71359404-8088-49e1-b34c-66b358cfd4b5/eb0b0518-ecdc-49d2-b7ca-9fc46bba1fba/
+```
+
+**IMPORTANT**: **The issuer must ends with `/`**. I tested it without it and it didn't work.
+
 Generate JWKS document by using the public key `sa.pub`:
 
 ```bash
@@ -216,7 +226,7 @@ nodes:
         service-account-private-key-file: /etc/kubernetes/pki/sa.key
 ```
 
-**IMPORTANT**: `$service_account_oidc_issuer` must be the same as the `issuer` in the `openid-configuration.json`.
+**IMPORTANT**: `$service_account_oidc_issuer` must be **exactly the same** as the `issuer` in the `openid-configuration.json`.
 
 ```bash
 kind create cluster \
@@ -236,6 +246,10 @@ az connectedk8s connect \
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/arc1.png" %}
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/arc2.png" %}
+
+From Azure Portal, we can see that the cluster is now connected:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/resources.png" %}
 
 
 ## 4. Setup workload identity
@@ -290,6 +304,10 @@ az identity federated-credential create \
 
 Federated credential is a way to connect the managed identity to the service account.
 Now slowly the pieces are coming together. Cluster creates the JWT token which maps to this federated credential.
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/federated1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/federated2.png" %}
+
 
 Next, we'll deploy a workload that uses the service account and see how this works in practice.
 
