@@ -103,7 +103,8 @@ hr {
     background-color: transparent;
     font-size: 16px;
     opacity: 0.2;
-    float: right;
+    position: absolute;
+    right: 20px;
 }
 
 .copy-button:hover {

@@ -8,17 +8,17 @@ tags: azure arc kubernetes identity
 ---
 
 [Microsoft Entra Workload ID](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview?tabs=dotnet)
-(a.k.a. [Azure AD Workload Identity](https://azure.github.io/azure-workload-identity/docs/))
-enables you to use managed identities for your workloads running Kubernetes clusters.
+(previously known as [Azure AD Workload Identity](https://azure.github.io/azure-workload-identity/docs/))
+enables you to use managed identities for your workloads running in Kubernetes clusters.
 
-In this post, we'll see how to use wWorkload identity with Azure Arc-enabled Kubernetes:
+In this post, we'll see how to use workload identity with [Azure Arc-enabled Kubernetes](https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/overview):
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/architecture.png" %}
 
 Here are the high-level steps for our deployment:
 
 1. Create a managed identity
-   - Assign the managed identity to reader access to the subscription
+   - Assign the managed identity reader permissions to the subscription
 2. Create service account signing keys
    - Generate a RSA key pair
    - Create Storage Account and Blob Container
@@ -33,7 +33,7 @@ Here are the high-level steps for our deployment:
 5. Deploy a workload that uses the service account
    - Use managed identity to access Azure resources
 
-I'll show main steps next and you can find the full code with details in this repository:
+I'll show main steps in this blog post and you can find the full code with details in this repository:
 
 {% include githubEmbed.html text="JanneMattila/azure-arc-demos/k8s/workload-identity" link="JanneMattila/azure-arc-demos/tree/main/k8s/workload-identity" %}
 
@@ -52,7 +52,7 @@ echo $principal_id
 
 subscription_id=$(az account show --query id -o tsv)
 
-# Grant reader access to identity to subscription
+# Grant reader access to subscription for our newly created managed identity
 az role assignment create \
  --assignee-object-id $principal_id \
  --assignee-principal-type ServicePrincipal \
@@ -64,14 +64,29 @@ We have now `$client_id` and `$principal_id` that we can use in the next steps.
 
 ## 2. Create service account signing keys
 
-Let's generate private and public keys for us:
+Before we start creating the keys and publish endpoints, we should understand the purpose of these keys.
+These keys are used to sign the JWT tokens that are used to authenticate the service account.
+In other words, these keys are used to prove that the service account is who it says it is.
+Since our cluster creates the tokens, it needs to have the private signing key to be able to create them.
+Verification is done in Entra ID so it has to have access to the public part of the signing key.
+Therefore, we need to publish the public signing key to a publicly accessible location.
+
+Similarly, your Entra ID OpenID Connect metadata document has well-known location and it is publicly accessible:
+
+```
+https://login.microsoftonline.com/<tenantid>/v2.0/.well-known/openid-configuration
+```
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/entraid.png" %}
+
+Let's generate private and public signing keys for us:
 
 ```bash
 openssl genrsa -out sa.key 2048
 openssl rsa -in sa.key -pubout -out sa.pub
 ```
 
-Then we need to create a Storage Account and Blob Container:
+Then we need to create a Storage Account and Blob Container which we will use for publishing the metadata document and public key:
 
 ```bash
 az storage account create --resource-group $resource_group_name --name $storage_name --allow-blob-public-access true
@@ -79,6 +94,7 @@ az storage container create --account-name $storage_name --name $container_name 
 ```
 
 Generate discovery document by filling in the values to `openid-configuration.json`:
+
 ```json
 {
   "issuer": "https://${storage_name}.blob.core.windows.net/${container_name}/",
@@ -101,7 +117,7 @@ Generate JWKS document by using the public key `sa.pub`:
 azwi jwks --public-keys sa.pub --output-file jwks.json
 ```
 
-Then we  upload these files to the Blob Container
+Then we upload these files to the Blob Container
 and test that both endpoints are working correctly:
 
 ```bash
@@ -147,15 +163,23 @@ Output:
 }
 ```
 
+Preparations are now done and we can move to the next step.
+
 ## 3. Create a Azure Arc-enabled Kubernetes cluster
 
 Now we need to create a Azure Arc-enabled Kubernetes cluster.
 Since we need to provide parameters to the api server, at least
 I couldn't find easy way to do this with Docker Desktop Kubernetes.
+We must pass `service-account-issuer`, `service-account-key-file`, 
+`service-account-signing-key-file`, `service-account-private-key-file` to the api server,
+so that it will know where to find the required signing keys etc..
 
 We can use
 [kind](https://kind.sigs.k8s.io/)
-for this purpose since it's easy to setup. Here is how to install `kind`:
+instead for this purpose since it's easy to setup.
+It works great with Docker Desktop. I just disabled the Docker Desktop Kubernetes and used `kind` instead.
+
+Here is how to install `kind`:
 
 ```bash
 curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.22.0/kind-linux-amd64
@@ -195,7 +219,10 @@ nodes:
 **IMPORTANT**: `$service_account_oidc_issuer` must be the same as the `issuer` in the `openid-configuration.json`.
 
 ```bash
-kind create cluster --name azure-workload-identity --image kindest/node:v1.22.4 --config cluster.yaml
+kind create cluster \
+  --name azure-workload-identity \
+  --image kindest/node:v1.22.4 \
+  --config cluster.yaml
 ```
 
 After the cluster is deployed, we can Arc-enable it:
@@ -213,7 +240,22 @@ az connectedk8s connect \
 
 ## 4. Setup workload identity
 
-Now we're ready to setup workload identity by installing Mutating Admission Webhook.
+Now we're ready to setup workload identity by installing
+[Mutating Admission Webhook](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#mutatingadmissionwebhook).
+
+What is that? It's a webhook that can modify the incoming requests to the Kubernetes API server.
+From
+[Azure AD Workload Identity -> Mutating Admission Webhook](https://azure.github.io/azure-workload-identity/docs/installation/mutating-admission-webhook.html):
+
+> Azure AD Workload Identity uses a mutating admission webhook
+> to project a signed service account token to your workload’s
+> volume and inject the following properties to pods with a service
+> account that is configured to use the webhook:
+> - AZURE_CLIENT_ID: The application/client ID of the Azure AD application or user-assigned managed identity.
+> - AZURE_TENANT_ID: The tenant ID of the Azure subscription.
+> - AZURE_FEDERATED_TOKEN_FILE: The path of the projected service account token file.
+
+Let's install the webhook using helm:
 
 ```bash
 helm install workload-identity-webhook azure-workload-identity/workload-identity-webhook \
@@ -222,7 +264,7 @@ helm install workload-identity-webhook azure-workload-identity/workload-identity
   --set azureTenantID="${tenant_id}"
 ```
 
-Let's create a Kubernetes service account:
+Let's create a Kubernetes service account and connect it to the managed identity we created earlier:
 
 ```yaml
 apiVersion: v1
@@ -246,12 +288,52 @@ az identity federated-credential create \
   --subject "system:serviceaccount:network-app:$service_account_name"
 ```
 
+Federated credential is a way to connect the managed identity to the service account.
+Now slowly the pieces are coming together. Cluster creates the JWT token which maps to this federated credential.
+
+Next, we'll deploy a workload that uses the service account and see how this works in practice.
+
 ## 5. Deploy a workload that uses the service account
 
 First, I'll deploy my 
 [webapp-network-tester]({% post_url 2023/08/2023-08-22-testing-your-network-configuration %}) tool,
 so that I can poke around the identity setup.
 
+Here is a snippet from the deployment file:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: network-app-deployment
+  namespace: network-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: network-app
+  template:
+    metadata:
+      labels:
+        app: network-app
+        azure.workload.identity/use: "true"
+    spec:
+      serviceAccountName: workload-identity-sa
+      containers:
+        - image: jannemattila/webapp-network-tester:1.0.69
+          name: network-app
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+```
+
+To point out the important parts:
+
+- Label `azure.workload.identity/use: "true"` tells the mutating admission webhook to kick-in and inject the required properties.
+- `serviceAccountName: workload-identity-sa` tells the Kubernetes to use the service account we created earlier.
+
+After deployment, we can test that the managed identity is working correctly.
 Here is my standard test suite:
 
 ```console
@@ -287,7 +369,13 @@ namespace and `sub` (subject) are correct:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/jwt.png" %}
 
-We could use that in our scripts to login to Azure:
+I can tell from experience, that tiny typos in the issuer or subject can cause it to fail.
+So, be careful with those.
+
+Now we have a working setup where our workload uses managed identity to access Azure resources.
+It means that we can deploy images that inside use Azure CLI or Azure SDKs to access Azure resources.
+
+Here is an example how to login to Azure using the federated token:
 
 ```bash
 az login --service-principal \
@@ -338,7 +426,9 @@ internal class EnvironmentVariables
 
 Read more about [Azure Identity client libraries](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview?tabs=dotnet#azure-identity-client-libraries) with Workload Identity.
 
+<!--
 // TODO: TEST LIMITATIONS
+-->
 
 ## Conclusion
 
@@ -348,6 +438,8 @@ created required signing keys, created a Azure Arc-enabled Kubernetes cluster,
 created a Kubernetes service account, and deployed a workload that uses the service account.
 
 This is a powerful feature that allows you to use managed identities
-for your workload and you don't have to manage any secrets (except for the signing keys of course).
+for your workload and you don't have to manage any secrets except for the signing keys of course.
+[Key rotation](https://azure.github.io/azure-workload-identity/docs/topics/self-managed-clusters/service-account-key-rotation.html#key-rotation)
+of the signing keys is extremely important so please plan ahead for that.
 
 I hope you find this useful!
