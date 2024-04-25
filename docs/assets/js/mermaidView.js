@@ -1,9 +1,7 @@
 class MermaidView {
-    constructor(elementName) {
-        console.log("MermaidView constructor");
-
-        this.elementName = elementName;
-        this.element = document.getElementById(elementName);
+    constructor(element, index) {
+        this.element = element;
+        this.elementName = "mermaid-" + index;;
 
         this.isOpened = false;
         this.historyEntryAdded = false;
@@ -40,4 +38,10 @@ class MermaidView {
             history.replaceState(null, "", location.href);
         }
     };
+}
+const mermaidElements = document.getElementsByClassName("mermaid");
+for (let index = 0; index < mermaidElements.length; index++) {
+    const mermaidElement = mermaidElements[index];
+    const view = new MermaidView(mermaidElement, index);
+    view.start();
 }

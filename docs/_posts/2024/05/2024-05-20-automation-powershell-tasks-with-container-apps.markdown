@@ -6,6 +6,17 @@ layout: posts
 categories: azure
 tags: azure powershell container-apps automation
 ---
+<!--
+- Maintenance task as Container App
+  - Cost, private vs. Func app
+  - https://github.com/Azure/CloudShell
+  - https://mcr.microsoft.com/en-us/product/azure-powershell/about
+
+  https://github.com/microsoft/azure-container-apps/issues/1056
+https://github.com/microsoft/azure-container-apps/issues/960
+
+-->
+
 I  previously wrote about
 [Automating maintenance tasks with Azure Functions and PowerShell]({% post_url 2023/10/2023-10-30-automating-maintenance-tasks-part1 %}).
 That combo has been my go-to solution for many automation tasks.
@@ -90,8 +101,6 @@ https://github.com/JanneMattila/azure-container-apps-demos
 {% include dockerEmbed.html text="JanneMattila/azure-powershell-job" link="r/jannemattila/azure-powershell-job" %}
 
 {% include githubEmbed.html text="JanneMattila/azure-powershell-job" link="JanneMattila/azure-powershell-job" %}
-
-
 
 ## Conclusion
 

@@ -20,7 +20,7 @@ This time I have the following scenario:
   - The second application `AdminApp` is protected by App Service authentication
     - Entra ID as the identity provider
     - This should be reachable only at `/admin` and any other traffic should go to the first application:
-{% include mermaid.html postfix="1" text="
+{% include mermaid.html text="
 graph TD
     User -->|https://host/...|AppGw
     AppGw -->|https://host/| AnonymousApp
@@ -31,7 +31,7 @@ graph TD
 - Application Gateway is in the front of the App Service
   - Managed rule sets are enabled in the Web Application Firewall
   - Capabilities of Application gateway are used extensively e.g., redirects HTTP to HTTPS:
-{% include mermaid.html postfix="2" text="
+{% include mermaid.html text="
 sequenceDiagram
     actor User
     participant AppGw
@@ -50,7 +50,7 @@ sequenceDiagram
 Here is the authentication flow for the above scenarios:<br/>
 _Click diagram to view in fullscreen_
 
-{% include mermaid.html postfix="3" text="
+{% include mermaid.html text="
 sequenceDiagram
     participant Entra ID
     actor User

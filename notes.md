@@ -2,6 +2,7 @@
 
 ## Upcoming posts
 
+- Sub move resource validation script
 - AKS Identity
   - In, Out
   - Admin, User access
@@ -9,15 +10,14 @@
   - App login access
 - https://mac-blog.org.ua/nginx-powershell/
   - https://github.com/Badgerati/Pode
- https://github.com/JanneMattila/azure-storage-demos/blob/main/perf%2Fnotes.md
+- https://github.com/JanneMattila/azure-storage-demos/blob/main/perf%2Fnotes.md
+- https://learn.microsoft.com/en-us/azure/azure-monitor/agents/azure-monitor-agent-migration
 - ACS and SMTP email sending
   - App registration rest api
   - https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email-smtp/smtp-authentication
-- Maintenance task as Container App
-  - Cost, private vs. Func app
-  - https://github.com/Azure/CloudShell
-  - https://mcr.microsoft.com/en-us/product/azure-powershell/about
 - Azure DevOps and getting rid of the Personal Access Tokens
+  - https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/authentication-guidance?view=azure-devops
+  - https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/service-principal-managed-identity?view=azure-devops
 - Office 365 Group and Teams incoming webhook
 - AppService and Private Endpoint and DNS
   - Web app network tester

@@ -1,2 +1,2 @@
-cd docs
-bundle exec jekyll serve
+Set-Location docs
+bundle exec jekyll serve --incremental

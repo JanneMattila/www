@@ -13,7 +13,7 @@ so that you don't have to store them in your code.
 
 If you would have to implement Key Vault integration yourself, then very like you would have to follow this kind of pattern:
 
-{% include mermaid.html postfix="1" text="
+{% include mermaid.html text="
 sequenceDiagram
     actor User
     participant KeyVault
@@ -261,7 +261,7 @@ The above can be illustrated using the following diagram:
 
 _Click diagram to view in fullscreen_
 
-{% include mermaid.html postfix="2" text="
+{% include mermaid.html text="
 sequenceDiagram
     actor User
     participant KeyVault
@@ -313,7 +313,7 @@ _Btw_... there is also interesting discussion about
 
 Alternatively, you can use Key Vault events to trigger updates to your application:
 
-{% include mermaid.html postfix="3" text="
+{% include mermaid.html text="
 sequenceDiagram
     actor User
     participant KeyVault

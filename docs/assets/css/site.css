@@ -96,6 +96,21 @@ hr {
     cursor: pointer;
 }
 
+.copy-button {
+    cursor: pointer;
+    padding: 5px;
+    border: 0px;
+    background-color: transparent;
+    font-size: 16px;
+    opacity: 0.2;
+    float: right;
+}
+
+.copy-button:hover {
+    display: inline;
+    opacity: 1;
+}
+
 .fullscreen {
     position: fixed;
     top: 0;
