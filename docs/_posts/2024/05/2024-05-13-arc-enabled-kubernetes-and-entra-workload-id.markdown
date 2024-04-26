@@ -60,6 +60,8 @@ az role assignment create \
  --role "Reader"
 ```
 
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/rbac.png" %}
+
 We have now `$client_id` and `$principal_id` that we can use in the next steps.
 
 ## 2. Create service account signing keys
@@ -111,7 +113,9 @@ Generate discovery document by filling in the values to `openid-configuration.js
 }
 ```
 
-For reference, you can get the issuer URL of your AKS cluster from the Azure CLI with the following command:
+For reference, you can get the issuer URL of your
+[AKS cluster](https://learn.microsoft.com/en-us/azure/aks/use-oidc-issuer)
+from the Azure CLI with the following command:
 
 ```console
 $ az aks show -n $aks_name -g $resource_group_name --query "oidcIssuerProfile.issuerUrl" -o tsv
@@ -119,7 +123,7 @@ $ az aks show -n $aks_name -g $resource_group_name --query "oidcIssuerProfile.is
 https://uksouth.oic.prod-aks.azure.com/71359404-8088-49e1-b34c-66b358cfd4b5/eb0b0518-ecdc-49d2-b7ca-9fc46bba1fba/
 ```
 
-**IMPORTANT**: **The issuer must ends with `/`**. I tested it without it and it didn't work.
+Out of interest, I did a test with the issuer URL without `/` in the end and it worked fine.
 
 Generate JWKS document by using the public key `sa.pub`:
 
@@ -228,10 +232,12 @@ nodes:
 
 **IMPORTANT**: `$service_account_oidc_issuer` must be **exactly the same** as the `issuer` in the `openid-configuration.json`.
 
+Create the cluster:
+
 ```bash
 kind create cluster \
   --name azure-workload-identity \
-  --image kindest/node:v1.22.4 \
+  --image kindest/node::v1.29.2 \
   --config cluster.yaml
 ```
 
@@ -250,7 +256,6 @@ az connectedk8s connect \
 From Azure Portal, we can see that the cluster is now connected:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/resources.png" %}
-
 
 ## 4. Setup workload identity
 
@@ -307,7 +312,6 @@ Now slowly the pieces are coming together. Cluster creates the JWT token which m
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/federated1.png" %}
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/federated2.png" %}
-
 
 Next, we'll deploy a workload that uses the service account and see how this works in practice.
 
@@ -390,8 +394,8 @@ namespace and `sub` (subject) are correct:
 I can tell from experience, that tiny typos in the issuer or subject can cause it to fail.
 So, be careful with those.
 
-Now we have a working setup where our workload uses managed identity to access Azure resources.
-It means that we can deploy images that inside use Azure CLI or Azure SDKs to access Azure resources.
+Now we have a working setup where our workload is capable of using  managed identity.
+It means that we can deploy images that inside them use Azure CLI, Azure PowerShell or Azure SDKs to access Azure resources.
 
 Here is an example how to login to Azure using the federated token:
 
@@ -447,6 +451,80 @@ Read more about [Azure Identity client libraries](https://learn.microsoft.com/en
 <!--
 // TODO: TEST LIMITATIONS
 -->
+
+## Troubleshooting
+
+### `Resource temporarily unavailable` for `login.microsoftonline.com`
+
+https://github.com/docker/compose/issues/8600
+https://github.com/docker/for-win/issues/12018
+https://stackoverflow.com/questions/77396384/docker-desktop-running-pods-on-wsl-cannot-resolve-host-name
+https://github.com/docker/for-win/issues/13768
+
+```console
+$ curl -X POST --data "IPLOOKUP login.microsoftonline.com" "$network_app_uri/api/commands"
+-> Start: IPLOOKUP login.microsoftonline.com
+System.Net.Sockets.SocketException (00000001, 11): Resource temporarily unavailable
+   at System.Net.Dns.GetHostEntryOrAddressesCore(String hostName, Boolean justAddresses, AddressFamily addressFamily, Nullable`1 startingTimestamp)
+   at System.Net.Dns.<>c.<GetHostEntryOrAddressesCoreAsync>b__33_0(Object s, Int64 startingTimestamp)
+   at System.Net.Dns.<>c__DisplayClass39_0`1.<RunAsync>b__0(Task <p0>, Object <p1>)
+   at System.Threading.Tasks.ContinuationResultTaskFromTask`1.InnerInvoke()
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at WebApp.Controllers.CommandsController.ExecuteIpLookUpAsync(String[] parameters) in /src/src/WebApp/Controllers/CommandsController.cs:line 334
+   at WebApp.Controllers.CommandsController.Post(String body) in /src/src/WebApp/Controllers/CommandsController.cs:line 94
+<- End: IPLOOKUP login.microsoftonline.com 183.70ms
+
+$ curl -X POST --data "IPLOOKUP bing.com" "$network_app_uri/api/commands"
+-> Start: IPLOOKUP bing.com
+IP: 13.107.21.200
+IP: 204.79.197.200
+IP: 2620:1ec:c11::200
+<- End: IPLOOKUP bing.com 149.37ms# 
+```
+
+Use external DNS server in the deployment (for example Cloudflare)
+by setting
+[dnsConfig](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-config):
+
+```yaml
+# deployment abbreviated
+      dnsPolicy: "None"
+      dnsConfig:
+        nameservers:
+          - 1.1.1.1
+```
+
+### Subject not found in federated credential
+
+If your subject is `system:serviceaccount:network-app:workload-identity-sa-abc` in the JWT token,
+but you get the following error:
+
+```powershell
+Connect-AzAccount: /bin/run.ps1:42
+Line |
+  42 |  Connect-AzAccount @params
+     |  ~~~~~~~~~~~~~~~~~~~~~~~~~
+     | ClientAssertionCredential authentication failed: A configuration issue
+     | is preventing authentication - check the error message from the server
+     | for details. You can modify the configuration in the application
+     | registration portal. See https://aka.ms/msal-net-invalid-client for
+     | details.  Original exception: AADSTS700213: No matching federated
+     | identity record found for presented assertion subject
+     | 'system:serviceaccount:network-app:workload-identity-sa-abc'. Please
+     | check your federated identity credential Subject, Audience and Issuer
+     | against the presented assertion.
+     | https://docs.microsoft.com/en-us/azure/active-directory/develop/workload-identity-federation Trace ID: 76057962-ba13-43fe-9902-a9960a412301 Correlation ID: a775f8a5-1f7c-4682-bb5c-7b29e015dc8e Timestamp: 2024-04-26 11:17:20Z Could not find tenant id for provided tenant domain 'f3296a34-479c-401a-a838-4a61d2d94703'.
+```
+
+> **AADSTS700213**: No matching federated
+> identity record found for presented assertion subject
+> _system:serviceaccount:network-app:workload-identity-sa-abc_.
+
+[Federated identity credentials support for wildcards](https://github.com/Azure/azure-workload-identity/issues/373#issuecomment-2078859575)
 
 ## Conclusion
 
