@@ -91,7 +91,7 @@ spec:
   # <-OPTIONAL
 ```
 
-There are plenty of details there but main points are:
+There are plenty of details there but the main points are:
 
 - `${keyvault_name}` is the name of your Key Vault
 - `${aks_keyvault_client_id}` is the client ID of configured identity for connecting to Key Vault

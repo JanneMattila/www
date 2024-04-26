@@ -520,15 +520,24 @@ Line |
      | https://docs.microsoft.com/en-us/azure/active-directory/develop/workload-identity-federation Trace ID: 76057962-ba13-43fe-9902-a9960a412301 Correlation ID: a775f8a5-1f7c-4682-bb5c-7b29e015dc8e Timestamp: 2024-04-26 11:17:20Z Could not find tenant id for provided tenant domain 'f3296a34-479c-401a-a838-4a61d2d94703'.
 ```
 
+The most important part of the above error is:
+
 > **AADSTS700213**: No matching federated
 > identity record found for presented assertion subject
 > _system:serviceaccount:network-app:workload-identity-sa-abc_.
 
-[Federated identity credentials support for wildcards](https://github.com/Azure/azure-workload-identity/issues/373#issuecomment-2078859575)
+Please check that it matches the subject in the federated credential:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/federated2.png" %}
+
+In the above example, they don't match and that's why the authentication fails.
+
+There is interesting discussions about
+[Federated identity credentials support for wildcards](https://github.com/Azure/azure-workload-identity/issues/373#issuecomment-2078859575) in the GitHub issues.
 
 ## Conclusion
 
-In this post, we have seen how to use Azure AD Workload Identity
+In this post, we have seen how to use Microsoft Entra Workload ID
 with Azure Arc-enabled Kubernetes. We have created a managed identity,
 created required signing keys, created a Azure Arc-enabled Kubernetes cluster,
 created a Kubernetes service account, and deployed a workload that uses the service account.

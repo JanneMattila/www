@@ -11,15 +11,15 @@ I was browsing through my Entra ID apps and noticed something interesting:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/06/scan-entra-id-apps/apps.png" %}
 
 If you look closely at the above list, you'll notice that there is application which is
-created already 2017 and it still has `Current` secret (vs. `Expired`).
+created already in 2017 and it still has `Current` secret (vs. `Expired`).
 Given that this is one of my development tenants and I know that I don't have automation in place to rotate secrets,
 I decided to take a closer look at the situation.
 
-I looked that the application and noticed that it has secret which is valid until `12/31/2299`:
+I looked that the application and noticed that it has a secret which is valid until `12/31/2299`:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/06/scan-entra-id-apps/appsecret.png" %}
 
-Okay that's not good. I started looking my other apps and noticed that there are actually many of them in the same situation:
+Okay, that's not good. I started looking at my other apps and noticed that there are actually many of them in the same situation:
 
 {% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/05/06/scan-entra-id-apps/apps2.png" %}
 {% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/05/06/scan-entra-id-apps/apps3.png" %}
