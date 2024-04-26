@@ -117,3 +117,5 @@ Benefits:
 Drawbacks:
 - Cost
 - More complex
+
+[Arc-enabled Kubernetes and Microsoft Entra Workload ID]({% post_url 2024/05/2024-05-13-arc-enabled-kubernetes-and-entra-workload-id %}).
