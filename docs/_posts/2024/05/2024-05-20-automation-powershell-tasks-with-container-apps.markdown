@@ -189,7 +189,7 @@ If you look carefully, then you'll notice couple of things:
 - `AZURE_CLIENT_ID` environment variable is used to pass the managed identity client ID to the container
 - `SCRIPT_FILE` environment variable is used to point to the script file
 - `volumes` and `volumeMounts` are used to mount the storage account to the container
-- `cronExpression`is used to define the internal of the job
+- `cronExpression`is used to define the interval of the job
 
 So what is in the `jannemattila/azure-powershell-job` image?
 
@@ -203,7 +203,7 @@ And the image is available in Docker Hub:
 
 {% include dockerEmbed.html text="JanneMattila/azure-powershell-job" link="r/jannemattila/azure-powershell-job" %}
 
-After deployment, I can see the job in the portal:
+After the above deployment, I can see the job in the portal:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/job1.png" %}
 
@@ -237,7 +237,7 @@ I can see the detailed logs of the run by clicking the `Console`:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/logs0.png" %}
 
-I have then use my KQL skills to just show the relevant fields:
+I can then use my KQL skills to just show the relevant fields:
 
 ```sql
 ContainerAppConsoleLogs_CL
@@ -257,7 +257,7 @@ Some benefits of this approach:
   - Might be easier to deploy to mounted storage account than in some other solutions
 
 Here is my cost analysis view for that resource group:
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/cost.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/costs.png" %}
 
 From that $4.52 cost, container registry has taken $4.42 since I was using
 [Basic](https://azure.microsoft.com/en-us/pricing/details/container-registry/)
@@ -267,6 +267,7 @@ If you think about the portability of this solution, then please read my post
 [Arc-enabled Kubernetes and Microsoft Entra Workload ID]({% post_url 2024/05/2024-05-13-arc-enabled-kubernetes-and-entra-workload-id %})
 because it shows how you can take this solution to elsewhere
 and still use the same managed identity and script file approach.
+Actually, this post gave me the idea to write that post.
 
 Okay, I admin, that to the people who are not so familiar with containers,
 this might feel complex solution. But I think in many scenarios,
@@ -274,6 +275,7 @@ you can split the infrastructure work and script development work to different p
 
 ## Conclusion
 
-
+Container App Jobs are a great way to run your maintenance tasks with PowerShell scripts.
+I can also see other scenarios for these jobs, but I'll leave those for future posts.
 
 I hope you find this useful!
