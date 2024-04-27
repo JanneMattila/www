@@ -8,6 +8,8 @@
   - Admin, User access
   - Workload
   - App login access
+- GitOps and hard coding e.g., Managed identity Arc-enabled Kubernetes
+  - How to avoid hard coding
 - https://mac-blog.org.ua/nginx-powershell/
   - https://github.com/Badgerati/Pode
 - https://github.com/JanneMattila/azure-storage-demos/blob/main/perf%2Fnotes.md

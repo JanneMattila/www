@@ -6,45 +6,139 @@ layout: posts
 categories: azure
 tags: azure powershell container-apps automation
 ---
-<!--
-- Maintenance task as Container App
-  - Cost, private vs. Func app
-  - https://github.com/Azure/CloudShell
-  - https://mcr.microsoft.com/en-us/product/azure-powershell/about
-
-  https://github.com/microsoft/azure-container-apps/issues/1056
-https://github.com/microsoft/azure-container-apps/issues/960
-
--->
 
 I  previously wrote about
 [Automating maintenance tasks with Azure Functions and PowerShell]({% post_url 2023/10/2023-10-30-automating-maintenance-tasks-part1 %}).
 That combo has been my go-to solution for many automation tasks.
 
-[Azure Functions Premium plan](https://learn.microsoft.com/en-us/azure/azure-functions/functions-premium-plan?tabs=portal)
 However, there are scenarios where Azure Functions are not the best fit. For example, when you need to run a long-running task or need to have more control over the environment.
+[Azure Functions Premium plan](https://learn.microsoft.com/en-us/azure/azure-functions/functions-premium-plan?tabs=portal)
+is typically the solution for these scenarios, but it's more expensive than the Consumption plan.
 
+There is currently a preview feature called
 [Azure Container Apps hosting of Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-container-apps-hosting)
+which might be a good fit for these maintenance tasks also in the future.
 
-In this post, I'll show you how to use Azure
-[Container App Jobs](https://learn.microsoft.com/en-us/azure/container-apps/jobs?tabs=azure-cli)
-to run PowerShell tasks.
+But in this post, I'll show alternative solution for running PowerShell tasks:<br/>
+[Container App Jobs](https://learn.microsoft.com/en-us/azure/container-apps/jobs?tabs=azure-cli).
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/job1.png" %}
 
+In this demo setup, I want to run my maintenance tasks with PowerShell scripts in a container app.
+
+More precisely, I want to run a PowerShell script with generic image which has Azure PowerShell module installed
+but the actual script is mounted from external storage.
+
+Here is the architecture:
+
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/architecture.png" %}
+
+The idea is to have my maintenance tasks written as normal PowerShell scripts and place them
+into Azure Files. Then these scripts are mounted to the container app and executed.
+And of course, I'll use managed identity for identity for running the tasks:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/architecture2.png" %}
 
-- Maintenance task as Container App
-  - Cost, private vs. Func app
-  - https://github.com/Azure/CloudShell
-  - https://mcr.microsoft.com/en-us/product/azure-powershell/about
+To make it concrete, the PowerShell script can be as simple as this:
+
+```powershell
+Write-Output "This is example job script"
+
+Get-AzResourceGroup | Format-Table
+```
+
+Before that script is executed, behind the scenes, `Connect-AzAccount` is executed with managed identity,
+so you don't need to worry about credentials in your maintenance scripts.
+
+Please check the official documentation for more details:
 
 [Create a job with Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/jobs-get-started-cli?pivots=container-apps-job-manual)
 
+[Use storage mounts in Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/storage-mounts?tabs=smb&pivots=azure-cli)
 
-```yaml
+[Tutorial: Create an Azure Files volume mount in Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/storage-mounts-azure-files?tabs=bash)
+
+The above documentation uses mixture of using CLI tooling and then exporting container app to YAML
+to be able to leverage the volume mounts.
+I'm not big fan of this kind of approach, so I'll show how to do this with YAML from the beginning.
+
+As always, the full code is available in my GitHub repository (`deploy.ps1` has all the details),
+but the main parts of the deployment in this post:
+
+{% include githubEmbed.html text="JanneMattila/azure-container-apps-demos" link="JanneMattila/azure-container-apps-demos" %}
+
+First, you need to create the container apps environment:
+
+```powershell
+# Create Container Apps environment
+az containerapp env create `
+  --name $containerAppsEnvironment `
+  --resource-group $resourceGroup `
+  --infrastructure-subnet-resource-id $subnetId `
+  --logs-workspace-id $workspaceCustomerId `
+  --logs-workspace-key $workspaceKey `
+  --enable-workload-profiles `
+  --location $location
+```
+
+Then we'll create storage account and SMB share:
+
+```powershell
+az storage account create `
+  --name $storageAccountName `
+  --resource-group $resourceGroup `
+  --location $location `
+  --sku Standard_LRS `
+  --kind StorageV2
+
+az storage share-rm create `
+  --access-tier Hot `
+  --enabled-protocols SMB `
+  --quota 10 `
+  --name $shareName `
+  --storage-account $storageAccountName
+```
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/share1.png" %}
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/share2.png" %}
+
+You can now deploy your script files to the storage using Azure CLI:
+
+```powershell
+az storage file upload `
+  --source timer1.ps1 `
+  --share-name $shareName `
+  --path timer1.ps1 `
+  --account-name $storageAccountName `
+  --auth-mode key
+```
+
+Since it's SMB share, you can mount it to your own machine and use it from File Explorer
+(of course, you need to have access to the storage account via private network if configured so):
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/explorer1.png" %}
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/explorer2.png" %}
+
+Next, we'll add the storage to the container app environment:
+
+```powershell
+# - Add storage to the environment
+az containerapp env storage set `
+  --name $containerAppsEnvironment `
+  --resource-group $resourceGroup `
+  --storage-name share `
+  --azure-file-account-name $storageAccountName `
+  --azure-file-account-key $storageKey `
+  --azure-file-share-name $shareName `
+  --access-mode ReadWrite
+```
+
+Finally, I'm ready to deploy the container app job from YAML:
+
+```powershell
+@"
 type: Microsoft.App/jobs
 identity:
   type: UserAssigned
@@ -70,7 +164,7 @@ properties:
             value: $($automationidentity.clientId)
           - name: SCRIPT_FILE
             value: /scripts/timer1.ps1
-        image: jannemattila/azure-powershell-job:1.0.1
+        image: jannemattila/azure-powershell-job:1.0.5
         name: azure-powershell-job
         resources:
           cpu: 0.25
@@ -82,40 +176,104 @@ properties:
       - name: azure-files-volume
         storageName: share
         storageType: AzureFile
+"@ > azure-powershell-job.yaml
+
+az containerapp job create --name azure-powershell-job `
+  --resource-group $resourceGroup `
+  --yaml azure-powershell-job.yaml
 ```
 
-https://github.com/JanneMattila/azure-powershell-job
+If you look carefully, then you'll notice couple of things:
 
-https://hub.docker.com/r/jannemattila/azure-powershell-job
+- `jannemattila/azure-powershell-job` image is used to run this job
+- `AZURE_CLIENT_ID` environment variable is used to pass the managed identity client ID to the container
+- `SCRIPT_FILE` environment variable is used to point to the script file
+- `volumes` and `volumeMounts` are used to mount the storage account to the container
+- `cronExpression`is used to define the internal of the job
 
-https://github.com/JanneMattila/azure-container-apps-demos
+So what is in the `jannemattila/azure-powershell-job` image?
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/explorer1.png" %}
-
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/explorer2.png" %}
-
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/share1.png" %}
-
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/share2.png" %}
-
-{% include dockerEmbed.html text="JanneMattila/azure-powershell-job" link="r/jannemattila/azure-powershell-job" %}
+It's a super simple image with Azure PowerShell module installed
+and wrapper script to start your actual script file.
+You can find the source code from my GitHub repository:
 
 {% include githubEmbed.html text="JanneMattila/azure-powershell-job" link="JanneMattila/azure-powershell-job" %}
 
+And the image is available in Docker Hub:
+
+{% include dockerEmbed.html text="JanneMattila/azure-powershell-job" link="r/jannemattila/azure-powershell-job" %}
+
+After deployment, I can see the job in the portal:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/job1.png" %}
+
+And it does have the attached volume as well:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/job2.png" %}
+
+Similarly, it has user assigned managed identity:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/job3.png" %}
+
+
+
+I can start that job directly from portal:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/runnow.png" %}
+
+Similarly, I can start the job with Azure CLI:
+
+```powershell
+az containerapp job start `
+  --name azureautomationapppwsh `
+  --resource-group $resourceGroup
+```
+
+After the job is started, I can see it the run history:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/runhistory.png" %}
+
+I can see the detailed logs of the run by clicking the `Console`:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/logs0.png" %}
+
+I have then use my KQL skills to just show the relevant fields:
+
+```sql
+ContainerAppConsoleLogs_CL
+| where ContainerGroupName_s startswith 'azure-powershell-job-zryhtgi'
+| project Log_s
+```
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/logs1.png" %}
+
+Some benefits of this approach:
+- Full control of the used software versions (as you can see from the above logs)
+  - E.g., PowerShell 7.4 now (and not when it's GA as in Azure Functions)
+- VNET support
+- By separating the script from the container, you can:
+  - Focus on the PowerShell script development
+- From the infrastructure deployment perspective:
+  - Might be easier to deploy to mounted storage account than in some other solutions
+
+Here is my cost analysis view for that resource group:
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/cost.png" %}
+
+From that $4.52 cost, container registry has taken $4.42 since I was using
+[Basic](https://azure.microsoft.com/en-us/pricing/details/container-registry/)
+tier for that registry.
+
+If you think about the portability of this solution, then please read my post
+[Arc-enabled Kubernetes and Microsoft Entra Workload ID]({% post_url 2024/05/2024-05-13-arc-enabled-kubernetes-and-entra-workload-id %})
+because it shows how you can take this solution to elsewhere
+and still use the same managed identity and script file approach.
+
+Okay, I admin, that to the people who are not so familiar with containers,
+this might feel complex solution. But I think in many scenarios,
+you can split the infrastructure work and script development work to different people.
+
 ## Conclusion
 
-Benefits:
-- Full control of the image and version
-  - E.g., 7.4 now (and not when it's GA)
-- VNET support
-- Focus on the PowerShell script if someone else is responsible for the infrastructure
-  - Might be easier to deploy to mounted storage account
-- You can take this to on-premises or other clouds
-  - E.g., Azure Arc-enabled Kubernetes
-- Managed Identity
 
-Drawbacks:
-- Cost
-- More complex
 
-[Arc-enabled Kubernetes and Microsoft Entra Workload ID]({% post_url 2024/05/2024-05-13-arc-enabled-kubernetes-and-entra-workload-id %}).
+I hope you find this useful!
