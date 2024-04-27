@@ -91,8 +91,15 @@ openssl rsa -in sa.key -pubout -out sa.pub
 Then we need to create a Storage Account and Blob Container which we will use for publishing the metadata document and public key:
 
 ```bash
-az storage account create --resource-group $resource_group_name --name $storage_name --allow-blob-public-access true
-az storage container create --account-name $storage_name --name $container_name --public-access blob
+az storage account create \
+  --resource-group $resource_group_name \
+  --name $storage_name \
+  --allow-blob-public-access true
+
+az storage container create \
+  --account-name $storage_name \
+  --name $container_name \
+  --public-access blob
 ```
 
 Generate discovery document by filling in the values to `openid-configuration.json`:
@@ -352,7 +359,7 @@ spec:
 
 To point out the important parts:
 
-- Label `azure.workload.identity/use: "true"` tells the mutating admission webhook to kick-in and inject the required properties.
+- Label `azure.workload.identity/use: "true"` tells the mutating admission webhook to kick in and inject the required environment variables and token file.
 - `serviceAccountName: workload-identity-sa` tells the Kubernetes to use the service account we created earlier.
 
 After deployment, we can test that the managed identity is working correctly.
@@ -454,12 +461,16 @@ Read more about [Azure Identity client libraries](https://learn.microsoft.com/en
 
 ## Troubleshooting
 
-### `Resource temporarily unavailable` for `login.microsoftonline.com`
+### DNS issues
 
-https://github.com/docker/compose/issues/8600
-https://github.com/docker/for-win/issues/12018
-https://stackoverflow.com/questions/77396384/docker-desktop-running-pods-on-wsl-cannot-resolve-host-name
-https://github.com/docker/for-win/issues/13768
+If you get `Resource temporarily unavailable` for `login.microsoftonline.com` when you try to resolve it from your pods,
+then you might have one of the following issues:
+
+- [DNS Resolution randomly fails in 3.6.0](https://github.com/docker/for-win/issues/12018)
+- [Docker Desktop running pods on WSL cannot resolve host name](https://stackoverflow.com/questions/77396384/docker-desktop-running-pods-on-wsl-cannot-resolve-host-name)
+- [Can't access external website with local Kubernetes in docker-desktop 4.25.0 releae](https://github.com/docker/for-win/issues/13768)
+
+You can test it with the following commands (using my webapp-network-tester tool):
 
 ```console
 $ curl -X POST --data "IPLOOKUP login.microsoftonline.com" "$network_app_uri/api/commands"
@@ -486,7 +497,10 @@ IP: 2620:1ec:c11::200
 <- End: IPLOOKUP bing.com 149.37ms# 
 ```
 
-Use external DNS server in the deployment (for example Cloudflare)
+Clearly, the `login.microsoftonline.com` is not resolving correctly for some reason.
+Therefore, the authentication will fail with various error messages.
+
+To fix this, you can try using external DNS server in the deployment (for example Cloudflare)
 by setting
 [dnsConfig](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-config):
 
@@ -500,8 +514,11 @@ by setting
 
 ### Subject not found in federated credential
 
-If your subject is `system:serviceaccount:network-app:workload-identity-sa-abc` in the JWT token,
-but you get the following error:
+If your subject in the JWT token is e.g.,
+```
+system:serviceaccount:network-app:workload-identity-sa-abc
+```
+and during the authentication you get the following error:
 
 ```powershell
 Connect-AzAccount: /bin/run.ps1:42
@@ -520,8 +537,6 @@ Line |
      | https://docs.microsoft.com/en-us/azure/active-directory/develop/workload-identity-federation Trace ID: 76057962-ba13-43fe-9902-a9960a412301 Correlation ID: a775f8a5-1f7c-4682-bb5c-7b29e015dc8e Timestamp: 2024-04-26 11:17:20Z Could not find tenant id for provided tenant domain 'f3296a34-479c-401a-a838-4a61d2d94703'.
 ```
 
-The most important part of the above error is:
-
 > **AADSTS700213**: No matching federated
 > identity record found for presented assertion subject
 > _system:serviceaccount:network-app:workload-identity-sa-abc_.
@@ -532,18 +547,20 @@ Please check that it matches the subject in the federated credential:
 
 In the above example, they don't match and that's why the authentication fails.
 
-There is interesting discussions about
+Related to this, there is very interesting discussions about
 [Federated identity credentials support for wildcards](https://github.com/Azure/azure-workload-identity/issues/373#issuecomment-2078859575) in the GitHub issues.
 
 ## Conclusion
 
 In this post, we have seen how to use Microsoft Entra Workload ID
-with Azure Arc-enabled Kubernetes. We have created a managed identity,
-created required signing keys, created a Azure Arc-enabled Kubernetes cluster,
+with Azure Arc-enabled Kubernetes. We have created required signing keys,
+published metadata and JWKS documents to a publicly accessible location,
+created a Azure Arc-enabled Kubernetes cluster,
+created a managed identity,
 created a Kubernetes service account, and deployed a workload that uses the service account.
 
 This is a powerful feature that allows you to use managed identities
-for your workload and you don't have to manage any secrets except for the signing keys of course.
+for your workload and you don't have to manage any secrets **except for the signing keys of course**.
 [Key rotation](https://azure.github.io/azure-workload-identity/docs/topics/self-managed-clusters/service-account-key-rotation.html#key-rotation)
 of the signing keys is extremely important so please plan ahead for that.
 
