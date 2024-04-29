@@ -2,6 +2,7 @@
 
 ## Upcoming posts
 
+- Azure DevOps for PowerShell script automation
 - Sub move resource validation script
 - AKS Identity
   - In, Out
