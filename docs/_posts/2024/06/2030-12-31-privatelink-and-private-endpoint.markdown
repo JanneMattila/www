@@ -1,7 +1,7 @@
 ---
 title: Privatelink and Private Endpoint
 image: /assets/posts/2024/05/27/privatelink-and-private-endpoint/appgw.png
-date: 2024-05-27 06:00:00 +0300
+date: 2030-12-31 06:00:00 +0300
 layout: posts
 categories: azure
 tags: azure networking
