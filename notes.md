@@ -2,7 +2,7 @@
 
 ## Upcoming posts
 
-- Azure DevOps for PowerShell script automation
+- Update Basic Public IP Dynamic to Static, and further to Standard SKU
 - Sub move resource validation script
 - AKS Identity
   - In, Out
