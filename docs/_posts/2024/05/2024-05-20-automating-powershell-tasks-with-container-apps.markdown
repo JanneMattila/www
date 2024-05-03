@@ -1,6 +1,6 @@
 ---
-title: Automation PowerShell tasks with Container App Jobs
-image: /assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/job1.png
+title: Automating PowerShell tasks with Container App Jobs
+image: /assets/posts/2024/05/20/automating-powershell-tasks-with-container-apps/job1.png
 date: 2024-05-20 06:00:00 +0300
 layout: posts
 categories: azure
@@ -22,7 +22,7 @@ which might be a good fit for these maintenance tasks also in the future.
 But in this post, I'll show alternative solution for running PowerShell tasks:<br/>
 [Container App Jobs](https://learn.microsoft.com/en-us/azure/container-apps/jobs?tabs=azure-cli).
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/job1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automating-powershell-tasks-with-container-apps/job1.png" %}
 
 In this demo setup, I want to run my maintenance tasks with PowerShell scripts in a container app.
 
@@ -31,13 +31,13 @@ but the actual script is mounted from external storage.
 
 Here is the architecture:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/architecture.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automating-powershell-tasks-with-container-apps/architecture.png" %}
 
 The idea is to have my maintenance tasks written as normal PowerShell scripts and place them
 into Azure Files. Then these scripts are mounted to the container app and executed.
 And of course, I'll use managed identity for identity for running the tasks:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/architecture2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automating-powershell-tasks-with-container-apps/architecture2.png" %}
 
 To make it concrete, the PowerShell script can be as simple as this:
 
@@ -99,9 +99,9 @@ az storage share-rm create `
   --storage-account $storageAccountName
 ```
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/share1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automating-powershell-tasks-with-container-apps/share1.png" %}
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/share2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automating-powershell-tasks-with-container-apps/share2.png" %}
 
 You can now deploy your script files to the storage using Azure CLI:
 
@@ -117,9 +117,9 @@ az storage file upload `
 Since it's SMB share, you can mount it to your own machine and use it from File Explorer
 (of course, you need to have access to the storage account via private network if configured so):
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/explorer1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automating-powershell-tasks-with-container-apps/explorer1.png" %}
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/explorer2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automating-powershell-tasks-with-container-apps/explorer2.png" %}
 
 Next, we'll add the storage to the container app environment:
 
@@ -205,21 +205,21 @@ And the image is available in Docker Hub:
 
 After the above deployment, I can see the job in the portal:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/job1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automating-powershell-tasks-with-container-apps/job1.png" %}
 
 And it does have the attached volume as well:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/job2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automating-powershell-tasks-with-container-apps/job2.png" %}
 
 Similarly, it has user assigned managed identity:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/job3.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automating-powershell-tasks-with-container-apps/job3.png" %}
 
 
 
 I can start that job directly from portal:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/runnow.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automating-powershell-tasks-with-container-apps/runnow.png" %}
 
 Similarly, I can start the job with Azure CLI:
 
@@ -231,11 +231,11 @@ az containerapp job start `
 
 After the job is started, I can see it the run history:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/runhistory.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automating-powershell-tasks-with-container-apps/runhistory.png" %}
 
 I can see the detailed logs of the run by clicking the `Console`:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/logs0.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automating-powershell-tasks-with-container-apps/logs0.png" %}
 
 I can then use my KQL skills to just show the relevant fields:
 
@@ -245,7 +245,7 @@ ContainerAppConsoleLogs_CL
 | project Log_s
 ```
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/logs1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automating-powershell-tasks-with-container-apps/logs1.png" %}
 
 Some benefits of this approach:
 - Full control of the used software versions (as you can see from the above logs)
@@ -257,7 +257,7 @@ Some benefits of this approach:
   - Might be easier to deploy to mounted storage account than in some other solutions
 
 Here is my cost analysis view for that resource group:
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automation-powershell-tasks-with-container-apps/costs.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/20/automating-powershell-tasks-with-container-apps/costs.png" %}
 
 From that $4.52 cost, container registry has taken $4.42 since I was using
 [Basic](https://azure.microsoft.com/en-us/pricing/details/container-registry/)

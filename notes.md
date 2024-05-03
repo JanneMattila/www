@@ -2,6 +2,7 @@
 
 ## Upcoming posts
 
+- Entra ID - API Chain OBO - API Examples, jwt.ms
 - Update Basic Public IP Dynamic to Static, and further to Standard SKU
 - Sub move resource validation script
 - AKS Identity
