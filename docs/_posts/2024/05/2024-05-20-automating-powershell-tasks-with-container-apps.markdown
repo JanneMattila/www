@@ -264,18 +264,99 @@ From that $4.52 cost, container registry has taken $4.42 since I was using
 tier for that registry.
 
 If you think about the portability of this solution, then please read my post
-[Arc-enabled Kubernetes and Microsoft Entra Workload ID]({% post_url 2024/05/2024-05-13-arc-enabled-kubernetes-and-entra-workload-id %})
-because it shows how you can take this solution to elsewhere
-and still use the same managed identity and script file approach.
-Actually, this post gave me the idea to write that post.
+[Arc-enabled Kubernetes and Microsoft Entra Workload ID]({% post_url 2024/05/2024-05-13-arc-enabled-kubernetes-and-entra-workload-id %}).
+It shows how you can take this solution to elsewhere
+and still use the managed identity for running the scripts.
 
-Okay, I admin, that to the people who are not so familiar with containers,
-this might feel complex solution. But I think in many scenarios,
-you can split the infrastructure work and script development work to different people.
+To show what I mean, here is the same job in self-hosted Kubernetes:
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-configmap
+data:
+  run.ps1: |-
+    Write-Output "This is example run.ps1 (from configmap)"
+
+    Get-AzResourceGroup | Format-Table
+```
+
+The above is the script file which is mounted to the container but this time just from Kubernetes ConfigMap
+(obviously you can use fileshares as well).
+
+```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: azure-powershell-job
+spec:
+  template:
+    metadata:
+      labels:
+        azure.workload.identity/use: "true"
+    spec:
+      serviceAccountName: "${service_account_name}"
+      restartPolicy: Never
+      containers:
+        - name: azure-powershell-job
+          image: jannemattila/azure-powershell-job:1.0.5
+          env:
+            # No need to set this manually, 
+            # since workload identity will automatically set it
+            # - name: AZURE_CLIENT_ID
+            #   value: "${client_id}"
+            - name: SCRIPT_FILE
+              value: /mnt/run.ps1
+          volumeMounts:
+            - name: configmap
+              mountPath: /mnt
+      volumes:
+        - name: configmap
+          configMap:
+            name: app-configmap
+            defaultMode: 0744
+```
+
+In the above YAML, I'm using Workload ID to pass the managed identity to the container.
+
+Here is the output from the job:
+
+```console
+$ kubectl logs $azure_powershell_job_pod1
+Azure PowerShell Job
+
+https://github.com/JanneMattila/azure-powershell-job
+https://hub.docker.com/r/jannemattila/azure-powershell-job
+Image: 1.0.5
+
+PowerShell 7.4.2
+.NET 8.0.4
+Az 11.5.0
+
+Job parameters:
+AZURE_CLIENT_ID: edad5241-56ba-4fea-91c5-c0e1d6149e39
+SCRIPT_FILE: /mnt/run.ps1
+
+# abbreviated
+Running script: /mnt/run.ps1
+This is example run.ps1 (from configmap)
+```
+
+To learn more about the details, read the post
+[Arc-enabled Kubernetes and Microsoft Entra Workload ID]({% post_url 2024/05/2024-05-13-arc-enabled-kubernetes-and-entra-workload-id %}).
+
+The above demo shows how you can use the same script and same approach in different environments.
+That can be Azure Container App Job or then your own self-hosted and Arc-enabled Kubernetes.
 
 ## Conclusion
 
 Container App Jobs are a great way to run your maintenance tasks with PowerShell scripts.
 I can also see other scenarios for these jobs, but I'll leave those for future posts.
+
+Okay, I admin, that to the people who are not so familiar with containers,
+this might feel complex solution. But I think in many scenarios,
+you can split the infrastructure work and script development work to different people
+and you can find good balance between the two.
 
 I hope you find this useful!

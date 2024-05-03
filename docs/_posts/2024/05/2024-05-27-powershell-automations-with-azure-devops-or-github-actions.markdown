@@ -7,7 +7,7 @@ categories: azure
 tags: azure powershell devops github actions
 ---
 
-I have been recently quite often writing about various PowerShell automation topics such as:
+I have been recently blogging about various automation topics:
 
 [Automating maintenance tasks with Azure Functions and PowerShell]({% post_url 2023/10/2023-10-30-automating-maintenance-tasks-part1 %})
 

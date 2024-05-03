@@ -40,10 +40,10 @@ I modified the script to scan only applications which have secrets that are vali
 You can use the script like this:
 
 ```powershell
-# Scan all applications with secret valid more than 2 year
+# Scan all applications with secret valid more than 2 years
 .\entra-scan-application-secrets.ps1
 
-# Scan all applications with secret valid more than 5 year
+# Scan all applications with secret valid more than 5 years
 .\entra-scan-application-secrets.ps1 -MaxDaysToFuture (365 * 5)
 ```
 
