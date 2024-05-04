@@ -15,7 +15,7 @@ I have been previously blogging about various automation topics:
 
 The above examples are using various Azure services for the automations.
 
-**However**, many times even more simpler approach can do the job.
+**However**, many times even simpler approach can do the job.
 I'm all about choosing the right tool for the job.
 
 In this post, I will show you how to automate tasks with
@@ -23,7 +23,7 @@ In this post, I will show you how to automate tasks with
 or
 [GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions).
 
-Both of these services are great for automating tasks and they are very easy to use.
+Both services are great for automating tasks, and they are very easy to use.
 They are feature rich and you can run them in managed agents or self-hosted agents.
 
 Scenario:
@@ -34,7 +34,7 @@ Scenario:
 
 Before we start implementing Azure Pipelines or GitHub Actions, we need to prepare the setup for the Workload Identity.
 
-First, let's register application to Entra ID:
+First, let's register an application to Entra ID:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/27/automations-with-azure-pipelines-or-github-actions/entra1.png" %}
 
@@ -111,7 +111,7 @@ Fill in the details for the service connection:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/27/automations-with-azure-pipelines-or-github-actions/ado4.png" %}
 
-Notice that it does provide following values for the issuer and subject identifier:
+Notice that it provides the following values for the issuer and subject identifier:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/27/automations-with-azure-pipelines-or-github-actions/ado-federated.png" %}
 
@@ -143,7 +143,7 @@ you'll get the following error:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/27/automations-with-azure-pipelines-or-github-actions/ado5.png" %}
 
-After the have successfully validated and created the service connection,
+After you have successfully validated and created the service connection,
 you can use it in your pipelines.
 
 Here's an example of a pipeline that runs on a schedule:
@@ -199,7 +199,7 @@ We can validate that the _Scheduled runs_ are as expected:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/27/automations-with-azure-pipelines-or-github-actions/ado8.png" %}
 
-After a day we can see that the pipeline has ran two times as expected:
+After a day we can see that the pipeline has run two times as expected:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/27/automations-with-azure-pipelines-or-github-actions/ado-schedule.png" %}
 
@@ -277,7 +277,7 @@ jobs:
         failOnStandardError: true
 ```
 
-Same principles apply here as with Azure Pipelines.
+The same principles apply here as with Azure Pipelines.
 
 Now we can test the GitHub Actions workflow by running it manually:
 
@@ -285,14 +285,39 @@ Now we can test the GitHub Actions workflow by running it manually:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/27/automations-with-azure-pipelines-or-github-actions/gh3.png" %}
 
-After a day we can see that the workflow has ran two times as expected:
+After a day we can see that the workflow has run two times as expected:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/27/automations-with-azure-pipelines-or-github-actions/gh-schedule.png" %}
 
 ## Conclusion
 
-// TBA: private self-hosted agent/runner and private networking
+In this post, I showed you how to automate tasks with Azure Pipelines or GitHub Actions.
+They're both great services for automating tasks and they are very easy to use.
+Sometimes this is all you need for automation.
 
-// TBA: paused if not used in given time
+One thing you need to be aware of is the possibility that your
+schedule automation can be paused or suspended due to inactivity.
+The implementation of inactivity varies between the services and is either user inactivity
+or then repository commit inactivity but nevertheless it's good to be aware of this.
+And as always, there are some
+[workarounds](https://github.com/marketplace/actions/keepalive-workflow)
+to this topic. But if these automations are part of your actively worked projects and repositories,
+then this should not be so big of an issue.
+
+Similarly, you have to understand that depending on the agent or runner you're using,
+there are some
+[limitations](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/scheduled-triggers?view=azure-devops&tabs=yaml#limits)
+to the
+[execution time](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/phases?view=azure-devops&tabs=yaml#timeouts),
+[usage limits](https://docs.github.com/en/actions/learn-github-actions/usage-limits-billing-and-administration#usage-limits),
+and the number of concurrent jobs.
+Also, if you need to access resources in a private network, you need to use a
+[self-hosted agents](https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/agents?view=azure-devops&tabs=browser)
+or
+[self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners)
+or use one of the options for
+[private networking with GitHub-hosted runners](https://docs.github.com/en/actions/using-github-hosted-runners/connecting-to-a-private-network/about-private-networking-with-github-hosted-runners).
+
+All in all, keep this automation option in mind when you're planning your next automation task.
 
 I hope you find this useful!
