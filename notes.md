@@ -3,7 +3,13 @@
 ## Upcoming posts
 
 - Entra ID - API Chain OBO - API Examples, jwt.ms
+- Managed identity and API permissions
+  - Publish API permissions
 - Update Basic Public IP Dynamic to Static, and further to Standard SKU
+- GitOps & Flux & workload identity to access GitHub
+  - https://fluxcd.io/flux/installation/configuration/workload-identity/
+  - https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/tutorial-use-gitops-flux2?tabs=azure-cli#workload-identity-in-aks-clusters
+  - Chicken and egg problem
 - Sub move resource validation script
 - AKS Identity
   - In, Out
