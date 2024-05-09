@@ -21,7 +21,8 @@ and currently there is
 Many customers are using Infrastructure as Code (IaC) to manage their APIM instances.
 If you have all that in place, then doing even larger changes to the environment should not be too daunting task.
 
-I was working with one customer who had two APIM instances and they wanted to merge them together.
+I was working with one customer who had two APIM instances for their internal integrations
+and they wanted to merge them together.
 Before merging two Azure API Management services together, they had the following setup:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/03/merging-two-apims-together/merging-two-apims-together-before.png" %}
@@ -39,9 +40,9 @@ They had already quite many integrations connecting to the another instance they
 into the main instance. They wanted to keep the subscription keys same for the existing customers.
 It should be "seamless" for the customers.
 
-Luckily, there is a nice
+Luckily, there is
 [New-AzApiManagementSubscription](https://learn.microsoft.com/en-us/powershell/module/az.apimanagement/new-azapimanagementsubscription?view=azps-11.6.0)
-cmdlet available.
+cmdlet available which can be used just for that.
 It allows you to create a new subscription so that you can provide the subscription key:
 
 ```powershell
@@ -53,7 +54,7 @@ New-AzApiManagementSubscription `
         -SecondaryKey $secondarySubscriptionKey `
 ```
 
-I created a small _example_ PowerShell script to handle the subscription keys move:
+I created a small _example_ PowerShell script to handle the subscription key move:
 
 1. Export the subscription keys from the source APIM to a CSV file
 2. Import the subscription keys to the target APIM from the CSV file
