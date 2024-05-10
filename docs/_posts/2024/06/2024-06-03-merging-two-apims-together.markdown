@@ -27,11 +27,11 @@ Before merging two Azure API Management services together, they had the followin
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/03/merging-two-apims-together/merging-two-apims-together-before.png" %}
 
-They wanted to merge these two APIM instances together and get into the following state:
+They wanted to merge these two APIM instances together and this was the interim state:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/03/merging-two-apims-together/merging-two-apims-together-after.png" %}
 
-And course, in the longer run, they want to get into this state:
+And course, after the successful merge, the final state is this:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/03/merging-two-apims-together/merging-two-apims-together-end.png" %}
 

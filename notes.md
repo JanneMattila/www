@@ -2,6 +2,8 @@
 
 ## Upcoming posts
 
+- Teams, subscription, event hub and notifications
+  - https://github.com/JanneMattila/teams-demos
 - Entra ID - API Chain OBO - API Examples, jwt.ms
 - Managed identity and API permissions
   - Publish API permissions

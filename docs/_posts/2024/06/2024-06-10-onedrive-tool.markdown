@@ -37,11 +37,14 @@ I started to think how to solve the problem.
 First, I needed to get the metadata of the files from OneDrive to a CSV file.
 If I have the metadata in CSV file,
 I can easily analyze it with PowerShell or in Excel.
+And all of this _offline_ without calling to the OneDrive APIs.
 
 Here is how I exported the data from OneDrive:
 
 ```powershell
-OneDriveTool --export --onedrive-file onedrive-export.csv
+OneDriveTool `
+  --export `
+  --onedrive-file onedrive-export.csv
 ```
 
 Tool starts to scan the files:
@@ -92,7 +95,10 @@ Next, I wanted to scan the hard drives.
 Here's the command I used:
 
 ```powershell
-OneDriveTool --scan D:\Backup --scan-file backup-harddrive1.csv --onedrive-file onedrive-export.csv
+OneDriveTool `
+  --scan D:\Backup `
+  --scan-file backup-harddrive1.csv `
+  --onedrive-file onedrive-export.csv
 ```
 
 Two new parameters needed:
@@ -125,11 +131,14 @@ As you can see, there is `InOneDrive` column which tells if the local file is al
 ```powershell
 $csv = Import-Csv -Path backup-harddrive1.csv -Delimiter ";"
 
-$filesMissingFromOneDrive = $csv | Where-Object -Property InOneDrive -Value "FALSE" -EQ
+$filesMissingFromOneDrive = $csv | `
+  Where-Object -Property InOneDrive -Value "FALSE" -EQ
 
 "$($filesMissingFromOneDrive.Count) files found which are not available in OneDrive"
 
-$jpgFiles = $filesMissingFromOneDrive | Where-Object -Property Name -Value "*.jpg" -Like | Select-Object @{
+$jpgFiles = $filesMissingFromOneDrive | `
+  Where-Object -Property Name -Value "*.jpg" -Like | `
+  Select-Object @{
     Name       = 'Output';
     Expression = { $_.Path + "/" + $_.Name }
 } | Select-Object -ExpandProperty Output
@@ -143,11 +152,14 @@ I decided to copy all the missing `.jpg` files to a temporary folder waiting for
 ```powershell
 $csv = Import-Csv -Path backup-harddrive1.csv -Delimiter ";"
 
-$filesMissingFromOneDrive = $csv | Where-Object -Property InOneDrive -Value "FALSE" -EQ
+$filesMissingFromOneDrive = $csv | `
+  Where-Object -Property InOneDrive -Value "FALSE" -EQ
 
 "$($filesMissingFromOneDrive.Count) files found which are not available in OneDrive"
 
-$jpgFiles = $filesMissingFromOneDrive | Where-Object -Property Name -Value "*.jpg" -Like | Select-Object @{
+$jpgFiles = $filesMissingFromOneDrive | `
+  Where-Object -Property Name -Value "*.jpg" -Like | `
+  Select-Object @{
     Name       = 'Output';
     Expression = { $_.Path + "/" + $_.Name }
 } | Select-Object -ExpandProperty Output
@@ -163,7 +175,8 @@ I decided to generate unique names for the files and copy them to a temporary fo
 ```powershell
 $csv = Import-Csv -Path backup-harddrive2.csv -Delimiter ";"
 
-$filesMissingFromOneDrive = $csv | Where-Object -Property InOneDrive -Value "FALSE" -EQ
+$filesMissingFromOneDrive = $csv | `
+  Where-Object -Property InOneDrive -Value "FALSE" -EQ
 
 "$($filesMissingFromOneDrive.Count) files found which are not available in OneDrive"
 
@@ -184,14 +197,19 @@ foreach ($source in $allFiles) {
 }
 ```
 
-New stats after the upload:
+After the above, I just uploaded the files to the OneDrive using the browser.
+Here are updated stats after the upload:
 
 ```
 78617 files found.
 793,870651786216
 ```
 
-{% include githubEmbed.html text="JanneMattila/azure-api-management-demos/subscription-keys.ps1" link="JanneMattila/azure-api-management-demos/blob/main/subscription-keys.ps1" %}
+It means that 5000 extra files were found during this process.
+
+Here is the tool in GitHub:
+
+{% include githubEmbed.html text="JanneMattila/onedrive-tool" link="JanneMattila/onedrive-tool" %}
 
 ## What's next?
 
@@ -205,18 +223,12 @@ directly in the app or in the browser. This means that I have to either download
 each video to local machine and watch it there _or_
 then I'll have to convert the files to `.mp4` format before uploading them to OneDrive.
 
-Since I have now my OneDrive data in CSV file, I can analyze it easily with PowerShell.
-
-```powershell
-$csv = Import-Csv -Path $LocalCSVFile -Delimiter ";"
-
-$filesMissingFromOneDrive = $csv | Where-Object -Property InOneDrive -Value "FALSE" -EQ
-
-```
+Since I have my OneDrive data in CSV file, I can analyze it easily with PowerShell.
 
 ```powershell
 $oneDriveCSV = Import-Csv -Path onedrive-export.csv -Delimiter ";"
-$mtsFiles = $oneDriveCSV | Where-Object -Property Name -Value "*.mts" -Like
+$mtsFiles = $oneDriveCSV | `
+  Where-Object -Property Name -Value "*.mts" -Like
 
 "$($mtsFiles.Count) .mts files found."
 
@@ -235,5 +247,4 @@ Output from the above is:
 ```
 
 So, I have 811 `.mts` files in my OneDrive and they take 164,9 GB of space.
-
-I hope you find this useful!
+This is something I need to take care of next. Expect a blog post about that in the future.
