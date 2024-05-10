@@ -158,6 +158,32 @@ Copy-Item $jpgFiles \temp\copies -Force
 The second hard drive had actually more files which were not in OneDrive.
 Also many of the file names were not unique.
 
+I decided to generate unique names for the files and copy them to a temporary folder:
+
+```powershell
+$csv = Import-Csv -Path backup-harddrive2.csv -Delimiter ";"
+
+$filesMissingFromOneDrive = $csv | Where-Object -Property InOneDrive -Value "FALSE" -EQ
+
+"$($filesMissingFromOneDrive.Count) files found which are not available in OneDrive"
+
+$allFiles = $filesMissingFromOneDrive | `
+  Where-Object -Property Name -Value "*.info" -NotLike | `
+  Where-Object -Property Name -Value "*.db" -NotLike | `
+  Where-Object -Property Name -Value "*.ini" -NotLike | `
+  Select-Object @{
+    Name       = 'Output';
+    Expression = { $_.Path + "/" + $_.Name }
+} | Select-Object -ExpandProperty Output
+
+$index = 10000
+foreach ($source in $allFiles) {
+    $destinationExtension = Split-Path -Path $source -Resolve -Extension
+    Copy-Item $source "\temp\copies\$index$destinationExtension" -Force
+    $index++
+}
+```
+
 New stats after the upload:
 
 ```
