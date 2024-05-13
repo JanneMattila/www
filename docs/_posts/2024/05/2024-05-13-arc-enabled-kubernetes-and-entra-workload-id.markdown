@@ -4,7 +4,7 @@ image: /assets/posts/2024/05/13/arc-enabled-kubernetes-and-entra-workload-id/jwt
 date: 2024-05-13 06:00:00 +0300
 layout: posts
 categories: azure
-tags: azure arc kubernetes identity entra
+tags: azure arc kubernetes entra
 ---
 
 [Microsoft Entra Workload ID](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview?tabs=dotnet)
