@@ -4,6 +4,10 @@
 
 - Teams, subscription, event hub and notifications
   - https://github.com/JanneMattila/teams-demos
+  - https://learn.microsoft.com/en-us/graph/change-notifications-delivery-event-hubs
+    - "Microsoft Graph Change Tracking" -> "Azure Event Hubs Data Sender"
+- Chaos Studio
+  - AKS
 - Entra ID - API Chain OBO - API Examples, jwt.ms
 - Managed identity and API permissions
   - Publish API permissions
