@@ -354,7 +354,7 @@ That can be Azure Container App Job or then your own self-hosted and Arc-enabled
 Container App Jobs are a great way to run your maintenance tasks with PowerShell scripts.
 I can also see other scenarios for these jobs, but I'll leave those for future posts.
 
-Okay, I admin, that to the people who are not so familiar with containers,
+Okay, I admit, that to the people who are not so familiar with containers,
 this might feel complex solution. But I think in many scenarios,
 you can split the infrastructure work and script development work to different people
 and you can find good balance between the two.
