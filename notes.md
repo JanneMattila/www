@@ -8,6 +8,9 @@
     - "Microsoft Graph Change Tracking" -> "Azure Event Hubs Data Sender"
 - Chaos Studio
   - AKS
+- AKS Backup and Restore
+- Disk performance analysis
+  - AKS SSD v2
 - Entra ID - API Chain OBO - API Examples, jwt.ms
 - Managed identity and API permissions
   - Publish API permissions
