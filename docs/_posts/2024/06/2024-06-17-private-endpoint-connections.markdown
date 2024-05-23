@@ -17,10 +17,13 @@ Private endpoints can be used to connect services between different tenants.
 This is useful when you have a service that you want to share with another tenant.
 It can be storage account that you want the other party to connect and push data to.
 
-Let's look this example from the eyes of our dear fictitious companies: Contoso and Litware.
-Contoso is a service provider and Litware is a customer of that service.
+Let's look this example from the eyes of our dear fictitious companies: **Contoso** and **Litware**.
+Contoso is a service provider and Litware is a consumer of that service.
 In order to share data between these companies, Contoso has created storage account
 and Litware will connect to that storage account using private endpoint.
+
+> **Note:**<br/>
+> I'm using Storage account as an example here, but this can be any service that supports private endpoints.
 
 Here is high-level overview of the above scenario:
 
@@ -105,10 +108,19 @@ They can now approve the connection and add their own message to the connection:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/pe8.png" %}
 
-Litware can now see this approved connection and with both messages are stored in
+Litware can now see this approved connection and both messages are stored in
 the private endpoint as well:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/pe9.png" %}
+
+Similarly, Contoso sees the connection:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/pe12.png" %}
+
+> **Note:**<br/>
+> In the above screenshot, you can see that the original `requestMessage`
+> is not stored in the connection.<br/>
+> Therefore, it's good idea to just append your own note to the end of the original message.
 
 If Contoso tries to access now the private endpoint, they'll see same error as Litware did before:
 
@@ -131,7 +143,7 @@ Let's study Storage Account we created in the above example:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/pe12.png" %}
 
-We can see that both parties have resource IDs to the other party's target resources.
+We can see that both parties have resource IDs to the other party's target resource.
 This is the key to finding cross-tenant private endpoint connections.
 
 Also note that the `type` of the private endpoint connection is:
@@ -151,16 +163,16 @@ And since private endpoint connection is a child resource, then
 we need to scan every resource that supports private endpoints.
 This is a lot of calls to the Azure Resource Manager API.
 
-Azure PowerShell has cmdlets to work with private endpoints and connections.
+Azure PowerShell has cmdlets to work with private endpoints and connections.<br/>
 [Get-AzPrivateEndpointConnection](https://learn.microsoft.com/en-us/powershell/module/az.network/get-azprivateendpointconnection?view=azps-11.6.0)
 is exactly what we need. It returns all the connections of the specified resource.
 
 _And even better_, it just happens to have **optimization** which helps our implementation.
 It has built-in list of resources that supports requesting this information,
-and if it doesn't then we have fast exit from the call.
+and does fast exit if the resource does not support fetching this information.
 You can find more details in the
 [ProviderConfiguration.cs](https://github.com/Azure/azure-powershell/blob/main/src/Network/Network/PrivateLinkService/PrivateLinkServiceProvider/ProviderConfiguration.cs)
-file.
+file. Look for `RegisterConfiguration` calls for each type.
 
 Here is the script to scan all the private endpoint connections in your environment:
 
@@ -185,8 +197,9 @@ SubscriptionID     : <contoso>
 ResourceGroupName  : rg-provider
 Name               : stprovider
 Type               : Microsoft.Storage/storageAccounts
-TargetResourceId   : /subscriptions/<litware>/resourceGroups/rg-consumer/providers/Microsoft.Netw 
-                     ork/privateEndpoints/pepstoragesvc
+TargetResourceId   : /subscriptions/<litware>
+                     /resourceGroups/rg-consumer
+                     /providers/Microsoft.Network/privateEndpoints/pepstoragesvc
 TargetSubscription : <litware>
 Description        : Litware connecting to the shared storage account CR#12345 - APR#345
 Status             : Approved
