@@ -38,6 +38,8 @@ Contoso shares the `ResourceID` of the storage account with Litware:
 
 And since they're going to use `blob` for data sharing, they'll share sub-resource `blob` with Litware as well.
 
+---
+
 > Hint:<br/>
 > You can use [Get-AzPrivateLinkResource](https://learn.microsoft.com/en-us/powershell/module/az.network/get-azprivatelinkresource?view=azps-12.0.0&viewFallbackFrom=azps-11.5.0)
 > cmdlet with resource ID to get all the supported
@@ -51,8 +53,11 @@ Get-AzPrivateLinkResource `
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/provider2.png" %}
 
+You can read more from the
+[Manage Azure private endpoints](https://learn.microsoft.com/en-us/azure/private-link/manage-private-endpoint?tabs=manage-private-link-powershell)
+documentation.
 
-
+---
 
 Litware prepares their environment by creating resource group `rg-consumer`
 and virtual network `vnet-consumer`:
@@ -117,7 +122,7 @@ Now the handshake is complete and Litware can start using the private endpoint t
 
 The above scenario might not be relevant to every company, so maybe you want to 
 [limit cross-tenant private endpoint connections](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/limit-cross-tenant-private-endpoint-connections).
-This Azure Policy based approach can helps you to prevent them to be created
+This Azure Policy based approach helps you to prevent them to be created in the first place
 and you can always make exemptions if needed.
 
 Next, I'll show you how to find all the cross-tenant private endpoint connections in your environment.
@@ -129,19 +134,63 @@ Let's study Storage Account we created in the above example:
 We can see that both parties have resource IDs to the other party's target resources.
 This is the key to finding cross-tenant private endpoint connections.
 
-https://learn.microsoft.com/en-us/azure/governance/resource-graph/reference/supported-tables-resources
+Also note that the `type` of the private endpoint connection is:
 
+```
+Microsoft.Storage/storageAccounts/privateEndpointConnections
+```
 
+So, it's child resource of the storage account.
 
+_Unfortunately_, at the time of writing this post, there is no resource graph
+[support for private endpoint connections](https://learn.microsoft.com/en-us/azure/governance/resource-graph/reference/supported-tables-resources).
+
+The above means that we need to scan our environment for these connections
+using my favorite tool: PowerShell.
+And since private endpoint connection is a child resource, then
+we need to scan every resource that supports private endpoints.
+This is a lot of calls to the Azure Resource Manager API.
+
+Azure PowerShell has cmdlets to work with private endpoints and connections.
 [Get-AzPrivateEndpointConnection](https://learn.microsoft.com/en-us/powershell/module/az.network/get-azprivateendpointconnection?view=azps-11.6.0)
+is exactly what we need. It returns all the connections of the specified resource.
 
-https://learn.microsoft.com/en-us/rest/api/storagerp/private-endpoint-connections/list?view=rest-storagerp-2023-01-01&tabs=HTTP
+_And even better_, it just happens to have **optimization** which helps our implementation.
+It has built-in list of resources that supports requesting this information,
+and if it doesn't then we have fast exit from the call.
+You can find more details in the
+[ProviderConfiguration.cs](https://github.com/Azure/azure-powershell/blob/main/src/Network/Network/PrivateLinkService/PrivateLinkServiceProvider/ProviderConfiguration.cs)
+file.
 
-https://github.com/Azure/azure-powershell/blob/main/src/Network/Network/PrivateLinkService/PrivateLinkServiceProvider/ProviderConfiguration.cs
+Here is the script to scan all the private endpoint connections in your environment:
 
-https://github.com/Azure/azure-powershell/blob/main/documentation/development-docs/examples/private-link-resource-example.md?plain=1
+{% include githubEmbed.html text="JanneMattila/some-questions-and-some-answers/scan-private-endpoint-connections.ps1" link="JanneMattila/some-questions-and-some-answers/blob/master/q%26a/scan-private-endpoint-connections.ps1" %}
 
+If I now execute that script:
 
-https://learn.microsoft.com/en-us/azure/private-link/manage-private-endpoint?tabs=manage-private-link-powershell
+```powershell
+.\scan-private-endpoint-connections.ps1
+```
 
+I'll get list of all the private endpoint connections in my environment in CSV format.
+And it has column to indicate if that is cross-tenant connection or not:
 
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/excel.png" %}
+
+Here is example of the output:
+
+```plain
+SubscriptionName   : development
+SubscriptionID     : <contoso>
+ResourceGroupName  : rg-provider
+Name               : stprovider
+Type               : Microsoft.Storage/storageAccounts
+TargetResourceId   : /subscriptions/<litware>/resourceGroups/rg-consumer/providers/Microsoft.Netw 
+                     ork/privateEndpoints/pepstoragesvc
+TargetSubscription : <litware>
+Description        : Litware connecting to the shared storage account CR#12345 - APR#345
+Status             : Approved
+IsExternal         : True
+```
+
+I hope you find this useful!
