@@ -8,6 +8,8 @@
     - "Microsoft Graph Change Tracking" -> "Azure Event Hubs Data Sender"
 - Chaos Studio
   - AKS
+- Private Endpoint policies
+  - https://learn.microsoft.com/en-us/azure/private-link/disable-private-endpoint-network-policy?tabs=network-policy-portal
 - AKS Backup and Restore
 - Disk performance analysis
   - AKS SSD v2
@@ -15,10 +17,14 @@
 - Managed identity and API permissions
   - Publish API permissions
 - Update Basic Public IP Dynamic to Static, and further to Standard SKU
+- Azure Machine Configuration
+  - https://learn.microsoft.com/en-us/azure/governance/machine-configuration/how-to/develop-custom-package/2-create-package
+  - DSC resource level visibility in the Azure portal
 - GitOps & Flux & workload identity to access GitHub
   - https://fluxcd.io/flux/installation/configuration/workload-identity/
   - https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/tutorial-use-gitops-flux2?tabs=azure-cli#workload-identity-in-aks-clusters
   - Chicken and egg problem
+- ACR, Docker Hub and "Action recommended: Begin managing public content with Artifact Cache"
 - Sub move resource validation script
 - AKS Identity
   - In, Out
@@ -84,6 +90,7 @@
   - SDL 2.0
 - Internet scam sites, DNS
   - How old is the domain
+  - https://www.ipvoid.com/domain-reputation-check/
   - https://en.wikipedia.org/wiki/WHOIS
   - https://github.com/flipbit/whois
   - https://github.com/jsakamoto/WhoisClient.NET/
