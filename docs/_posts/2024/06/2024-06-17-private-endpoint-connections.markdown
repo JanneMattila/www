@@ -1,6 +1,6 @@
 ---
 title: Find cross-tenant private endpoint connections
-image: /assets/posts/2024/06/17/private-endpoint-connections/appgw.png
+image: /assets/posts/2024/06/17/private-endpoint-connections/storage-pec1.png
 date: 2024-06-17 06:00:00 +0300
 layout: posts
 categories: azure
@@ -25,7 +25,7 @@ and Litware will connect to that storage account using private endpoint.
 > **Note:**<br/>
 > I'm using Storage account as an example here, but this can be any service that supports private endpoints.
 
-Here is high-level overview of the above scenario:
+Here is high-level overview of our scenario:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/storage-pec1.png" %}
 
