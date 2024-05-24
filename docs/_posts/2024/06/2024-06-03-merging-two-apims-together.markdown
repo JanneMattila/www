@@ -40,12 +40,18 @@ They had already quite many integrations connecting to the another instance they
 into the main instance. They wanted to keep the subscription keys same for the existing customers.
 It should be "seamless" for the customers.
 
-Luckily, there is
+Luckily, there are
+[Get-AzApiManagementSubscriptionKey](https://learn.microsoft.com/en-us/powershell/module/az.apimanagement/get-azapimanagementsubscriptionkey?view=azps-11.6.0)
+cmdlet for getting the subscription keys and
 [New-AzApiManagementSubscription](https://learn.microsoft.com/en-us/powershell/module/az.apimanagement/new-azapimanagementsubscription?view=azps-11.6.0)
-cmdlet available which can be used just for that.
-It allows you to create a new subscription so that you can provide the subscription key:
+cmdlet for creating new subscription with existing keys:
 
 ```powershell
+# Export
+Get-AzApiManagementSubscription `
+        -Context $apimContextSource
+
+# Import
 New-AzApiManagementSubscription `
         -Context $apimContextTarget `
         -Name $subscriptionName `
@@ -57,7 +63,9 @@ New-AzApiManagementSubscription `
 I created a small _example_ PowerShell script to handle the subscription key move:
 
 1. Export the subscription keys from the source APIM to a CSV file
-2. Import the subscription keys to the target APIM from the CSV file
+2. Allows you to review the CSV file and make any necessary manual changes
+   - There is `ToBeImported` column indicating if the subscription key should be imported to the target APIM
+3. Import the subscription keys to the target APIM from the CSV file
 
 Here is the script:
 

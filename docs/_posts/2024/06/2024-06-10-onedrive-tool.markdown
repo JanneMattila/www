@@ -128,25 +128,7 @@ After the scan, I have now CSV file with the scan results:
 
 As you can see, there is `InOneDrive` column which tells if the local file is already in OneDrive or not.
 
-```powershell
-$csv = Import-Csv -Path backup-harddrive1.csv -Delimiter ";"
-
-$filesMissingFromOneDrive = $csv | `
-  Where-Object -Property InOneDrive -Value "FALSE" -EQ
-
-"$($filesMissingFromOneDrive.Count) files found which are not available in OneDrive"
-
-$jpgFiles = $filesMissingFromOneDrive | `
-  Where-Object -Property Name -Value "*.jpg" -Like | `
-  Select-Object @{
-    Name       = 'Output';
-    Expression = { $_.Path + "/" + $_.Name }
-} | Select-Object -ExpandProperty Output
-
-Copy-Item $jpgFiles \temp\copies -Force
-```
-
-The first hard drive has less than 100 files which are not in OneDrive.
+The first hard drive had less than 100 files which are not in OneDrive.
 I decided to copy all the missing `.jpg` files to a temporary folder waiting for upload:
 
 ```powershell

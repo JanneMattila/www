@@ -7,7 +7,7 @@ categories: azure
 tags: azure powershell devops github actions
 ---
 
-I have been previously blogging about various automation topics:
+I have been previously blogging about various automation topics such as:
 
 [Automating maintenance tasks with Azure Functions and PowerShell]({% post_url 2023/10/2023-10-30-automating-maintenance-tasks-part1 %})
 
@@ -146,7 +146,7 @@ you'll get the following error:
 After you have successfully validated and created the service connection,
 you can use it in your pipelines.
 
-Here's an example of a pipeline that runs on a schedule:
+Here's an example pipeline that runs on a schedule:
 
 ```yaml
 schedules:
@@ -233,13 +233,14 @@ we can see that we have now two federated credentials in our app registration:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/27/automations-with-azure-pipelines-or-github-actions/entra6.png" %}
 
-Next, we need to set secrets to the GitHub repository for the authentication:
+Next, we need to set variables to the GitHub repository for the authentication:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/05/27/automations-with-azure-pipelines-or-github-actions/gh1.png" %}
 
 Our GitHub Actions workflow file looks like this:
 
 ```yaml
+{% raw %}
 name: Azure PowerShell Automation
 on:
   workflow_dispatch:
@@ -275,6 +276,7 @@ jobs:
         azPSVersion: latest
         errorActionPreference: stop
         failOnStandardError: true
+{% endraw %}
 ```
 
 The same principles apply here as with Azure Pipelines.

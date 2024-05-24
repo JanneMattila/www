@@ -206,4 +206,6 @@ Status             : Approved
 IsExternal         : True
 ```
 
+This way you can easily find all the cross-tenant private endpoint connections in your environment.
+
 I hope you find this useful!
