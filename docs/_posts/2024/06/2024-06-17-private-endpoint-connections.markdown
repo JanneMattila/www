@@ -208,4 +208,6 @@ IsExternal         : True
 
 This way you can easily find all the cross-tenant private endpoint connections in your environment.
 
+And remember this is about _connectivity_ and you still have authentication and authorization on top of this.
+
 I hope you find this useful!
