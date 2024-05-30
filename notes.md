@@ -8,12 +8,27 @@
     - "Microsoft Graph Change Tracking" -> "Azure Event Hubs Data Sender"
 - Chaos Studio
   - AKS
+- NSG Flush Connection
+  - https://github.com/Azure/azure-powershell/blob/main/src/Network/Network/help/New-AzNetworkSecurityGroup.md
+  - https://learn.microsoft.com/en-us/dotnet/api/microsoft.azure.management.network.models.networksecuritygroup.flushconnection?view=azure-dotnet
+  - 
 - Private Endpoint policies
   - https://learn.microsoft.com/en-us/azure/private-link/disable-private-endpoint-network-policy?tabs=network-policy-portal
 - AKS Backup and Restore
+- https://vscode.dev/ & https://marketplace.visualstudio.com/items?itemName=jannemattila.send-snippet-to-terminal
+  - https://code.visualstudio.com/api/extension-guides/web-extensions
 - Disk performance analysis
   - AKS SSD v2
+- Logic Apps and scaling:
+  - https://techcommunity.microsoft.com/t5/azure-integration-services-blog/packing-more-workflows-into-logic-app-standard/ba-p/4127827
+  - https://techcommunity.microsoft.com/t5/azure-integration-services-blog/scaling-logic-app-standard-for-high-throughput-scenarios/ba-p/3866731
+  - https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-limits-and-config?tabs=standard#workflow-definition-limits
 - Entra ID - API Chain OBO - API Examples, jwt.ms
+- Custom image & Login with Entra ID
+  - "This image does not support Login with Entra ID"
+  - https://github.com/danielsollondon/azvmimagebuilder/issues/32
+  - az vm extension set --publisher Microsoft.Azure.ActiveDirectory --name AADLoginForWindows --resource-group rg --vm-name vm
+  - https://learn.microsoft.com/en-us/entra/identity/devices/howto-vm-sign-in-azure-ad-windows#enable-microsoft-entra-login-for-a-windows-vm-in-azure
 - Managed identity and API permissions
   - Publish API permissions
 - Update Basic Public IP Dynamic to Static, and further to Standard SKU
