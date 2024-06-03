@@ -19,7 +19,7 @@ and currently there is
 [Azure APIOps Toolkit](https://github.com/Azure/APIOps).
 
 Many customers are using Infrastructure as Code (IaC) to manage their APIM instances.
-If you have all that in place, then doing even larger changes to the environment should not be too daunting task.
+If you have all that in place, then making even larger changes to the environment should not be too daunting task.
 
 I was working with one customer who had two APIM instances for their internal integrations
 and they wanted to merge them together.
@@ -35,16 +35,16 @@ And course, after the successful merge, the final state is this:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/03/merging-two-apims-together/merging-two-apims-together-end.png" %}
 
-One thing they didn't yet have solution in their process: how to handle the subscription keys.
-They had already quite many integrations connecting to the another instance they planned to merge
-into the main instance. They wanted to keep the subscription keys same for the existing customers.
-It should be "seamless" for the customers.
+One thing they didn't yet have a solution in their process: how to handle the subscription keys.
+They had already quite a lot of integrations connecting to another instance they planned to merge
+into the main instance. They wanted to keep the subscription keys the same for the existing customers.
+It should be "seamless" for their customers.
 
 Luckily, there are
 [Get-AzApiManagementSubscriptionKey](https://learn.microsoft.com/en-us/powershell/module/az.apimanagement/get-azapimanagementsubscriptionkey?view=azps-11.6.0)
 cmdlet for getting the subscription keys and
 [New-AzApiManagementSubscription](https://learn.microsoft.com/en-us/powershell/module/az.apimanagement/new-azapimanagementsubscription?view=azps-11.6.0)
-cmdlet for creating new subscription with existing keys:
+cmdlet for creating **a new subscription with existing keys**:
 
 ```powershell
 # Export

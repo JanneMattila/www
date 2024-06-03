@@ -210,4 +210,25 @@ This way you can easily find all the cross-tenant private endpoint connections i
 
 And remember this is about _connectivity_ and you still have authentication and authorization on top of this.
 
+## And then: prior art found!
+
+Just as I was finishing my post, I found out that there is already post touching topic
+but slightly from different angle:
+
+[An overview of Azure Managed Virtual Networks (Managed VNets)](https://www.jlaundry.nz/2024/overview_of_azure_managed_vnets/)
+
+It contains 
+If you then want to do similar scan but to _reverse direction_, then you can start from private endpoints and 
+look for their `privateLinkServiceId` and analyze that subscription.
+In this lookup scenario, you should be aware about managed private endpoints
+However, it's good to understand that some services 
+Managed endpoints
+Microsoft.Synapse/workspaces/privateEndpointConnections
+
+<!--
+Tenant: 33e01921-4d64-4f8c-a055-5bdaffd5e33d
+-->
+
+
+
 I hope you find this useful!
