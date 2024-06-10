@@ -230,3 +230,5 @@ Output from the above is:
 
 So, I have 811 `.mts` files in my OneDrive and they take 164,9 GB of space.
 This is something I need to take care of next. Expect a blog post about that in the future.
+
+I hope you find this useful!
