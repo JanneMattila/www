@@ -2,6 +2,9 @@
 
 ## Upcoming posts
 
+- PowerPoint Morph Transition
+  - https://support.microsoft.com/en-us/office/use-the-morph-transition-in-powerpoint-8dd1c7b2-b935-44f5-a74c-741d8d9244ea
+  - https://support.microsoft.com/en-us/office/morph-transition-tips-and-tricks-bc7f48ff-f152-4ee8-9081-d3121788024f
 - Teams, subscription, event hub and notifications
   - https://github.com/JanneMattila/teams-demos
   - https://learn.microsoft.com/en-us/graph/change-notifications-delivery-event-hubs

@@ -56,7 +56,7 @@ Get-AzPrivateLinkResource `
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/provider2.png" %}
 
-You can read more from the
+You can read more about it at the
 [Manage Azure private endpoints](https://learn.microsoft.com/en-us/azure/private-link/manage-private-endpoint?tabs=manage-private-link-powershell)
 documentation.
 
@@ -130,55 +130,146 @@ If Contoso tries to access now the private endpoint, they'll see same error as L
 
 Now the handshake is complete and Litware can start using the private endpoint to access the storage account.
 
-## Finding cross-tenant private endpoint connections
+## Finding cross-tenant private endpoints and their connections
 
-The above scenario might not be relevant to every company, so maybe you want to 
+The above sharing scenario might not be relevant to every company, so maybe you want to 
 [limit cross-tenant private endpoint connections](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/limit-cross-tenant-private-endpoint-connections).
 This Azure Policy based approach helps you to prevent them to be created in the first place
 and you can always make exemptions if needed.
+This same sharing technique is used with managed private endpoints as well.
 
-Next, I'll show you how to find all the cross-tenant private endpoint connections in your environment.
+Next, I'll show you how to find all the cross-tenant private endpoints and their connections in your environment.
 
 Let's study Storage Account we created in the above example:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/pe12.png" %}
 
-We can see that both parties have resource IDs to the other party's target resource.
+We can see that we have resource IDs to the other party's target resource.
 This is the key to finding cross-tenant private endpoint connections.
 
-Also note that the `type` of the private endpoint connection is:
+In the producer side, we can see this information stored in the `privateEndpointConnections` of the ARM object.
+I want to use Resource Graph to find this information, so I looked prior art on this topic online.
+I found this post which has good starting point for my Resource Graph query:
 
+[An overview of Azure Managed Virtual Networks (Managed VNets)](https://www.jlaundry.nz/2024/overview_of_azure_managed_vnets/)
+
+I wanted to collect additional information about the connection, so I decided to go full PowerShell way.
+My implementation has these steps:
+
+1. Get all subscriptions in the tenant.
+2. Get all resources with `privateEndpointConnections`
+3. Collect all the possible information about the connection.
+  - Subscription and tenant information from both the source and target
+4. Output the information to CSV file.
+
+### Step 1: Get all subscriptions in the tenant
+
+```sql
+resourcecontainers
+| where type == 'microsoft.resources/subscriptions'
+| project  subscriptionId, name, tenantId
 ```
-Microsoft.Storage/storageAccounts/privateEndpointConnections
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/rg1.png" %}
+
+In the above query, we're getting also all the tenant IDs used by the subscriptions.
+
+### Step 2: Get all resources with `privateEndpointConnections`
+
+```sql
+resources
+| where isnotnull(properties) and properties contains "privateEndpointConnections"
+| where array_length(properties.privateEndpointConnections) > 0
+| mv-expand properties.privateEndpointConnections
+| extend status = properties_privateEndpointConnections.properties.privateLinkServiceConnectionState.status
+| extend description = coalesce(properties_privateEndpointConnections.properties.privateLinkServiceConnectionState.description, "")
+| extend privateEndpointResourceId = properties_privateEndpointConnections.properties.privateEndpoint.id
+| extend privateEndpointSubscriptionId = tostring(split(privateEndpointResourceId, "/")[2])
+| project id, name, location, type, resourceGroup, subscriptionId, tenantId, privateEndpointResourceId, privateEndpointSubscriptionId, status, description
 ```
 
-So, it's child resource of the storage account.
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/rg2.png" %}
 
-_Unfortunately_, at the time of writing this post, there is no resource graph
-[support for private endpoint connections](https://learn.microsoft.com/en-us/azure/governance/resource-graph/reference/supported-tables-resources).
+The above query heavily borrows the query structure presented in this
+[post](https://www.jlaundry.nz/2024/overview_of_azure_managed_vnets/)
+.
 
-The above means that we need to scan our environment for these connections
-using my favorite tool: PowerShell.
-And since private endpoint connection is a child resource, then
-we need to scan every resource that supports private endpoints.
-This is a lot of calls to the Azure Resource Manager API.
+### Step 3: Collect all the possible information about the connection
 
-Azure PowerShell has cmdlets to work with private endpoints and connections.<br/>
-[Get-AzPrivateEndpointConnection](https://learn.microsoft.com/en-us/powershell/module/az.network/get-azprivateendpointconnection?view=azps-11.6.0)
-is exactly what we need. It returns all the connections of the specified resource.
+I now use the previous information about the subscriptions and tenants to get more information about the connection.
 
-_And even better_, it just happens to have **optimization** which helps our implementation.
-It has built-in list of resources that supports requesting this information,
-and does fast exit if the resource does not support fetching this information.
-You can find more details in the
-[ProviderConfiguration.cs](https://github.com/Azure/azure-powershell/blob/main/src/Network/Network/PrivateLinkService/PrivateLinkServiceProvider/ProviderConfiguration.cs)
-file. Look for `RegisterConfiguration` calls for each type.
+If I have subscription and I don't tenant id of that subscription, then I'll make a simple call to get this information in the error message:
+
+```powershell
+$subscriptionResponse = Invoke-AzRestMethod -Path "/subscriptions/$($SubscriptionID)?api-version=2022-12-01"
+$startIndex = $subscriptionResponse.Headers.WwwAuthenticate.Parameter.IndexOf("https://login.windows.net/")
+$tenantID = $subscriptionResponse.Headers.WwwAuthenticate.Parameter.Substring($startIndex + "https://login.windows.net/".Length, 36)
+```
+
+`WWW-Authenticate` header contains the following error message:
+
+```plain	
+Bearer 
+authorization_uri="https://login.windows.net/33e01921-4d64-4f8c-a055-5bdaffd5e33d",
+error="invalid_token",
+error_description="The access token is from the wrong issuer. 
+It must match the tenant associated with this subscription. Please use correct authority to get the token."
+```
+
+From the above output, you can parse the tenant id e.g. `33e01921-4d64-4f8c-a055-5bdaffd5e33d`.
+
+Each of the tenant ids are then used to get more information about the tenant:
+
+```powershell
+$tenantResponse = Invoke-AzRestMethod `
+  -Uri "https://graph.microsoft.com/v1.0/tenantRelationships/findTenantInformationByTenantId(tenantId='$TenantID')"
+$tenantInformation = ($tenantResponse.Content | ConvertFrom-Json)
+$tenantInformation
+```
+
+The above has the following output:
+
+```powershell
+@odata.context      : https://graph.microsoft.com/v1.0/$metadata#microsoft.graph.tenantInformation
+tenantId            : 33e01921-4d64-4f8c-a055-5bdaffd5e33d
+federationBrandName : 
+displayName         : MS Azure Cloud
+defaultDomainName   : MSAzureCloud.onmicrosoft.com
+```
+
+This helps us better identify the tenants and see which ones are Microsoft managed and which ones are not.
+
+### Step 4: Output the information to CSV file
+
+After we have collected all the information, we can output it to CSV file.
+Data in here is transposed so that it's easier to read:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/excel.png" %}
+
+`External` column indicates if the connection is cross-tenant connection or not with `Yes` or `No` value.
+If the value is `Managed by Microsoft`, then it's Microsoft managed tenant.
+
+Here is similar output but from different environment and some columns are removed:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/excel2.png" %}
+
+### From Consumer (Litware) point of view
+
+As shown in the above screenshots, Litware can see the connection in their portal:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/pe9.png" %}
+
+We can very similarly to the above automation process these `manualPrivateLinkServiceConnections` values.
+
+Here is example output from that:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/excel3.png" %}
+
+### Try it yourself
 
 Here is the script to scan all the private endpoint connections in your environment:
 
 {% include githubEmbed.html text="JanneMattila/some-questions-and-some-answers/scan-private-endpoint-connections.ps1" link="JanneMattila/some-questions-and-some-answers/blob/master/q%26a/scan-private-endpoint-connections.ps1" %}
-
-If I now execute that script:
 
 ```powershell
 .\scan-private-endpoint-connections.ps1
@@ -186,8 +277,6 @@ If I now execute that script:
 
 I'll get list of all the private endpoint connections in my environment in CSV format.
 And it has column to indicate if that is cross-tenant connection or not:
-
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/excel.png" %}
 
 Here is example of the output:
 
@@ -206,29 +295,29 @@ Status             : Approved
 IsExternal         : True
 ```
 
+<!--
+The above means that we need to scan our environment for these connections
+using my favorite tool: PowerShell.
+And since private endpoint connection is a child resource, then
+we need to scan every resource that supports private endpoints.
+This is a lot of calls to the Azure Resource Manager API.
+
+Azure PowerShell has cmdlets to work with private endpoints and connections.<br/>
+[Get-AzPrivateEndpointConnection](https://learn.microsoft.com/en-us/powershell/module/az.network/get-azprivateendpointconnection?view=azps-11.6.0)
+is exactly what we need. It returns all the connections of the specified resource.
+
+_And even better_, it just happens to have **optimization** which helps our implementation.
+It has built-in list of resources that supports requesting this information,
+and does fast exit if the resource does not support fetching this information.
+You can find more details in the
+[ProviderConfiguration.cs](https://github.com/Azure/azure-powershell/blob/main/src/Network/Network/PrivateLinkService/PrivateLinkServiceProvider/ProviderConfiguration.cs)
+file. Look for `RegisterConfiguration` calls for each type.
+-->
+
+
 This way you can easily find all the cross-tenant private endpoint connections in your environment.
 
 And remember this is about _connectivity_ and you still have authentication and authorization on top of this.
-
-## And then: prior art found!
-
-Just as I was finishing my post, I found out that there is already post touching topic
-but slightly from different angle:
-
-[An overview of Azure Managed Virtual Networks (Managed VNets)](https://www.jlaundry.nz/2024/overview_of_azure_managed_vnets/)
-
-It contains 
-If you then want to do similar scan but to _reverse direction_, then you can start from private endpoints and 
-look for their `privateLinkServiceId` and analyze that subscription.
-In this lookup scenario, you should be aware about managed private endpoints
-However, it's good to understand that some services 
-Managed endpoints
-Microsoft.Synapse/workspaces/privateEndpointConnections
-
-<!--
-Tenant: 33e01921-4d64-4f8c-a055-5bdaffd5e33d
--->
-
 
 
 I hope you find this useful!
