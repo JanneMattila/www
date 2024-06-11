@@ -15,11 +15,11 @@ If you're developing your own service, then you can use
 
 Private endpoints can be used to connect services between different tenants.
 This is useful when you have a service that you want to share with another tenant.
-It can be storage account that you want the other party to connect and push data to.
+It can be a storage account that you want the other party to connect and push data to.
 
-Let's look this example from the eyes of our dear fictitious companies: **Contoso** and **Litware**.
+Let's look at this example from the eyes of our dear fictitious companies: **Contoso** and **Litware**.
 Contoso is a service provider and Litware is a consumer of that service.
-In order to share data between these companies, Contoso has created storage account
+To share data between these companies, Contoso has created storage account
 and Litware will connect to that storage account using private endpoint.
 
 > **Note:**<br/>
@@ -73,7 +73,7 @@ Now they're ready to create private endpoint to the storage account:
 
 They input the `ResourceID` of the storage account and the sub-resource `blob`
 as shared by Contoso. They also provide message that can be then
-verified by Contoso later on when they're approving the connection:
+verified by Contoso later when they're approving the connection:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/pe2.png" %}
 
@@ -92,7 +92,7 @@ they'll get this error:
 The above is of course expected, since it tries to navigate to the storage account
 in Contoso's subscription and Litware does not have access to that subscription.
 
-Now, Litware has to wait for Contoso to approve the connection.
+Now, Litware must wait for Contoso to approve the connection.
 
 Contoso now sees the pending request in their portal:
 
@@ -134,7 +134,7 @@ Now the handshake is complete and Litware can start using the private endpoint t
 
 The above sharing scenario might not be relevant to every company, so maybe you want to 
 [limit cross-tenant private endpoint connections](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/limit-cross-tenant-private-endpoint-connections).
-This Azure Policy based approach helps you to prevent them to be created in the first place
+This Azure Policy based approach helps you to prevent them from being created in the first place
 and you can always make exemptions if needed.
 It's good to understand that this same sharing technique is used with managed private endpoints as well.
 
@@ -257,7 +257,7 @@ In short:
   - You should have many of these in your environment and these are mainly for information purposes.
     You can filter these out.
 - `External` = `Managed by Microsoft` means that the other party is Microsoft managed.
-- `External` = `Yes` means that the connection is cross-tenant connection.
+- `External` = `Yes` means that the connection is a cross-tenant connection.
   - **This is the value we're interested in**. You can then filter the output based on this value.
 
 Here is similar output but from different environment and some columns are removed:
@@ -270,7 +270,7 @@ As shown in the above screenshots, Litware can see the connection in their porta
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/pe9.png" %}
 
-We can do very similar process to `manualPrivateLinkServiceConnections` values in Private Endpoints.
+We can do a very similar process to `manualPrivateLinkServiceConnections` values in Private Endpoints.
 
 Here is example output from that:
 
@@ -286,7 +286,7 @@ Here is the script to scan all the private endpoint connections in your environm
 .\scan-private-endpoint-connections.ps1
 ```
 
-It will get list of all the private endpoint connections in your environment in CSV format.
+It will get a list of all the private endpoint connections in your environment in CSV format.
 Here is abbreviated example of the output:
 
 ```plain
@@ -337,10 +337,10 @@ file. Look for `RegisterConfiguration` calls for each type.
 ## Conclusion
 
 I tried to explain how cross-tenant private endpoint connections work and how you can find them in your environment.
-This is pretty complex topic and I hope I was able to explain it in a way that makes sense.
+This is a complex topic and I hope I was able to explain it in a way that makes sense.
 
-And I want to still highlight that this is about _connectivity_
+And I want to still highlight that this is about _connectivity_,
 and you still have authentication and authorization on top of this.
-This is just one but important piece of the puzzle.
+This is just one, but important piece of the puzzle.
 
 I hope you find this useful!
