@@ -216,9 +216,11 @@ error_description="The access token is from the wrong issuer.
 It must match the tenant associated with this subscription. Please use correct authority to get the token."
 ```
 
-From the above output, you can parse the tenant id e.g. `33e01921-4d64-4f8c-a055-5bdaffd5e33d`.
+From the above output, you can parse the tenant id e.g.,
 
-Each of the tenant ids are then used to get more information about the tenant:
+`33e01921-4d64-4f8c-a055-5bdaffd5e33d`
+
+Each of the tenant ids are then used to get more information about the tenant using Graph API:
 
 ```powershell
 $tenantResponse = Invoke-AzRestMethod `
@@ -249,6 +251,15 @@ Data in here is transposed so that it's easier to read:
 `External` column indicates if the connection is cross-tenant connection or not with `Yes` or `No` value.
 If the value is `Managed by Microsoft`, then it's Microsoft managed tenant.
 
+In short:
+
+- `External` = `No` means that the connection is within the same tenant.
+  - You should have many of these in your environment and these are mainly for information purposes.
+    You can filter these out.
+- `External` = `Managed by Microsoft` means that the tenant is Microsoft managed.
+- `External` = `Yes` means that the connection is cross-tenant connection.
+  - This is the value we're interested in. You can then filter the output based on this value.
+
 Here is similar output but from different environment and some columns are removed:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/excel2.png" %}
@@ -259,7 +270,7 @@ As shown in the above screenshots, Litware can see the connection in their porta
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/pe9.png" %}
 
-We can very similarly to the above automation process these `manualPrivateLinkServiceConnections` values.
+We can do very similar process to `manualPrivateLinkServiceConnections` values.
 
 Here is example output from that:
 
@@ -278,21 +289,32 @@ Here is the script to scan all the private endpoint connections in your environm
 I'll get list of all the private endpoint connections in my environment in CSV format.
 And it has column to indicate if that is cross-tenant connection or not:
 
-Here is example of the output:
+Here is abbreviated example of the output:
 
 ```plain
-SubscriptionName   : development
-SubscriptionID     : <contoso>
-ResourceGroupName  : rg-provider
-Name               : stprovider
-Type               : Microsoft.Storage/storageAccounts
-TargetResourceId   : /subscriptions/<litware>
-                     /resourceGroups/rg-consumer
-                     /providers/Microsoft.Network/privateEndpoints/pepstoragesvc
-TargetSubscription : <litware>
-Description        : Litware connecting to the shared storage account CR#12345 - APR#345
-Status             : Approved
-IsExternal         : True
+SubscriptionName        : development
+SubscriptionID          : <contoso>
+ResourceGroupName       : rg-provider
+Name                    : stprovider
+Type                    : Microsoft.Storage/storageAccounts
+TargetResourceId        : /subscriptions/<litware>
+                          /resourceGroups/rg-consumer
+                          /providers/Microsoft.Network/privateEndpoints/pepstoragesvc
+TargetSubscription      : <litware>
+TargetTenantID          : <litware-tenant-id>
+TargetTenantDisplayName : Litware
+TargetTenantDomainName  : litware.onmicrosoft.com
+Description             : Litware connecting to the shared storage account CR#12345 - APR#345
+Status                  : Approved
+External                : Yes
+```
+
+Similarly, you can scan the `manualPrivateLinkServiceConnections` values from the consumer side with this script:
+
+{% include githubEmbed.html text="JanneMattila/some-questions-and-some-answers/scan-private-endpoints-with-manual-connections.ps1" link="JanneMattila/some-questions-and-some-answers/blob/master/q%26a/scan-private-endpoints-with-manual-connections.ps1" %}
+
+```powershell
+.\scan-private-endpoints-with-manual-connections.ps1
 ```
 
 <!--
@@ -314,10 +336,13 @@ You can find more details in the
 file. Look for `RegisterConfiguration` calls for each type.
 -->
 
+## Conclusion
 
-This way you can easily find all the cross-tenant private endpoint connections in your environment.
+I tried to explain how cross-tenant private endpoint connections work and how you can find them in your environment.
+This is pretty complex topic and I hope I was able to explain it in a way that makes sense.
 
-And remember this is about _connectivity_ and you still have authentication and authorization on top of this.
-
+And I want to still highlight that this is about _connectivity_
+and you still have authentication and authorization on top of this.
+This is just one but important piece of the puzzle.
 
 I hope you find this useful!
