@@ -136,7 +136,7 @@ The above sharing scenario might not be relevant to every company, so maybe you 
 [limit cross-tenant private endpoint connections](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/limit-cross-tenant-private-endpoint-connections).
 This Azure Policy based approach helps you to prevent them to be created in the first place
 and you can always make exemptions if needed.
-This same sharing technique is used with managed private endpoints as well.
+It's good to understand that this same sharing technique is used with managed private endpoints as well.
 
 Next, I'll show you how to find all the cross-tenant private endpoints and their connections in your environment.
 
@@ -156,11 +156,11 @@ I found this post which has good starting point for my Resource Graph query:
 I wanted to collect additional information about the connection, so I decided to go full PowerShell way.
 My implementation has these steps:
 
-1. Get all subscriptions in the tenant.
+1. Get all subscriptions in the tenant 
 2. Get all resources with `privateEndpointConnections`
-3. Collect all the possible information about the connection.
+3. Collect all the possible information about the connection
   - Subscription and tenant information from both the source and target
-4. Output the information to CSV file.
+4. Output the information to CSV file
 
 ### Step 1: Get all subscriptions in the tenant
 
@@ -172,7 +172,7 @@ resourcecontainers
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/rg1.png" %}
 
-In the above query, we're getting also all the tenant IDs used by the subscriptions.
+In the above query, we're also getting all the tenant IDs used by the subscriptions.
 
 ### Step 2: Get all resources with `privateEndpointConnections`
 
@@ -198,7 +198,7 @@ The above query heavily borrows the query structure presented in this
 
 I now use the previous information about the subscriptions and tenants to get more information about the connection.
 
-If I have subscription and I don't tenant id of that subscription, then I'll make a simple call to get this information in the error message:
+If I have subscription and I don't have tenant id of that subscription, then I'll make a simple call to get this information in the error message (this is exactly what Azure Portal does and what we saw in the above screenshots):
 
 ```powershell
 $subscriptionResponse = Invoke-AzRestMethod -Path "/subscriptions/$($SubscriptionID)?api-version=2022-12-01"
@@ -229,7 +229,7 @@ $tenantInformation = ($tenantResponse.Content | ConvertFrom-Json)
 $tenantInformation
 ```
 
-The above has the following output:
+Here is the output of the above call:
 
 ```powershell
 @odata.context      : https://graph.microsoft.com/v1.0/$metadata#microsoft.graph.tenantInformation
@@ -239,7 +239,7 @@ displayName         : MS Azure Cloud
 defaultDomainName   : MSAzureCloud.onmicrosoft.com
 ```
 
-This helps us better identify the tenants and see which ones are Microsoft managed and which ones are not.
+This helps us identify the tenants and see which ones are Microsoft managed (like the above) and which ones are not.
 
 ### Step 4: Output the information to CSV file
 
@@ -256,9 +256,9 @@ In short:
 - `External` = `No` means that the connection is within the same tenant.
   - You should have many of these in your environment and these are mainly for information purposes.
     You can filter these out.
-- `External` = `Managed by Microsoft` means that the tenant is Microsoft managed.
+- `External` = `Managed by Microsoft` means that the other party is Microsoft managed.
 - `External` = `Yes` means that the connection is cross-tenant connection.
-  - This is the value we're interested in. You can then filter the output based on this value.
+  - **This is the value we're interested in**. You can then filter the output based on this value.
 
 Here is similar output but from different environment and some columns are removed:
 
@@ -266,11 +266,11 @@ Here is similar output but from different environment and some columns are remov
 
 ### From Consumer (Litware) point of view
 
-As shown in the above screenshots, Litware can see the connection in their portal:
+As shown in the above screenshots, Litware can see the connection in their portal like this:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/pe9.png" %}
 
-We can do very similar process to `manualPrivateLinkServiceConnections` values.
+We can do very similar process to `manualPrivateLinkServiceConnections` values in Private Endpoints.
 
 Here is example output from that:
 
@@ -286,9 +286,7 @@ Here is the script to scan all the private endpoint connections in your environm
 .\scan-private-endpoint-connections.ps1
 ```
 
-I'll get list of all the private endpoint connections in my environment in CSV format.
-And it has column to indicate if that is cross-tenant connection or not:
-
+It will get list of all the private endpoint connections in your environment in CSV format.
 Here is abbreviated example of the output:
 
 ```plain
@@ -309,7 +307,7 @@ Status                  : Approved
 External                : Yes
 ```
 
-Similarly, you can scan the `manualPrivateLinkServiceConnections` values from the consumer side with this script:
+Similarly, you can scan the `manualPrivateLinkServiceConnections` values from Private Endpoints in the consumer side with this script:
 
 {% include githubEmbed.html text="JanneMattila/some-questions-and-some-answers/scan-private-endpoints-with-manual-connections.ps1" link="JanneMattila/some-questions-and-some-answers/blob/master/q%26a/scan-private-endpoints-with-manual-connections.ps1" %}
 
