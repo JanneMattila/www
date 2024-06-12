@@ -13,7 +13,9 @@ is fairly new service that allows you to run chaos experiments on your Azure res
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/24/chaos-studio-and-aks/overview.png" %}
 
 To get good understanding more about chaos engineering and Chaos Studio,
-please check out excellent presentation from Build 2024: [Improve Application Resilience using Azure Chaos Studio](https://build.microsoft.com/en-US/sessions/5723eeff-0b6b-4dee-b35b-dd8f3f40c5b2)
+please check out excellent presentation from Build 2024: 
+
+[Improve Application Resilience using Azure Chaos Studio](https://build.microsoft.com/en-US/sessions/5723eeff-0b6b-4dee-b35b-dd8f3f40c5b2)
 
 
 [text](https://en.wikipedia.org/wiki/Chaos_engineering)

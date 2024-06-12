@@ -7,11 +7,16 @@ categories: azure
 tags: azure networking
 ---
 
+> _In a hurry? Skip the introduction and jump directly to the solution:_<br/>
+> [Finding cross-tenant private endpoints and their connections](#finding-cross-tenant-private-endpoints-and-their-connections)
+
 [Private endpoints](https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-overview)
 is a capability which allows you to access various services over a private connection.
 Private endpoints are commonly used with services like Azure Storage, Azure SQL Database, and Azure Key Vault.
 If you're developing your own service, then you can use
 [Private Link Service](https://learn.microsoft.com/en-us/azure/private-link/private-link-service-overview).
+**There is excellent workflow diagram that explains the whole process in a single picture.**
+Please check it out.
 
 Private endpoints can be used to connect services between different tenants.
 This is useful when you have a service that you want to share with another tenant.
@@ -69,7 +74,7 @@ and virtual network `vnet-consumer`:
 
 Now they're ready to create private endpoint to the storage account:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/pe1.png" %}
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2024/06/17/private-endpoint-connections/pe1.png" %}
 
 They input the `ResourceID` of the storage account and the sub-resource `blob`
 as shared by Contoso. They also provide message that can be then
@@ -82,7 +87,7 @@ is in `Pending` state:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/pe3.png" %}
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/06/17/private-endpoint-connections/pe4.png" %}
+{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2024/06/17/private-endpoint-connections/pe4.png" %}
 
 If they now try to click the _Private link resource_ link in the above screenshot,
 they'll get this error:
@@ -132,7 +137,8 @@ Now the handshake is complete and Litware can start using the private endpoint t
 
 ## Finding cross-tenant private endpoints and their connections
 
-The above sharing scenario might not be relevant to every company, so maybe you want to 
+In the introduction, we saw how you can share a service between different tenants.
+This might not be relevant to every company, so maybe you want to 
 [limit cross-tenant private endpoint connections](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/limit-cross-tenant-private-endpoint-connections).
 This Azure Policy based approach helps you to prevent them from being created in the first place
 and you can always make exemptions if needed.
