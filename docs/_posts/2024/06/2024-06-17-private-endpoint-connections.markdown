@@ -262,7 +262,7 @@ In short:
 - `External` = `No` means that the connection is within the same tenant.
   - You should have many of these in your environment and these are mainly for information purposes.
     You can filter these out.
-- `External` = `Managed by Microsoft` means that the other party is Microsoft managed.
+- `External` = `Managed by Microsoft` means that the other party is Microsoft.
 - `External` = `Yes` means that the connection is a cross-tenant connection.
   - **This is the value we're interested in**. You can then filter the output based on this value.
 
