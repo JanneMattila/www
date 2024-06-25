@@ -2,18 +2,21 @@
 
 ## Upcoming posts
 
-- PowerPoint Morph Transition
-  - https://support.microsoft.com/en-us/office/use-the-morph-transition-in-powerpoint-8dd1c7b2-b935-44f5-a74c-741d8d9244ea
-  - https://support.microsoft.com/en-us/office/morph-transition-tips-and-tricks-bc7f48ff-f152-4ee8-9081-d3121788024f
+- ACS and SMTP email sending
+  - App registration rest api
+  - https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email-smtp/smtp-authentication
+- Entra ID - API Chain OBO - API Examples, jwt.ms
 - 429s from app to load balancing solutions
  - AKS: livenessProbe, readinessProbe, etc.
  - https://learn.microsoft.com/en-us/azure/traffic-manager/traffic-manager-overview
    - Azure Traffic Manager is a DNS-based traffic load balancer
- - 
 - Teams, subscription, event hub and notifications
   - https://github.com/JanneMattila/teams-demos
   - https://learn.microsoft.com/en-us/graph/change-notifications-delivery-event-hubs
     - "Microsoft Graph Change Tracking" -> "Azure Event Hubs Data Sender"
+- AppService and Private Endpoint and DNS
+  - Web app network tester
+  - One target resource as private and other as public e.g., key vault
 - App Service and unique hostname
   - https://techcommunity.microsoft.com/t5/apps-on-azure-blog/public-preview-creating-web-app-with-a-unique-default-hostname/ba-p/4156353
 - Network Security Perimeters
@@ -29,7 +32,6 @@
   - https://techcommunity.microsoft.com/t5/azure-integration-services-blog/packing-more-workflows-into-logic-app-standard/ba-p/4127827
   - https://techcommunity.microsoft.com/t5/azure-integration-services-blog/scaling-logic-app-standard-for-high-throughput-scenarios/ba-p/3866731
   - https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-limits-and-config?tabs=standard#workflow-definition-limits
-- Entra ID - API Chain OBO - API Examples, jwt.ms
 - Custom image & Login with Entra ID
   - "This image does not support Login with Entra ID"
   - https://github.com/danielsollondon/azvmimagebuilder/issues/32
@@ -58,27 +60,10 @@
   - https://github.com/Badgerati/Pode
 - https://github.com/JanneMattila/azure-storage-demos/blob/main/perf%2Fnotes.md
 - https://learn.microsoft.com/en-us/azure/azure-monitor/agents/azure-monitor-agent-migration
-- ACS and SMTP email sending
-  - App registration rest api
-  - https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email-smtp/smtp-authentication
 - Azure DevOps and getting rid of the Personal Access Tokens
   - https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/authentication-guidance?view=azure-devops
   - https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/service-principal-managed-identity?view=azure-devops
 - Office 365 Group and Teams incoming webhook
-- AppService and Private Endpoint and DNS
-  - Web app network tester
-  - One target resource as private and other as public e.g., key vault
-- VNET Private Link Service
-  - Storage account
-  - Resource Graph query to find out the exposes services
-  - AKS
-  - https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-overview#private-endpoint-properties
-  - https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-overview#private-link-resource
-  - Diagram:
-    - Provider hands over the resource id and subtype
-    - Consumer creates a private endpoint
-      - Add lock to prevent accidental deletion
-    - Provider approves
 - VNET transitive peering
   - https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-faq#if-i-peer-vneta-to-vnetb-and-i-peer-vnetb-to-vnetc-does-that-mean-vneta-and-vnetc-are-peered
 - Export Azure Resource templates to git repo daily
@@ -146,8 +131,6 @@
 
   $SpeechSynthesizer.Speak("Computer says no")
   $SpeechSynthesizer.Speak("Computer says yes")
-- Azure VNet and subnet as property vs. child resource
-  - https://github.com/Azure/azure-quickstart-templates/issues/2786
 - Demo failures
   - VMSS 1000 VMs
   - AKS debugging with bridge in auditorium and zooming too much
