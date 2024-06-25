@@ -5,16 +5,19 @@
 - PowerPoint Morph Transition
   - https://support.microsoft.com/en-us/office/use-the-morph-transition-in-powerpoint-8dd1c7b2-b935-44f5-a74c-741d8d9244ea
   - https://support.microsoft.com/en-us/office/morph-transition-tips-and-tricks-bc7f48ff-f152-4ee8-9081-d3121788024f
+- 429s from app to load balancing solutions
+ - AKS: livenessProbe, readinessProbe, etc.
+ - https://learn.microsoft.com/en-us/azure/traffic-manager/traffic-manager-overview
+   - Azure Traffic Manager is a DNS-based traffic load balancer
+ - 
 - Teams, subscription, event hub and notifications
   - https://github.com/JanneMattila/teams-demos
   - https://learn.microsoft.com/en-us/graph/change-notifications-delivery-event-hubs
     - "Microsoft Graph Change Tracking" -> "Azure Event Hubs Data Sender"
-- Chaos Studio
-  - AKS
-- NSG Flush Connection
-  - https://github.com/Azure/azure-powershell/blob/main/src/Network/Network/help/New-AzNetworkSecurityGroup.md
-  - https://learn.microsoft.com/en-us/dotnet/api/microsoft.azure.management.network.models.networksecuritygroup.flushconnection?view=azure-dotnet
-  - 
+- App Service and unique hostname
+  - https://techcommunity.microsoft.com/t5/apps-on-azure-blog/public-preview-creating-web-app-with-a-unique-default-hostname/ba-p/4156353
+- Network Security Perimeters
+  - https://learn.microsoft.com/en-us/rest/api/networkmanager/network-security-perimeters/create-or-update?view=rest-networkmanager-2023-07-01-preview&viewFallbackFrom=rest-networkmanager-2023-09-01&tabs=HTTP
 - Private Endpoint policies
   - https://learn.microsoft.com/en-us/azure/private-link/disable-private-endpoint-network-policy?tabs=network-policy-portal
 - AKS Backup and Restore
