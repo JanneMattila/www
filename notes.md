@@ -5,6 +5,12 @@
 - ACS and SMTP email sending
   - App registration rest api
   - https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email-smtp/smtp-authentication
+- NFS and Storage account - Secure access
+  - https://learn.microsoft.com/en-us/azure/storage/files/files-nfs-protocol
+  - https://learn.microsoft.com/en-us/azure/storage/files/files-nfs-protocol#features
+  - 
+- AKS and Topology Aware Routing
+  - https://kubernetes.io/docs/concepts/services-networking/topology-aware-routing/
 - Entra ID - API Chain OBO - API Examples, jwt.ms
 - 429s from app to load balancing solutions
  - AKS: livenessProbe, readinessProbe, etc.
@@ -14,6 +20,12 @@
   - https://github.com/JanneMattila/teams-demos
   - https://learn.microsoft.com/en-us/graph/change-notifications-delivery-event-hubs
     - "Microsoft Graph Change Tracking" -> "Azure Event Hubs Data Sender"
+- Disk performance analysis
+  - AKS SSD v2
+  - https://github.com/JanneMattila/playground-aks-storage/blob/main/notes.md#example-disk-perf-analysis
+- ACR, Docker Hub and "Action recommended: Begin managing public content with Artifact Cache"
+- Sub move resource validation script
+- GitHub Copilot and C++ Direct2D game
 - AppService and Private Endpoint and DNS
   - Web app network tester
   - One target resource as private and other as public e.g., key vault
@@ -26,8 +38,6 @@
 - AKS Backup and Restore
 - https://vscode.dev/ & https://marketplace.visualstudio.com/items?itemName=jannemattila.send-snippet-to-terminal
   - https://code.visualstudio.com/api/extension-guides/web-extensions
-- Disk performance analysis
-  - AKS SSD v2
 - Logic Apps and scaling:
   - https://techcommunity.microsoft.com/t5/azure-integration-services-blog/packing-more-workflows-into-logic-app-standard/ba-p/4127827
   - https://techcommunity.microsoft.com/t5/azure-integration-services-blog/scaling-logic-app-standard-for-high-throughput-scenarios/ba-p/3866731
@@ -47,8 +57,6 @@
   - https://fluxcd.io/flux/installation/configuration/workload-identity/
   - https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/tutorial-use-gitops-flux2?tabs=azure-cli#workload-identity-in-aks-clusters
   - Chicken and egg problem
-- ACR, Docker Hub and "Action recommended: Begin managing public content with Artifact Cache"
-- Sub move resource validation script
 - AKS Identity
   - In, Out
   - Admin, User access

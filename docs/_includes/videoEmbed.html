@@ -1,0 +1,4 @@
+<video width="{{ include.width | 100% }}" height="{{ include.height | 100% }}" {{ include.tags }}>
+    <source src=" {{ include.link }}" type="{{ include.format | video/mp4 }}">
+    Your browser does not support the video tag.
+</video>
