@@ -1,7 +1,7 @@
 ---
 title: Testing your AKS resiliency with Chaos Studio
 image: /assets/posts/2024/08/19/chaos-studio-and-aks/chaos-studio.png
-date: 2024-08-19 06:00:00 +0300
+date: 2024-08-26 06:00:00 +0300
 layout: posts
 categories: azure
 tags: azure chaos-studio chaos-engineering chaos-mesh kubernetes aks

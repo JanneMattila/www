@@ -5,12 +5,16 @@
 - ACS and SMTP email sending
   - App registration rest api
   - https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email-smtp/smtp-authentication
+- Azure Container Storage
+  - https://aka.ms/Azure-container-storage-ga-blog
+  - https://aka.ms/AzureContainerStorageDocs
+- What's in it for me
+ - YouTube: Whitaker James - What's in it for me
+   - https://www.youtube.com/watch?v=8Ia6FX-tqcE&pp=ygUYamFtZXMgd2hpdGFrZXIgbWljcm9zb2Z0
+   - 
 - NFS and Storage account - Secure access
   - https://learn.microsoft.com/en-us/azure/storage/files/files-nfs-protocol
   - https://learn.microsoft.com/en-us/azure/storage/files/files-nfs-protocol#features
-  - 
-- AKS and Topology Aware Routing
-  - https://kubernetes.io/docs/concepts/services-networking/topology-aware-routing/
 - Entra ID - API Chain OBO - API Examples, jwt.ms
 - 429s from app to load balancing solutions
  - AKS: livenessProbe, readinessProbe, etc.
