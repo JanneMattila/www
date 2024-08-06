@@ -7,14 +7,13 @@ categories: productivity
 tags: productivity office powerpoint
 ---
 
-PowerPoint has had a long time feature called
+PowerPoint has feature called
 [Morph transition](https://support.microsoft.com/en-us/office/use-the-morph-transition-in-powerpoint-8dd1c7b2-b935-44f5-a74c-741d8d9244ea)
-that allows you
-to create smooth animations between slides. 
+that allows you to create smooth animations between slides.
 
-_However_, I have missed one important part of that feature: **Naming of objects**.
+It has been there a long time but somehow, I have managed to miss one important part of the feature: **Naming of objects**.
 
-You can use `!!` prefix to name objects in PowerPoint and this will allow you to morph between objects with the same name across slides. 
+You can use `!!` prefix to name objects allowing PowerPoint to morph these objects with the same name across slides. 
 
 Let's check this out with a simple example:
 
@@ -52,27 +51,31 @@ After the name change:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/12/powerpoint-morph/demo.gif" %}
 
-You can use the above technique for visualizing complex architectural diagrams, process flows, data flow etc.
+You can use the above technique for visualizing complex architectural diagrams, process flows, data flows etc.
 
-Here is one concrete example of how you can use this feature to visualize your
-Azure Kubernetes Service (AKS) architecture in case of zonal failure.
+Here is one concrete example how you can use this feature:<br/>
+_Visualize your Azure Kubernetes Service (AKS) application deployments during zonal failure_.<br/>
 I will blog more about this in my upcoming [Azure Chaos Studio](https://learn.microsoft.com/en-us/azure/chaos-studio/chaos-studio-overview) post.
 
-Here is simple picture demonstrating my AKS application deployment across three different availability zones:
+Here is simple PowerPoint slide demonstrating my AKS application deployment across three different availability zones:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/12/powerpoint-morph/aks-start.png" %}
 
-I'll make sure that my objects are named so that they're easy to identify:
+I'll make sure that my objects are named so that they're easy to identify (do you still remember [Two Hard Things](https://martinfowler.com/bliki/TwoHardThings.html)?):
 
 {% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/08/12/powerpoint-morph/aks-pane.png" %}
 
-I can now create new slides to show the transition between the two states:
+I can now create new slides to show the transition between different states:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/12/powerpoint-morph/aks-final.png" %}
 
 And here is the result demonstrating availability zone 2 outage:
 
 {% include videoEmbed.html width="100%" height="100%" tags="autoplay muted controls loop" link="/assets/posts/2024/08/12/powerpoint-morph/aks-morph.mp4" %}
+
+You might notice from my visualization that application instances marked with `(2)` are moved to the remaining two availability zones
+but the application instance marked with `(1)` is not.
+As mentioned earlier, I will blog more about this in my upcoming [Azure Chaos Studio](https://learn.microsoft.com/en-us/azure/chaos-studio/chaos-studio-overview) post.
 
 Checkout also [Morph transition: Tips and tricks](https://support.microsoft.com/en-us/office/morph-transition-tips-and-tricks-bc7f48ff-f152-4ee8-9081-d3121788024f).
 
