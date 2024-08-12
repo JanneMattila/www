@@ -1,6 +1,6 @@
 ---
 title: Testing your AKS resiliency with Chaos Studio
-image: /assets/posts/2024/08/19/chaos-studio-and-aks/chaos-studio.png
+image: /assets/posts/2024/08/26/chaos-studio-and-aks/chaos-studio.png
 date: 2024-08-26 06:00:00 +0300
 layout: posts
 categories: azure
@@ -10,7 +10,7 @@ tags: azure chaos-studio chaos-engineering chaos-mesh kubernetes aks
 [Azure Chaos Studio](https://learn.microsoft.com/en-us/azure/chaos-studio/chaos-studio-overview)
 is fairly new service that allows you to run chaos experiments on your Azure resources:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/19/chaos-studio-and-aks/overview.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/overview.png" %}
 
 To get good understanding more about chaos engineering and Chaos Studio,
 please check out excellent presentation from Build 2024: 
@@ -35,19 +35,23 @@ In this post, I will show you how to use Chaos Studio to test the resiliency of 
 
 Here is the architecture of the setup:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/19/chaos-studio-and-aks/chaos-studio.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/chaos-studio.png" %}
 
 In the diagram, we have 4 different apps: `app1`, `app2`, `app3`, and `app4` (only numbers are shown in the diagram).
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/19/chaos-studio-and-aks/experiments.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/targets.png" %}
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiments.png" %}
 
 ## Experiment 1: Simulate DNS failures
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/19/chaos-studio-and-aks/experiment1-start.png" %}
+{% include videoEmbed.html width="100%" height="100%" tags="autoplay muted controls loop" link="/assets/posts/2024/08/26/chaos-studio-and-aks/dns-experiment.mp4" %}
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/19/chaos-studio-and-aks/experiment1-end.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment1-start.png" %}
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/19/chaos-studio-and-aks/experiment1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment1-end.png" %}
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment1.png" %}
 
 ```json
 {
@@ -71,11 +75,11 @@ In the diagram, we have 4 different apps: `app1`, `app2`, `app3`, and `app4` (on
 
 ## Experiment 2: Simulate POD failure
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/19/chaos-studio-and-aks/experiment2-start.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment2-start.png" %}
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/19/chaos-studio-and-aks/experiment2-end.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment2-end.png" %}
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/19/chaos-studio-and-aks/experiment2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment2.png" %}
 
 ```json
 {
@@ -123,18 +127,18 @@ function list_pods()
 }
 ```
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/19/chaos-studio-and-aks/experiment3-start.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment3-start.png" %}
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/19/chaos-studio-and-aks/experiment3-end.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment3-end.png" %}
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/19/chaos-studio-and-aks/experiment3.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment3.png" %}
 
 
 ## Cost
 
 [Azure Chaos Studio pricing](https://azure.microsoft.com/en-us/pricing/details/chaos-studio/)
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/19/chaos-studio-and-aks/costs.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/costs.png" %}
 
 ## What's next?
 

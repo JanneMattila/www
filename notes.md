@@ -2,6 +2,12 @@
 
 ## Upcoming posts
 
+- Blob streaming
+  - curl --request GET --url 'https://webappfileblob-abc123.northeurope-01.azurewebsites.net/api/downloadblob?container=demo1&path=blobtemp/500MB.bin' --output 500MB.bin
+  - https://learn.microsoft.com/en-us/rest/api/storageservices/create-user-delegation-sas
+  - Multiple storage accounts or hide the storage account name
+  
+- ACR, Docker Hub and "Action recommended: Begin managing public content with Artifact Cache"
 - ACS and SMTP email sending
   - App registration rest api
   - https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email-smtp/smtp-authentication
@@ -27,7 +33,6 @@
 - Disk performance analysis
   - AKS SSD v2
   - https://github.com/JanneMattila/playground-aks-storage/blob/main/notes.md#example-disk-perf-analysis
-- ACR, Docker Hub and "Action recommended: Begin managing public content with Artifact Cache"
 - Sub move resource validation script
 - GitHub Copilot and C++ Direct2D game
 - AppService and Private Endpoint and DNS
