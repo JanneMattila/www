@@ -8,7 +8,7 @@ tags: azure chaos-studio chaos-engineering chaos-mesh kubernetes aks
 ---
 
 [Azure Chaos Studio](https://learn.microsoft.com/en-us/azure/chaos-studio/chaos-studio-overview)
-is fairly new service that allows you to run chaos experiments on your Azure resources:
+allows you to run chaos experiments on your Azure resources:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/overview.png" %}
 
@@ -45,7 +45,7 @@ In the diagram, we have 4 different apps: `app1`, `app2`, `app3`, and `app4` (on
 
 ## Experiment 1: Simulate DNS failures
 
-{% include videoEmbed.html width="100%" height="100%" tags="autoplay muted controls loop" link="/assets/posts/2024/08/26/chaos-studio-and-aks/dns-experiment.mp4" %}
+<!-- {% include videoEmbed.html width="100%" height="100%" tags="autoplay muted controls loop" link="/assets/posts/2024/08/26/chaos-studio-and-aks/dns-experiment.mp4" %} -->
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment1-start.png" %}
 
@@ -75,11 +75,9 @@ In the diagram, we have 4 different apps: `app1`, `app2`, `app3`, and `app4` (on
 
 ## Experiment 2: Simulate POD failure
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment2-start.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-pod-chaos1.png" %}
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment2-end.png" %}
-
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-pod-chaos2.png" %}
 
 ```json
 {
@@ -127,9 +125,20 @@ function list_pods()
 }
 ```
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment3-start.png" %}
+Here is example output of the function listing pods from `app` namespace:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment3-end.png" %}
+```console
+$ list_pods app
+Pod: app-858f68d4cd-6hrvw, Node: aks-nodepool1-17464156-vmss000000, Zone: uksouth-1
+Pod: app-858f68d4cd-bhtjz, Node: aks-nodepool1-17464156-vmss000001, Zone: uksouth-2
+Pod: app-858f68d4cd-smxd4, Node: aks-nodepool1-17464156-vmss000002, Zone: uksouth-3
+```
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-az-failure1.png" %}
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-az-failure2.png" %}
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-az-failure3.png" %}
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment3.png" %}
 
