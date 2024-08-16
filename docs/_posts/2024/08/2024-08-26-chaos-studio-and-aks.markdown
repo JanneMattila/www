@@ -1,6 +1,6 @@
 ---
 title: Testing your AKS resiliency with Chaos Studio
-image: /assets/posts/2024/08/26/chaos-studio-and-aks/chaos-studio.png
+image: /assets/posts/2024/08/26/chaos-studio-and-aks/aks-az-failure2.png
 date: 2024-08-26 06:00:00 +0300
 layout: posts
 categories: azure
@@ -33,23 +33,56 @@ The above presentation explains how you should approach chaos engineering implem
 
 In this post, I will show you how to use Chaos Studio to test the resiliency of your AKS cluster.
 
-Here is the architecture of the setup:
+To get started, there are many safety mechanisms in-place for preventing _accidental_ chaos experiments for your resources:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/chaos-studio.png" %}
-
-In the diagram, we have 4 different apps: `app1`, `app2`, `app3`, and `app4` (only numbers are shown in the diagram).
+1) First, you need to enable Azure resources to be used with Chaos Studio:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/targets.png" %}
 
+<!-- Here is the architecture of the setup:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/chaos-studio.png" %}
+
+In the diagram, we have 4 different apps: `app1`, `app2`, `app3`, and `app4` (only numbers are shown in the diagram). -->
+
+Then you can start creating experiments:
+
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiments.png" %}
 
+When designing experiments, remember that identity of the experiment needs to have permissions to perform the required tasks (e.g., shutdown VM, update NSG, etc.).
+Otherwise you will get an error like this:
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-access-denied.png" %}
+
+When experimenting with AKS, you need to make sure that:
+ - Local accounts are not disabled in the cluster
+ - API server is accessible for experiments
+
+Error if local accounts are disabled:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-disabled-local-accounts.png" %}
+
+Error if API server is not accessible:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-api-server-access.png" %}
+
+Okay, let's start with some experiments!
+
 ## Experiment 1: Simulate DNS failures
+
+Let's start with a simple, _yet very effective_ experiment: simulate DNS failures.
+Here is our test application and it's dependencies:
 
 <!-- {% include videoEmbed.html width="100%" height="100%" tags="autoplay muted controls loop" link="/assets/posts/2024/08/26/chaos-studio-and-aks/dns-experiment.mp4" %} -->
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment1-start.png" %}
 
+Our hypotheses is that our application continues to run, even if DNS is failing for some of the services.
+
+We want to simulate following failure scenario with our app next:
+
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment1-end.png" %}
+
+Here is the experiment configuration:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment1.png" %}
 
@@ -73,11 +106,135 @@ In the diagram, we have 4 different apps: `app1`, `app2`, `app3`, and `app4` (on
 }
 ```
 
+The above configuration is quite easy to understand. We are simulating DNS failures for the following domains:
+ - `bing.com`
+ - `github.com`
+ - `login.microsoftonline.com`
+ - `network-app-internal-svc`
+
+ And we are targeting the following namespaces:
+  - `network-app`
+  - `network-app2`
+  - `update-app`
+
+I'm _again_ using my [webapp-network-tester](https://github.com/JanneMattila/webapp-network-tester)
+for demonstrating purposes. Read more about it
+[here]({% post_url 2023/08/2023-08-22-testing-your-network-configuration %}). 
+
+_Webapp-network-tester_ workload is deployed to `network-app` namespace.
+`network-app-internal-svc` is a service which is accessible within the cluster and
+`network-app-external-svc` accessible from outside the cluster.
+
+Now, we're ready to show how the application works under the normal circumstances.
+If I send a payload `IPLOOKUP bing.com` to the application via Rest API, it should return the IP addresses of the domain `bing.com`:
+
+```console
+$ curl -X POST --data "IPLOOKUP bing.com" "$network_app_external_svc_ip/api/commands"
+-> Start: IPLOOKUP bing.com
+IP: 13.107.21.200
+IP: 204.79.197.200
+IP: 2620:1ec:c11::200
+<- End: IPLOOKUP bing.com 10.53ms
+```
+
+Similarly, it will reply list of IPs of those other domains as well.
+
+Now, let's start our experiment and see how the application behaves:
+
+{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-experiment1-start.png" %}
+
+After the experiment has started, we can see that configured DNS failures are happening:
+
+```console
+$ curl -X POST --data "IPLOOKUP github.com" "$network_app_external_svc_ip/api/commands"
+-> Start: IPLOOKUP github.com
+System.Net.Sockets.SocketException (00000001, 11): Resource temporarily unavailable
+   at System.Net.Dns.GetHostEntryOrAddressesCore(String hostName, Boolean justAddresses, AddressFamily addressFamily, Nullable`1 startingTimestamp)
+   at System.Net.Dns.<>c.<GetHostEntryOrAddressesCoreAsync>b__33_0(Object s, Int64 startingTimestamp)
+   at System.Net.Dns.<>c__DisplayClass39_0`1.<RunAsync>b__0(Task <p0>, Object <p1>)
+   at System.Threading.Tasks.ContinuationResultTaskFromTask`1.InnerInvoke()
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at WebApp.Controllers.CommandsController.ExecuteIpLookUpAsync(String[] parameters) in /src/src/WebApp/Controllers/CommandsController.cs:line 387
+   at WebApp.Controllers.CommandsController.Post(String body) in /src/src/WebApp/Controllers/CommandsController.cs:line 120
+<- End: IPLOOKUP github.com 417.04ms
+```
+
+Failure is also happening for the internal service DNS lookup:
+
+```console
+$ curl -X POST --data "IPLOOKUP network-app-internal-svc" "$network_app_external_svc_ip/api/commands"
+-> Start: IPLOOKUP network-app-internal-svc
+System.Net.Sockets.SocketException (00000001, 11): Resource temporarily unavailable
+   at System.Net.Dns.GetHostEntryOrAddressesCore(String hostName, Boolean justAddresses, AddressFamily addressFamily, Nullable`1 startingTimestamp)
+   at System.Net.Dns.<>c.<GetHostEntryOrAddressesCoreAsync>b__33_0(Object s, Int64 startingTimestamp)
+   at System.Net.Dns.<>c__DisplayClass39_0`1.<RunAsync>b__0(Task <p0>, Object <p1>)
+   at System.Threading.Tasks.ContinuationResultTaskFromTask`1.InnerInvoke()
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at WebApp.Controllers.CommandsController.ExecuteIpLookUpAsync(String[] parameters) in /src/src/WebApp/Controllers/CommandsController.cs:line 387
+   at WebApp.Controllers.CommandsController.Post(String body) in /src/src/WebApp/Controllers/CommandsController.cs:line 120
+<- End: IPLOOKUP network-app-internal-svc 2006.08ms
+```
+
+`microsoft.com` DNS lookup is still working fine during our experiment:
+
+```console
+$ curl -X POST --data "IPLOOKUP microsoft.com" "$network_app_external_svc_ip/api/commands"
+-> Start: IPLOOKUP microsoft.com
+IP: 20.112.250.133
+IP: 20.70.246.20
+IP: 20.231.239.246
+IP: 20.76.201.171
+IP: 2603:1030:20e:3::23c
+IP: 2603:1020:201:10::10f
+IP: 2603:1030:c02:8::14
+IP: 2603:1010:3:3::5b
+IP: 2603:1030:b:3::152
+<- End: IPLOOKUP microsoft.com 98.05ms
+```
+
+In the end, we can see that our application is still running and responding to the requests.
+So, it did not crash but obviously requests failed for those configured addresses.
+
+This is good example how you can use **DNS Chaos** to test out your application resiliency
+and many different scenarios.
+
+Would you application survive if DNS is failing for some of the services e.g., database, storage, Redis, etc.?
+Using Chaos Studio, you can easily test out your hypotheses with experiments.
+
 ## Experiment 2: Simulate POD failure
+
+In this experiment, we are going to simulate POD failures in our AKS cluster.
+
+Here we have our cluster and apps `(1)` and `(2)` running in the cluster:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-pod-chaos1.png" %}
 
+Apps have different count of replicas and they are spread across different nodes in the cluster.
+
+Now, we are going to simulate POD failures for the apps `(1)` and `(2)`:
+- For app `(1)`, we are going to simulate fixed number of POD failures of `2`
+- For app `(2)`, we are going to simulate fixed percentage of POD failures of `66%`
+
+We expect that the `(2)` app will still continue to run and be able to serve requests even if 66% of the PODs are failing
+but `(1)` app will be completely down if 2 PODs are failing:
+
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-pod-chaos2.png" %}
+
+Here is the experiment configuration:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment2.png" %}
+
+As you can see, there are now two branches in the experiment configuration for simulating two different configurations at the same time.
+
+Fixed number of failures:
 
 ```json
 {
@@ -93,6 +250,8 @@ In the diagram, we have 4 different apps: `app1`, `app2`, `app3`, and `app4` (on
 }
 ```
 
+Percentage based number of failures:
+
 ```json
 {
   "action": "pod-failure",
@@ -106,6 +265,50 @@ In the diagram, we have 4 different apps: `app1`, `app2`, `app3`, and `app4` (on
   }
 }
 ```
+
+Now, let's start our second experiment and see what happens:
+
+{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-experiment2-start.png" %}
+
+After the experiment has started, we can see that `(1)` is completely down:
+
+```console
+$ kubectl get pods -n app1
+NAME                               READY   STATUS             RESTARTS     AGE
+app1-deployment-75787c7cdd-fzjxt   0/1     CrashLoopBackOff   3 (9s ago)   45h
+app1-deployment-75787c7cdd-mxkmw   0/1     CrashLoopBackOff   3 (9s ago)   45h
+
+$ curl $app1_svc_ip
+curl: (28) Failed to connect to 4.158.40.219 port 80: Connection timed out
+```
+
+But `(2)` is still running and serving requests even if 66% of the PODs are failing:
+
+```console
+$ kubectl get pods -n app2
+NAME                               READY   STATUS    RESTARTS      AGE
+app2-deployment-858f68d4cd-jxlnn   1/1     Running   0             45h
+app2-deployment-858f68d4cd-mzxmw   0/1     Running   5 (13s ago)   45h
+app2-deployment-858f68d4cd-xxdn6   0/1     Running   5 (13s ago)   45h
+
+$ curl -s $app2_svc_ip/api/update | jq .
+{
+  "machineName": "app2-deployment-858f68d4cd-jxlnn",
+  "started": "2024-08-16T07:05:37.7032398Z",
+  "uptime": "00:00:13.4063413",
+  "appEnvironment": null,
+  "appEnvironmentSticky": null,
+  "content": "1.0.11\n"
+}
+```
+
+This is good example how you can use **POD Chaos** to test out your application resiliency
+especially when you have microservices architecture and you have dependencies between different services.
+
+Would your application survive if some other service is not running in full capacity?
+What if you're under heavy load and some of the services are failing?
+[Azure Load Testing](https://learn.microsoft.com/en-us/azure/load-testing/overview-what-is-azure-load-testing)
+is good companion for Chaos Studio for generating load to your services so that you can test the impact of the failures.
 
 ## Experiment 3: Simulate availability zone failure
 
