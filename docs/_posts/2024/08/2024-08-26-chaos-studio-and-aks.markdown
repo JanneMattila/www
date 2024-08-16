@@ -312,7 +312,15 @@ is good companion for Chaos Studio for generating load to your services so that 
 
 ## Experiment 3: Simulate availability zone failure
 
-Bash function `list_pods`:
+In this experiment, we are going to simulate availability zone failure in our 3 node AKS cluster:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/nodepool.png" %}
+
+Here is our application deployments in the cluster:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-az-failure1-3n.png" %}
+
+I have helper `list_pods` function in my shell to list pods and their nodes and zones:
 
 ```bash
 function list_pods()
@@ -328,34 +336,108 @@ function list_pods()
 }
 ```
 
-Here is example output of the function listing pods from `app` namespace:
+Here is example output of the function listing pods of app `(1)`:
 
 ```console
-$ list_pods app
-Pod: app-858f68d4cd-6hrvw, Node: aks-nodepool1-17464156-vmss000000, Zone: uksouth-1
-Pod: app-858f68d4cd-bhtjz, Node: aks-nodepool1-17464156-vmss000001, Zone: uksouth-2
-Pod: app-858f68d4cd-smxd4, Node: aks-nodepool1-17464156-vmss000002, Zone: uksouth-3
+$ list_pods app1
+Pod: app1-858f68d4cd-6hrvw, Node: aks-nodepool1-17464156-vmss000000, Zone: uksouth-1
+Pod: app1-858f68d4cd-bhtjz, Node: aks-nodepool1-17464156-vmss000001, Zone: uksouth-2
+Pod: app1-858f68d4cd-smxd4, Node: aks-nodepool1-17464156-vmss000002, Zone: uksouth-3
 ```
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-az-failure1.png" %}
+So I can see that they're spread across different availability zones.
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-az-failure2.png" %}
+Similarly, here is listing of `(2)`:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-az-failure3.png" %}
+```console
+$ list_pods app2
+Pod: app2-75787c7cdd-qbk8v, Node: aks-nodepool1-17464156-vmss000001, Zone: uksouth-2
+```
+Before starting the experiment, our cluster nodes are running as expected:
+
+```console
+$ kubectl get nodes
+NAME                                STATUS   ROLES    AGE     VERSION
+aks-nodepool1-17464156-vmss000000   Ready    <none>   73m     v1.30.3
+aks-nodepool1-17464156-vmss000001   Ready    <none>   5m46s   v1.30.3
+aks-nodepool1-17464156-vmss000002   Ready    <none>   5m51s   v1.30.3
+```
+
+Now, we are going to simulate availability zone 2 failure.
+Here is the experiment configuration:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment3.png" %}
 
+Now, let's start our third experiment and see what happens:
 
-## Cost
+{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-experiment3-start.png" %}
 
-[Azure Chaos Studio pricing](https://azure.microsoft.com/en-us/pricing/details/chaos-studio/)
+After the experiment has started and availability zone 2 is impacted, many things start to happen quite fast:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/costs.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-az-failure2-3n.png" %}
 
-## What's next?
+You might see that node is reported to be `NotReady`:
 
-As you might have noticed, in the architecture diagram above, we have also two other applications `app3` and `app4`.
-We didn't yet 
+```console
+$ kubectl get nodes
+NAME                                STATUS     ROLES    AGE    VERSION
+aks-nodepool1-17464156-vmss000000   Ready      <none>   104m   v1.30.3
+aks-nodepool1-17464156-vmss000001   NotReady   <none>   36m    v1.30.3
+aks-nodepool1-17464156-vmss000002   Ready      <none>   36m    v1.30.3
+```
+
+If we monitor our apps, we can see that they're being rescheduled to other cluster nodes:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-az-failure3-3n.png" %}
+
+```console
+$ kubectl get pods -n app1 -w
+NAME                    READY   STATUS              RESTARTS   AGE
+app1-858f68d4cd-bhtjz   1/1     Running             0          20m
+app1-858f68d4cd-bhtjz   1/1     Terminating         0          20m
+app1-858f68d4cd-bhblt   0/1     Pending             0          0s
+app1-858f68d4cd-bhblt   0/1     ContainerCreating   0          0s
+app1-858f68d4cd-bhblt   0/1     Running             0          1s
+app1-858f68d4cd-bhtjz   1/1     Terminating         0          20m
+app1-858f68d4cd-bhblt   1/1     Running             0          6s
+
+$ list_pods app1
+Pod: app1-858f68d4cd-6hrvw, Node: aks-nodepool1-17464156-vmss000000, Zone: uksouth-1
+Pod: app1-858f68d4cd-bhblt, Node: aks-nodepool1-17464156-vmss000002, Zone: uksouth-3
+Pod: app1-858f68d4cd-smxd4, Node: aks-nodepool1-17464156-vmss000002, Zone: uksouth-3
+
+$ list_pods app2
+Pod: app2-75787c7cdd-bhblt, Node: aks-nodepool1-17464156-vmss000002, Zone: uksouth-3
+```
+
+Here is the final state of the cluster after the experiment has completed:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-az-failure4-3n.png" %}
+
+---
+
+You can run the same experiment with larger clusters and see how it then behaves.
+
+Starting point:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-az-failure1.png" %}
+
+After the experiment has started:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-az-failure2.png" %}
+
+During the experiment:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-az-failure3.png" %}
+
+After the experiment has completed:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-az-failure4.png" %}
+
+---
+
+**Availability Zone Chaos** extremely powerful experiment to test out your AKS cluster resiliency.
+Put persistent storage to the picture and you might see some interesting challenges if you by accident have e.g., LRS disks in your cluster.
 
 Cluster 1.28 and below does not have storage classes with ZRS support. You have to create storage class for them yourself.
 From [Release 2024-04-28](https://github.com/Azure/AKS/releases/tag/2024-04-28):
@@ -363,3 +445,18 @@ From [Release 2024-04-28](https://github.com/Azure/AKS/releases/tag/2024-04-28):
 > Effective **starting with Kubernetes version 1.29**,
 > when you deploy Azure Kubernetes Service (AKS) clusters across **multiple availability zones**,
 > AKS now utilizes **zone-redundant storage (ZRS) to create managed disks within built-in storage classes**. 
+
+## Cost
+
+[Azure Chaos Studio pricing](https://azure.microsoft.com/en-us/pricing/details/chaos-studio/)
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/costs.png" %}
+
+## Conclusion
+
+In this post, we have seen how you can use Chaos Studio to test out your AKS cluster resiliency.
+We have seen how you can simulate DNS failures, POD failures, and availability zone failures.
+
+Chaos Studio is a powerful tool for testing your hypotheses and making sure that your applications are resilient to failures.
+
+I hope you find this useful!
