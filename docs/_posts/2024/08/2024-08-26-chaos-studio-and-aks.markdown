@@ -56,14 +56,15 @@ Otherwise you will get an error like this:
 
 Additionally, when experimenting with AKS, you need to make sure that:
  - Local accounts are not disabled in the cluster
- - API server is accessible for experiments
+ - API server is accessible by the experiments
  - You need to [Set up Chaos Mesh on your AKS cluster](https://learn.microsoft.com/en-us/azure/chaos-studio/chaos-studio-tutorial-aks-portal#set-up-chaos-mesh-on-your-aks-cluster)
 
-If you have local accounts disabled in your cluster, you'll get the following error message:
+If you have local accounts disabled in your cluster, you'll get the following error message
+when trying to run faults on the cluster:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-disabled-local-accounts.png" %}
 
-This is the error message if API server is not accessible:
+This is the error message if API server is not accessible by the experiments:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-api-server-access.png" %}
 
