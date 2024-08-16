@@ -12,8 +12,8 @@ allows you to run chaos experiments on your Azure resources:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/overview.png" %}
 
-To get good understanding more about chaos engineering and Chaos Studio,
-please check out excellent presentation from Build 2024: 
+To get good understanding about chaos engineering and Chaos Studio,
+please check out this excellent presentation from Build 2024: 
 
 [Improve Application Resilience using Azure Chaos Studio](https://build.microsoft.com/en-US/sessions/5723eeff-0b6b-4dee-b35b-dd8f3f40c5b2)
 
@@ -35,7 +35,7 @@ In this post, I will show you how to use Chaos Studio to test the resiliency of 
 
 To get started, there are many safety mechanisms in-place for preventing _accidental_ chaos experiments for your resources:
 
-1) First, you need to enable Azure resources to be used with Chaos Studio:
+First, you need to enable Azure resources to be used with Chaos Studio:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/targets.png" %}
 
@@ -45,23 +45,25 @@ To get started, there are many safety mechanisms in-place for preventing _accide
 
 In the diagram, we have 4 different apps: `app1`, `app2`, `app3`, and `app4` (only numbers are shown in the diagram). -->
 
-Then you can start creating experiments:
+Then you can start creating experiments and connect them to these resources:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiments.png" %}
 
-When designing experiments, remember that identity of the experiment needs to have permissions to perform the required tasks (e.g., shutdown VM, update NSG, etc.).
+Next you need to enable the identity of the experiment to have required permissions to perform the configured tasks (e.g., shutdown VM, update NSG, etc.).
+
 Otherwise you will get an error like this:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-access-denied.png" %}
 
-When experimenting with AKS, you need to make sure that:
+Additionally, when experimenting with AKS, you need to make sure that:
  - Local accounts are not disabled in the cluster
  - API server is accessible for experiments
+ - You need to [Set up Chaos Mesh on your AKS cluster](https://learn.microsoft.com/en-us/azure/chaos-studio/chaos-studio-tutorial-aks-portal#set-up-chaos-mesh-on-your-aks-cluster)
 
-Error if local accounts are disabled:
+If you have local accounts disabled in your cluster, you'll get the following error message:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-disabled-local-accounts.png" %}
 
-Error if API server is not accessible:
+This is the error message if API server is not accessible:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-api-server-access.png" %}
 
@@ -108,11 +110,11 @@ Here is the experiment configuration:
 
 The above configuration is quite easy to understand. We are simulating DNS failures for the following domains:
  - `bing.com`
- - `github.com`
+ - `github.com` (or more specifically `github.?om` with `?` as any character)
  - `login.microsoftonline.com`
  - `network-app-internal-svc`
 
- And we are targeting the following namespaces:
+ And we are targeting the following namespaces (other namespaces are not affected):
   - `network-app`
   - `network-app2`
   - `update-app`
@@ -137,7 +139,7 @@ IP: 2620:1ec:c11::200
 <- End: IPLOOKUP bing.com 10.53ms
 ```
 
-Similarly, it will reply list of IPs of those other domains as well.
+Similarly, it will reply with the list of IPs of those other domains as well.
 
 Now, let's start our experiment and see how the application behaves:
 
@@ -204,9 +206,12 @@ In the end, we can see that our application is still running and responding to t
 So, it did not crash but obviously requests failed for those configured addresses.
 
 This is good example how you can use **DNS Chaos** to test out your application resiliency
-and many different scenarios.
+and many different network related scenarios.
 
 Would you application survive if DNS is failing for some of the services e.g., database, storage, Redis, etc.?
+
+How should it handle gracefully those kind of failures?
+
 Using Chaos Studio, you can easily test out your hypotheses with experiments.
 
 ## Experiment 2: Simulate POD failure
@@ -221,7 +226,7 @@ Apps have different count of replicas and they are spread across different nodes
 
 Now, we are going to simulate POD failures for the apps `(1)` and `(2)`:
 - For app `(1)`, we are going to simulate fixed number of POD failures of `2`
-- For app `(2)`, we are going to simulate fixed percentage of POD failures of `66%`
+- For app `(2)`, we are going to simulate percentage of POD failures of `66%`
 
 We expect that the `(2)` app will still continue to run and be able to serve requests even if 66% of the PODs are failing
 but `(1)` app will be completely down if 2 PODs are failing:
@@ -304,8 +309,19 @@ $ curl -s $app2_svc_ip/api/update | jq .
 
 This is good example how you can use **POD Chaos** to test out your application resiliency
 especially when you have microservices architecture and you have dependencies between different services.
+You can then use these to test out your implemented circuit breakers, retries, timeouts, etc.
+Here are a few links to the related resources:
+- [Retry pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/retry)
+- [Circuit Breaker pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker)
+- [Implement retries with exponential backoff](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/implement-retries-exponential-backoff)
+- [Transient fault handling](https://learn.microsoft.com/en-us/azure/architecture/best-practices/transient-faults)
+
+Of course, you should start asking questions like these from yourself:
 
 Would your application survive if some other service is not running in full capacity?
+
+How many replicas you should have per service and how many of them can be down at the same time?
+
 What if you're under heavy load and some of the services are failing?
 [Azure Load Testing](https://learn.microsoft.com/en-us/azure/load-testing/overview-what-is-azure-load-testing)
 is good companion for Chaos Studio for generating load to your services so that you can test the impact of the failures.
@@ -437,20 +453,25 @@ After the experiment has completed:
 ---
 
 **Availability Zone Chaos** extremely powerful experiment to test out your AKS cluster resiliency.
-Put persistent storage to the picture and you might see some interesting challenges if you by accident have e.g., LRS disks in your cluster.
 
-Cluster 1.28 and below does not have storage classes with ZRS support. You have to create storage class for them yourself.
+There are tons of examples and scenarios you can test out with availability zone failures.
+Put persistent storage to the picture and you might see some interesting challenges if you by accident have e.g., Locally Redundant Storage (LRS) disks in your cluster.
+Unfortunately, clusters with 1.28 and below does not have storage classes with Zone Redundant Storage (ZRS) support
+built-in. You have to create storage class for them yourself.
 From [Release 2024-04-28](https://github.com/Azure/AKS/releases/tag/2024-04-28):
 
 > Effective **starting with Kubernetes version 1.29**,
 > when you deploy Azure Kubernetes Service (AKS) clusters across **multiple availability zones**,
-> AKS now utilizes **zone-redundant storage (ZRS) to create managed disks within built-in storage classes**. 
+> AKS now utilizes **zone-redundant storage (ZRS) to create managed disks within built-in storage classes**.
 
-## Cost
+This gives us many interesting scenarios to test out with Chaos Studio but they do deserve their own post.
+Expect to see more about this in the future.
+
+<!-- ## Cost
 
 [Azure Chaos Studio pricing](https://azure.microsoft.com/en-us/pricing/details/chaos-studio/)
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/costs.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/costs.png" %} -->
 
 ## Conclusion
 
@@ -458,5 +479,9 @@ In this post, we have seen how you can use Chaos Studio to test out your AKS clu
 We have seen how you can simulate DNS failures, POD failures, and availability zone failures.
 
 Chaos Studio is a powerful tool for testing your hypotheses and making sure that your applications are resilient to failures.
+
+You can find the above examples in GitHub:
+
+{% include githubEmbed.html text="JanneMattila/aks-workshop/26-chaos-studio.sh" link="JanneMattila/aks-workshop/blob/main/26-chaos-studio.sh" %}
 
 I hope you find this useful!
