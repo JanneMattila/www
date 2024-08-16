@@ -2,12 +2,13 @@
 
 ## Upcoming posts
 
+- ACR, Docker Hub and "Action recommended: Begin managing public content with Artifact Cache"
+
 - Blob streaming
   - curl --request GET --url 'https://webappfileblob-abc123.northeurope-01.azurewebsites.net/api/downloadblob?container=demo1&path=blobtemp/500MB.bin' --output 500MB.bin
   - https://learn.microsoft.com/en-us/rest/api/storageservices/create-user-delegation-sas
   - Multiple storage accounts or hide the storage account name
   
-- ACR, Docker Hub and "Action recommended: Begin managing public content with Artifact Cache"
 - ACS and SMTP email sending
   - App registration rest api
   - https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email-smtp/smtp-authentication

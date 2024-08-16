@@ -455,33 +455,42 @@ After the experiment has completed:
 
 **Availability Zone Chaos** extremely powerful experiment to test out your AKS cluster resiliency.
 
-There are tons of examples and scenarios you can test out with availability zone failures.
-Put persistent storage to the picture and you might see some interesting challenges if you by accident have e.g., Locally Redundant Storage (LRS) disks in your cluster.
-Unfortunately, clusters with 1.28 and below does not have storage classes with Zone Redundant Storage (ZRS) support
-built-in. You have to create storage class for them yourself.
+There are tons of scenarios you can test out with availability zone failures.
+You can test if you application is correctly scheduled to across zones and nodes as you expected
+when you set various _almost magical elements_ in your deployment configurations.
+Read more about
+[Assigning Pods to Nodes](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/).
+
+Another important test scenario is of course storage. Put persistent storage to the picture and you might see some interesting issues if you by accident have deployed
+[Locally redundant storage (LRS)](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-redundancy#locally-redundant-storage-for-managed-disks)
+disks into your cluster.
+Unfortunately, clusters with 1.28 and below does not have
+[storage classes](https://learn.microsoft.com/en-us/azure/aks/concepts-storage#storage-classes)
+with
+[Zone-redundant storage (ZRS)](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-redundancy#zone-redundant-storage-for-managed-disks)
+support built-in. You have to create storage class for them yourself.
 From [Release 2024-04-28](https://github.com/Azure/AKS/releases/tag/2024-04-28):
 
 > Effective **starting with Kubernetes version 1.29**,
 > when you deploy Azure Kubernetes Service (AKS) clusters across **multiple availability zones**,
 > AKS now utilizes **zone-redundant storage (ZRS) to create managed disks within built-in storage classes**.
 
-This gives us many interesting scenarios to test out with Chaos Studio but they do deserve their own post.
-Expect to see more about this in the future.
-
-<!-- ## Cost
-
-[Azure Chaos Studio pricing](https://azure.microsoft.com/en-us/pricing/details/chaos-studio/)
-
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/costs.png" %} -->
+This gives us many interesting scenarios to test out with Chaos Studio, including
+[Azure Container Storage](https://learn.microsoft.com/en-us/azure/storage/container-storage/container-storage-introduction),
+but they do deserve their own post.
 
 ## Conclusion
 
 In this post, we have seen how you can use Chaos Studio to test out your AKS cluster resiliency.
 We have seen how you can simulate DNS failures, POD failures, and availability zone failures.
 
-Chaos Studio is a powerful tool for testing your hypotheses and making sure that your applications are resilient to failures.
+Chaos Studio is a powerful tool for testing your hypotheses and making sure
+that your applications are resilient to failures.
 
-You can find the above examples in GitHub:
+This is broad topic and I have only scratched the surface here.
+Expect to see more posts about these topics the future.
+
+You can find the above examples in my GitHub:
 
 {% include githubEmbed.html text="JanneMattila/aks-workshop/26-chaos-studio.sh" link="JanneMattila/aks-workshop/blob/main/26-chaos-studio.sh" %}
 
