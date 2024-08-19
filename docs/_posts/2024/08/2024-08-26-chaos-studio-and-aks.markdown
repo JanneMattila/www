@@ -51,7 +51,7 @@ Then you can start creating experiments and connect them to these resources:
 
 Next you need to enable the identity of the experiment to have required permissions to perform the configured tasks (e.g., shutdown VM, update NSG, etc.).
 
-Otherwise you will get an error like this:
+Otherwise, you will get an error like this:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-access-denied.png" %}
 
 Additionally, when experimenting with AKS, you need to make sure that:
@@ -73,13 +73,13 @@ Okay, let's start with some experiments!
 ## Experiment 1: Simulate DNS failures
 
 Let's start with a simple, _yet very effective_ experiment: simulate DNS failures.
-Here is our test application and it's dependencies:
+Here is our test application and its dependencies:
 
 <!-- {% include videoEmbed.html width="100%" height="100%" tags="autoplay muted controls loop" link="/assets/posts/2024/08/26/chaos-studio-and-aks/dns-experiment.mp4" %} -->
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiment1-start.png" %}
 
-Our hypotheses is that our application continues to run, even if DNS is failing for some of the services.
+Our hypothesis is that our application continues to run, even if DNS is failing for some of the services.
 
 We want to simulate following failure scenario with our app next:
 
@@ -128,7 +128,7 @@ _Webapp-network-tester_ workload is deployed to `network-app` namespace.
 `network-app-internal-svc` is a service which is accessible within the cluster and
 `network-app-external-svc` accessible from outside the cluster.
 
-Now, we're ready to show how the application works under the normal circumstances.
+Now, we're ready to show how the application works under normal circumstances.
 If I send a payload `IPLOOKUP bing.com` to the application via Rest API, it should return the IP addresses of the domain `bing.com`:
 
 ```console
@@ -206,12 +206,12 @@ IP: 2603:1030:b:3::152
 In the end, we can see that our application is still running and responding to the requests.
 So, it did not crash but obviously requests failed for those configured addresses.
 
-This is good example how you can use **DNS Chaos** to test out your application resiliency
+This is a good example of how you can use **DNS Chaos** to test out your application resiliency
 and many different network related scenarios.
 
-Would you application survive if DNS is failing for some of the services e.g., database, storage, Redis, etc.?
+Would your application survive if DNS is failing for some of the services e.g., database, storage, Redis, etc.?
 
-How should it handle gracefully those kind of failures?
+How should it handle gracefully those kinds of failures?
 
 Using Chaos Studio, you can easily test out your hypotheses with experiments.
 
@@ -223,13 +223,13 @@ Here we have our cluster and apps `(1)` and `(2)` running in the cluster:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-pod-chaos1.png" %}
 
-Apps have different count of replicas and they are spread across different nodes in the cluster.
+Apps have different counts of replicas, and they are spread across different nodes in the cluster.
 
 Now, we are going to simulate POD failures for the apps `(1)` and `(2)`:
 - For app `(1)`, we are going to simulate fixed number of POD failures of `2`
 - For app `(2)`, we are going to simulate percentage of POD failures of `66%`
 
-We expect that the `(2)` app will still continue to run and be able to serve requests even if 66% of the PODs are failing
+We expect that the `(2)` app will continue to run and be able to serve requests even if 66% of the PODs are failing
 but `(1)` app will be completely down if 2 PODs are failing:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-pod-chaos2.png" %}
@@ -319,7 +319,7 @@ Here are a few links to the related resources:
 
 Of course, you should start asking questions like these from yourself:
 
-Would your application survive if some other service is not running in full capacity?
+Would your application survive if some other service is not running at full capacity?
 
 How many replicas you should have per service and how many of them can be down at the same time?
 
@@ -333,7 +333,7 @@ In this experiment, we are going to simulate availability zone failure in our 3 
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/nodepool.png" %}
 
-Here is our application deployments in the cluster:
+Here are our application deployments in the cluster:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-az-failure1-3n.png" %}
 
@@ -389,7 +389,7 @@ Now, let's start our third experiment and see what happens:
 
 {% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-experiment3-start.png" %}
 
-After the experiment has started and availability zone 2 is impacted, many things start to happen quite fast:
+After the experiment has started and availability zone 2 is impacted, many things start to happen:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-az-failure2-3n.png" %}
 
@@ -451,24 +451,23 @@ After the experiment has completed:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-az-failure4.png" %}
 
----
+**Availability Zone Chaos** is an extremely powerful way to test out your AKS cluster resiliency.
 
-**Availability Zone Chaos** extremely powerful experiment to test out your AKS cluster resiliency.
-
-There are tons of scenarios you can test out with availability zone failures.
-You can test if you application is correctly scheduled to across zones and nodes as you expected
+There are tons of scenarios you can test out with it.
+You can test if you application is correctly deployed to across zones and nodes as you expected
 when you set various _almost magical elements_ in your deployment configurations.
 Read more about
 [Assigning Pods to Nodes](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/).
 
-Another important test scenario is of course storage. Put persistent storage to the picture and you might see some interesting issues if you by accident have deployed
+Another important test scenario is persistent storage. When you put persistent storage to the picture,
+you might run into interesting issues. Especially, if you have deployed
 [Locally redundant storage (LRS)](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-redundancy#locally-redundant-storage-for-managed-disks)
 disks into your cluster.
-Unfortunately, clusters with 1.28 and below does not have
+Unfortunately, clusters with 1.28 and below don't have
 [storage classes](https://learn.microsoft.com/en-us/azure/aks/concepts-storage#storage-classes)
 with
 [Zone-redundant storage (ZRS)](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-redundancy#zone-redundant-storage-for-managed-disks)
-support built-in. You have to create storage class for them yourself.
+support built-in. You have to create a storage class for that yourself.
 From [Release 2024-04-28](https://github.com/Azure/AKS/releases/tag/2024-04-28):
 
 > Effective **starting with Kubernetes version 1.29**,
@@ -477,7 +476,14 @@ From [Release 2024-04-28](https://github.com/Azure/AKS/releases/tag/2024-04-28):
 
 This gives us many interesting scenarios to test out with Chaos Studio, including
 [Azure Container Storage](https://learn.microsoft.com/en-us/azure/storage/container-storage/container-storage-introduction),
-but they do deserve their own post.
+but they do deserve their own post. 
+
+I blogged previously about
+[Enhance your PowerPoint presentations with morph transitions]({% post_url 2024/08/2024-08-12-powerpoint-morph-transition %})
+and think it's good way to illustrate these quite complex scenarios.
+Here is an example visualization of the above scenario:
+
+{% include videoEmbed.html width="100%" height="100%" tags="autoplay muted controls loop" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-morph3.mp4" %}
 
 ## Conclusion
 
@@ -487,8 +493,8 @@ We have seen how you can simulate DNS failures, POD failures, and availability z
 Chaos Studio is a powerful tool for testing your hypotheses and making sure
 that your applications are resilient to failures.
 
-This is broad topic and I have only scratched the surface here.
-Expect to see more posts about these topics the future.
+This is a broad topic and I have only scratched the surface here.
+Expect to see more posts about these topics in the future.
 
 You can find the above examples in my GitHub:
 
