@@ -17,11 +17,6 @@ please check out this excellent presentation from Build 2024:
 
 [Improve Application Resilience using Azure Chaos Studio](https://build.microsoft.com/en-US/sessions/5723eeff-0b6b-4dee-b35b-dd8f3f40c5b2)
 
-<!-- 
-[text](https://en.wikipedia.org/wiki/Chaos_engineering)
-[text](https://principlesofchaos.org/)
--->
-
 The above presentation explains how you should approach chaos engineering implementation:
 
 > Formulate **hypotheses** around resiliency scenarios, 
@@ -39,24 +34,23 @@ First, you need to enable Azure resources to be used with Chaos Studio:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/targets.png" %}
 
-<!-- Here is the architecture of the setup:
-
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/chaos-studio.png" %}
-
-In the diagram, we have 4 different apps: `app1`, `app2`, `app3`, and `app4` (only numbers are shown in the diagram). -->
-
 Then you can start creating experiments and connect them to these resources:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/experiments.png" %}
 
 Next you need to enable the identity of the experiment to have required permissions to perform the configured tasks (e.g., shutdown VM, update NSG, etc.).
+Read more about
+[Permissions and security in Azure Chaos Studio](https://learn.microsoft.com/en-us/azure/chaos-studio/chaos-studio-permissions-security)
+in the documentation.
 
 Otherwise, you will get an error like this:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-access-denied.png" %}
 
 Additionally, when experimenting with AKS, you need to make sure that:
- - Local accounts are not disabled in the cluster
+ - [Local accounts are not disabled in the cluster](https://learn.microsoft.com/en-us/azure/chaos-studio/chaos-studio-tutorial-aks-portal#limitations)
  - API server is accessible by the experiments
+   - [Virtual network injection in Azure Chaos Studio](https://learn.microsoft.com/en-us/azure/chaos-studio/chaos-studio-private-networking?tabs=azure-portal)
+   - [Limitations -> Allow Chaos Studio's IP ranges](https://learn.microsoft.com/en-us/azure/chaos-studio/chaos-studio-tutorial-aks-portal#limitations)
  - You need to [Set up Chaos Mesh on your AKS cluster](https://learn.microsoft.com/en-us/azure/chaos-studio/chaos-studio-tutorial-aks-portal#set-up-chaos-mesh-on-your-aks-cluster)
 
 If you have local accounts disabled in your cluster, you'll get the following error message
@@ -142,7 +136,18 @@ IP: 2620:1ec:c11::200
 
 Similarly, it will reply with the list of IPs of those other domains as well.
 
-Now, let's start our experiment and see how the application behaves:
+I can also test the HTTP GET requests to the different addresses:
+
+```console
+$ curl -X POST --data "HTTP GET http://network-app-internal-svc" "$network_app_external_svc_ip/api/commands"
+-> Start: HTTP GET http://network-app-internal-svc
+Hello there!
+<- End: HTTP GET http://network-app-internal-svc 272.55ms
+```
+
+So, everything is working as expected.
+
+Now, let's start our experiment and see how the application behaves then:
 
 {% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/08/26/chaos-studio-and-aks/aks-experiment1-start.png" %}
 
@@ -203,8 +208,40 @@ IP: 2603:1030:b:3::152
 <- End: IPLOOKUP microsoft.com 98.05ms
 ```
 
-In the end, we can see that our application is still running and responding to the requests.
-So, it did not crash but obviously requests failed for those configured addresses.
+Similarly, HTTP GET requests are failing for the configured addresses:
+
+```console
+$ curl -X POST --data "HTTP GET http://network-app-internal-svc" "$network_app_external_svc_ip/api/commands"
+-> Start: HTTP GET http://network-app-internal-svc
+System.Net.Http.HttpRequestException: Resource temporarily unavailable (network-app-internal-svc:80)
+ ---> System.Net.Sockets.SocketException (11): Resource temporarily unavailable
+<abbreviated>
+<- End: HTTP GET http://network-app-internal-svc 2008.51ms
+
+$ curl -X POST --data "HTTP GET https://login.microsoftonline.com" "$network_app_external_svc_ip/api/commands"
+-> Start: HTTP GET https://login.microsoftonline.com
+System.Net.Http.HttpRequestException: Resource temporarily unavailable (login.microsoftonline.com:443)
+ ---> System.Net.Sockets.SocketException (11): Resource temporarily unavailable
+<abbreviated>
+<- End: HTTP GET https://login.microsoftonline.com 28.57ms
+```
+
+Other requests are still working fine:
+
+```console
+$ curl -X POST --data "HTTP GET https://microsoft.com" "$network_app_external_svc_ip/api/commands"
+-> Start: HTTP GET https://microsoft.com
+<!DOCTYPE HTML>
+
+<html lang="en-GB" dir="ltr">
+<abbreviated>
+</body>
+</html>
+<- End: HTTP GET https://microsoft.com 2158.71ms
+```
+
+In the end, we can see that our application is still running and responding to our requests.
+So, it did not crash but obviously it could not resolve DNS to those configured addresses causing the above failures.
 
 This is a good example of how you can use **DNS Chaos** to test out your application resiliency
 and many different network related scenarios.
