@@ -158,16 +158,7 @@ $ curl -X POST --data "IPLOOKUP github.com" "$network_app_external_svc_ip/api/co
 -> Start: IPLOOKUP github.com
 System.Net.Sockets.SocketException (00000001, 11): Resource temporarily unavailable
    at System.Net.Dns.GetHostEntryOrAddressesCore(String hostName, Boolean justAddresses, AddressFamily addressFamily, Nullable`1 startingTimestamp)
-   at System.Net.Dns.<>c.<GetHostEntryOrAddressesCoreAsync>b__33_0(Object s, Int64 startingTimestamp)
-   at System.Net.Dns.<>c__DisplayClass39_0`1.<RunAsync>b__0(Task <p0>, Object <p1>)
-   at System.Threading.Tasks.ContinuationResultTaskFromTask`1.InnerInvoke()
-   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
---- End of stack trace from previous location ---
-   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
-   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
---- End of stack trace from previous location ---
-   at WebApp.Controllers.CommandsController.ExecuteIpLookUpAsync(String[] parameters) in /src/src/WebApp/Controllers/CommandsController.cs:line 387
-   at WebApp.Controllers.CommandsController.Post(String body) in /src/src/WebApp/Controllers/CommandsController.cs:line 120
+... <abbreviated>
 <- End: IPLOOKUP github.com 417.04ms
 ```
 
@@ -178,16 +169,7 @@ $ curl -X POST --data "IPLOOKUP network-app-internal-svc" "$network_app_external
 -> Start: IPLOOKUP network-app-internal-svc
 System.Net.Sockets.SocketException (00000001, 11): Resource temporarily unavailable
    at System.Net.Dns.GetHostEntryOrAddressesCore(String hostName, Boolean justAddresses, AddressFamily addressFamily, Nullable`1 startingTimestamp)
-   at System.Net.Dns.<>c.<GetHostEntryOrAddressesCoreAsync>b__33_0(Object s, Int64 startingTimestamp)
-   at System.Net.Dns.<>c__DisplayClass39_0`1.<RunAsync>b__0(Task <p0>, Object <p1>)
-   at System.Threading.Tasks.ContinuationResultTaskFromTask`1.InnerInvoke()
-   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
---- End of stack trace from previous location ---
-   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
-   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
---- End of stack trace from previous location ---
-   at WebApp.Controllers.CommandsController.ExecuteIpLookUpAsync(String[] parameters) in /src/src/WebApp/Controllers/CommandsController.cs:line 387
-   at WebApp.Controllers.CommandsController.Post(String body) in /src/src/WebApp/Controllers/CommandsController.cs:line 120
+... <abbreviated>
 <- End: IPLOOKUP network-app-internal-svc 2006.08ms
 ```
 
@@ -215,14 +197,14 @@ $ curl -X POST --data "HTTP GET http://network-app-internal-svc" "$network_app_e
 -> Start: HTTP GET http://network-app-internal-svc
 System.Net.Http.HttpRequestException: Resource temporarily unavailable (network-app-internal-svc:80)
  ---> System.Net.Sockets.SocketException (11): Resource temporarily unavailable
-<abbreviated>
+... <abbreviated>
 <- End: HTTP GET http://network-app-internal-svc 2008.51ms
 
 $ curl -X POST --data "HTTP GET https://login.microsoftonline.com" "$network_app_external_svc_ip/api/commands"
 -> Start: HTTP GET https://login.microsoftonline.com
 System.Net.Http.HttpRequestException: Resource temporarily unavailable (login.microsoftonline.com:443)
  ---> System.Net.Sockets.SocketException (11): Resource temporarily unavailable
-<abbreviated>
+... <abbreviated>
 <- End: HTTP GET https://login.microsoftonline.com 28.57ms
 ```
 
@@ -234,7 +216,7 @@ $ curl -X POST --data "HTTP GET https://microsoft.com" "$network_app_external_sv
 <!DOCTYPE HTML>
 
 <html lang="en-GB" dir="ltr">
-<abbreviated>
+... <abbreviated>
 </body>
 </html>
 <- End: HTTP GET https://microsoft.com 2158.71ms
