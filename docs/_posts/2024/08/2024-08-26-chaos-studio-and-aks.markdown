@@ -269,7 +269,7 @@ Fixed number of failures:
   "duration": "300s",
   "selector": {
     "namespaces": [
-      "network-app"
+      "app1"
     ]
   }
 }
@@ -285,7 +285,7 @@ Percentage based number of failures:
   "duration": "300s",
   "selector": {
     "namespaces": [
-      "update-app"
+      "app2"
     ]
   }
 }

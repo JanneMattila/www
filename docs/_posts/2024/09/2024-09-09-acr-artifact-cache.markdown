@@ -9,6 +9,10 @@ tags: azure acr acr-cache aks kubernetes docker-hub
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/email.png" %}
 
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/aci-deployment.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/aci-deployment2.png" %}
+
+
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/acr-cache.png" %}
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/acr-repositories.png" %}
@@ -24,6 +28,17 @@ tags: azure acr acr-cache aks kubernetes docker-hub
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/acr-cache-rule.png" %}
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/acr-repositories2.png" %}
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/acr-repositories3.png" %}
+
+
+```json
+{
+ "code": "RegistryErrorResponse",
+ "message": "An error response is received from the docker registry 'index.docker.io'. Please retry later."
+}
+```
+
 
 No need to use access policy based access.
 
