@@ -1,6 +1,6 @@
 ---
 title: "\"Action recommended: Begin managing public content with Artifact Cache\""
-image: /assets/posts/2024/09/09/acr-artifact-cache/acr-cache.png
+image: /assets/posts/2024/09/09/acr-artifact-cache/email.png
 date: 2024-09-09 06:00:00 +0300
 layout: posts
 categories: azure
