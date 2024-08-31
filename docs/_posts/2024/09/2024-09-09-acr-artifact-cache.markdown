@@ -83,7 +83,7 @@ Before we start creating a new caching rule, we need to understand the big pictu
   - Create a new Key Vault
   - Create two new secrets in Key Vault: Docker Hub username and password
 2. Create a new credential set in ACR and use the above secrets from Key Vault.
-  - You need to grant credential set System Managed Identity (MI) access to Key Vault
+  - You need to grant credential set System Managed Identity access to Key Vault
 3. Create a new caching rule in ACR and use the above credential set
 4. Deploy workload using image from ACR which should automatically fetch the image from Docker Hub and store it in the cache
 
@@ -104,11 +104,15 @@ Credential set creates a new System Managed Identity which I need to grant acces
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/kv-access.png" %}
 
-Finally, I'll create a new caching rule and use the credential set:
+Finally, I'll create a new caching rule and use newly created credential set:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/acr-rule.png" %}
 
-Now, I can test the setup by deploying a new workload using the image from Docker Hub via ACR:
+The above means that following thing happens:<br/>
+If image is requested from ACR from path `docker/*` e.g.,  `docker/jannemattila/webapp-network-tester`,
+then it will convert that request to `docker.io/jannemattila/webapp-network-tester` and fetch the image from Docker Hub.
+
+Now, I can test the setup by deploying a new workload to my AKS cluster:
 
 ```yaml
 apiVersion: apps/v1
@@ -137,8 +141,8 @@ spec:
               protocol: TCP
 ```
 
-Image is set to be `$acr_loginserver/docker/jannemattila/webapp-network-tester:1.0.75`, so
-it's coming from our ACR from the configured `docker/*` path.
+Image of the workload is set to `$acr_loginserver/docker/jannemattila/webapp-network-tester:1.0.75`, so
+ACR should fetch it from Docker Hub as configured in the cache rule.
 
 After successful deployment, I can see the image in the ACR:
 
@@ -146,7 +150,11 @@ After successful deployment, I can see the image in the ACR:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/acr-repositories3.png" %}
 
-And I can verify that the caching rule is also showing green status:
+And I can see the caching rule is also showing green status:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/rule-green.png" %}
+
+Similarly, credential set is showing healthy status:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/acr-credential-set.png" %}
 
