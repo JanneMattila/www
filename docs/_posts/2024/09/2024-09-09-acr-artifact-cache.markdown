@@ -7,7 +7,7 @@ categories: azure
 tags: azure acr acr-cache aks kubernetes docker-hub
 ---
 
-If you're working with containers in Azure, then you have most likely received the following email:
+If you're working with containers in Azure,  you've most likely received the following email:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/email.png" %}
 
@@ -16,7 +16,9 @@ More information about the limits here:
 [Docker Hub rate limit](https://docs.docker.com/docker-hub/download-rate-limit/)
 
 So, what does this mean in practice?
-When you build your image or deploy your applications you might get errors due to throttling from Docker Hub.
+When you build your own images which use base images from Docker Hub or
+when you  deploy apps using images available from Docker Hub,
+then you might get throttled.
 
 Here are examples that you might see in your deployments:
 
@@ -52,59 +54,62 @@ Events:
   Warning  Failed     2m1s (x4 over 2m2s)  kubelet
 ```
 
-You can overcome the above challenges by
-[importing container images to Azure Container Registry (ACR)](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-import-images?tabs=azure-cli):
+You can overcome the above issues by
+[importing container images to Azure Container Registry (ACR)](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-import-images?tabs=azure-cli)
+and use them from there:
 
 ```bash
-az acr import -n $acr_name -t "docker/jannemattila/webapp-network-tester" --source "docker.io/jannemattila/webapp-network-tester" 
+az acr import \
+ -n $acr_name \
+ -t "docker/jannemattila/webapp-network-tester" \
+ --source "docker.io/jannemattila/webapp-network-tester" 
 ```
 
-However, this is a manual process, and you need to do this for each image you want to use.
+_However_, this is a manual process, and you need to do this for each image you want to use.
 
-An easier way to overcome the above challenges is to use ACR as a cache for Docker Hub images.
+An easier way to overcome the above challenges is to use ACR as a cache for pulling images from Docker Hub.
 This feature is called [Artifact cache](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-artifact-cache).
 With Artifact cache, ACR automatically fetches the image from Docker Hub when you try to pull it from ACR and stores it in the cache.
-This allows you to avoid rate limiting issues and have more reliability deployments.
+This allows you to avoid rate limiting issues and have more reliable deployments.
 
 ---
 
-Let's see how to set up the Artifact cache. Starting point for our setup is an existing ACR with
-empty repositories:
+Let's see how to set up the Artifact cache. Starting point for our setup is empty ACR:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/acr-repositories.png" %}
 
-We don't have any caching rules set up either:
+We don't have any cache rules set up either:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/acr-cache.png" %}
 
-Before we start creating a new caching rule, we need to understand the big picture:
+Before we start creating a new cache rule, we need to understand the big picture:
 
 1. We need to store Docker Hub credentials securely, therefore we need to create Key Vault
-  - Create a new Key Vault
-  - Create two new secrets in Key Vault: Docker Hub username and password
-2. Create a new credential set in ACR and use the above secrets from Key Vault.
-  - You need to grant credential set System Managed Identity access to Key Vault
-3. Create a new caching rule in ACR and use the above credential set
-4. Deploy workload using image from ACR which should automatically fetch the image from Docker Hub and store it in the cache
+  - Create two new secrets into Key Vault: Docker Hub username and password
+2. Create new credentials into ACR and use secrets from Key Vault.
+  - Credentials will automatically get new system managed identity
+  - You need to grant access to Key Vault for this new identity so that it can read secrets from it 
+3. Create a new cache rule in ACR and use the configured credentials
+  - Cache rule will define which images are fetched from Docker Hub and stored in the cache
+4. Test by deploying workload using image from ACR
 
-
-Let's start creating Key Vault and secrets:
+Let's start by creating Key Vault and secrets:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/kv.png" %}
 
-My Key Vault is using Azure RBAC as access model:
+Key Vault is using Azure RBAC as permission model:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/kv-access-model.png" %}
 
-Next, I'll create credential set and reference the secrets from Key Vault:
+Next, I'll create credentials and reference the secrets from Key Vault:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/acr-credential-info.png" %}
 
-Credential set creates a new System Managed Identity which I need to grant access to read the secrets from Key Vault:
+Credentials creates a new system managed identity which I need to grant access to read the secrets from Key Vault:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/kv-access.png" %}
 
-Finally, I'll create a new caching rule and use newly created credential set:
+Finally, I'll create a new cache rule and use newly created credentials:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/acr-rule.png" %}
 
@@ -150,7 +155,7 @@ After successful deployment, I can see the image in the ACR:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/acr-repositories3.png" %}
 
-And I can see the caching rule is also showing green status:
+And I can see the cache rule is also showing green status:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/09/acr-artifact-cache/rule-green.png" %}
 
