@@ -38,21 +38,29 @@ More detailed error message:
 Or deployment to AKS:
 
 ```console
-$ kubectl apply -f deployment.yaml
-deployment.apps/nginx-deployment created
-$ kubectl get pods
-NAME                                READY   STATUS             RESTARTS   AGE
-nginx-deployment-7f8f5c4f7b-7z5zv   0/1     ImagePullBackOff   0          2s
-$ kubectl describe pod nginx-deployment-7f8f5c4f7b-7z5zv
+$ kubectl apply -f network-app/deployment.yaml
+deployment.apps/network-app-deployment created
+$ kubectl get pod -n network-app
+NAME                                      READY   STATUS             RESTARTS   AGE
+network-app-deployment-78c68f74bf-2bmtx   0/1     ImagePullBackOff   0          11s
+$ kubectl describe pod network-app-deployment-7f8f5c4f7b-7z5zv
 ...
 Events:
-  Type     Reason     Age                  From               Message
-  ----     ------     ----                 ----               -------
-  Normal   Scheduled  <unknown>            default-scheduler  Successfully assigned default/nginx-deployment-7f8f5c4f7b-7z5zv to aks-nodepool1-12345678-vmss000000
-  Normal   Pulling    2m1s (x4 over 2m2s)  kubelet            Pulling image "nginx:latest"
-  Warning  Failed     2m1s (x4 over 2m2s)  kubelet            Failed to pull image "nginx:latest": rpc error: code = Unknown desc = Error response from daemon: toomanyrequests: Too Many Requests.
-  Warning  Failed     2m1s (x4 over 2m2s)  kubelet
+  Type     Reason     Age                From               Message
+  ----     ------     ----               ----               -------
+  Normal   Scheduled  79s                default-scheduler  Successfully assigned network-app/network-app-deployment-78c68f74bf-2bmtx to aks-nodepool1-17464156-vmss000008
+  Normal   Pulling    32s (x2 over 78s)  kubelet            Pulling image "jannemattila/webapp-network-tester:1.0.47"
+  Warning  Failed     17s (x2 over 47s)  kubelet            Failed to pull image "jannemattila/webapp-network-tester:1.0.47": failed to pull and unpack image "docker.io/jannemattila/webapp-network-tester:1.0.47": failed to copy: httpReadSeeker: failed open: unexpected status code https://registry-1.docker.io/v2/jannemattila/webapp-network-tester/manifests/sha256:c866ebedc921ec29c7d94b11fdf6fbf4cbe65696afeb744dcc039e92fea5b4c8: 429 Too Many Requests - Server message: toomanyrequests: You have reached your pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limit
+  Warning  Failed     17s (x2 over 47s)  kubelet            Error: ErrImagePull
+  Normal   BackOff    6s (x2 over 46s)   kubelet            Back-off pulling image "jannemattila/webapp-network-tester:1.0.47"
+  Warning  Failed     6s (x2 over 46s)   kubelet            Error: ImagePullBackOff
 ```
+
+Most important detail from the above error message is:
+
+> **429 Too Many Requests - Server message: toomanyrequests**:<br/>
+> **You have reached your pull rate limit**. <br/>
+> You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limit
 
 You can overcome the above issues by
 [importing container images to Azure Container Registry (ACR)](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-import-images?tabs=azure-cli)
@@ -170,6 +178,9 @@ In case you have problems setting up the Artifact cache, you can find more infor
 
 Using ACR as a cache for Docker Hub images is a great way to
 avoid rate limiting issues and have more reliable deployments.
+
+Docker Hub rate limits are not low, but we all know that you hit them
+when you least expect it. Therefore, it's a good idea to prepare for them in advance.
 
 Hopefully, I managed to explain the setup process clearly
 so you can start using the Artifact cache in your own environments.
