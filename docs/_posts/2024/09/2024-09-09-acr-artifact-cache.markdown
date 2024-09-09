@@ -60,7 +60,8 @@ Most important detail from the above error message is:
 
 > **429 Too Many Requests - Server message: toomanyrequests**:<br/>
 > **You have reached your pull rate limit**. <br/>
-> You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limit
+> You may increase the limit by authenticating and upgrading:
+> [https://www.docker.com/increase-rate-limit](https://www.docker.com/increase-rate-limit)
 
 You can overcome the above issues by
 [importing container images to Azure Container Registry (ACR)](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-import-images?tabs=azure-cli)
@@ -123,7 +124,8 @@ Finally, I'll create a new cache rule and use newly created credentials:
 
 The above means that following thing happens:<br/>
 If image is requested from ACR from path `docker/*` e.g.,  `docker/jannemattila/webapp-network-tester`,
-then it will convert that request to `docker.io/jannemattila/webapp-network-tester` and fetch the image from Docker Hub.
+then it will convert that request to `docker.io/jannemattila/webapp-network-tester` and fetch the image from Docker Hub
+using the credentials provided earlier.
 
 Now, I can test the setup by deploying a new workload to my AKS cluster:
 

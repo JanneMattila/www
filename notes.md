@@ -157,6 +157,7 @@
   - https://www.lean.org/lexicon-terms/5-whys/
   - http://www.catb.org/esr/faqs/smart-questions.html
   - https://en.wikipedia.org/wiki/Five_whys
+  - Dead horse theory
 - GitHub Copilot
 - Azure Firewall & No network connectivity
 - AKS Edge Essentials
