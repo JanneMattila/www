@@ -81,7 +81,7 @@ But I’m only focusing on the download mechanics in this post.
 
 Here is my very _good-looking_ user interface for this download demo scenario:
 
-{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/09/23/app-service-to-blob/download2.png" %}
+{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/09/23/app-service-to-blob/download2.png" %}
 
 User can click the download button and the file is downloaded:
 
@@ -150,7 +150,7 @@ We’ll implement the following Blob upload API to our App:
 
 Chunks also help to build a progress bar for the end user so they can see how much of the file has been uploaded. Here is my user interface for this:
 
-{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/09/23/app-service-to-blob/upload1.png" %}
+{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/09/23/app-service-to-blob/upload1.png" %}
 
 Users can select multiple files to upload:
 
