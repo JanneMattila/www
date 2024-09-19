@@ -1,7 +1,7 @@
 ---
 title: App Service as proxy to Blob Storage
-image: /assets/posts/2024/10/02/app-service-to-blob/architecture.png
-date: 2024-10-02 06:00:00 +0300
+image: /assets/posts/2024/09/23/app-service-to-blob/architecture.png
+date: 2024-09-23 06:00:00 +0300
 layout: posts
 categories: azure
 tags: azure app-service blob-storage
@@ -27,7 +27,7 @@ based access is not the solution.
 
 The problem statement is simple, and it means that we need to have an App Service between the users and the backend Blob storage:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/02/app-service-to-blob/architecture.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/23/app-service-to-blob/architecture.png" %}
 
 Quite often the first question when implementation starts is:
 “[Why does my request time out after 230 seconds?](https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/web-apps-performance-faqs#why-does-my-request-time-out-after-230-seconds)”.
@@ -35,17 +35,17 @@ Reason is quite simple – App Service expects to operate in Request-Response ma
 
 Let’s now enhance the above architecture a bit by introducing Managed Identities to App Service:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/02/app-service-to-blob/architecture2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/23/app-service-to-blob/architecture2.png" %}
 
 This allows us to avoid using any storage account keys in the App Service code.
 
 Here's how you enable system assigned managed identity to the App Service:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/02/app-service-to-blob/identity.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/23/app-service-to-blob/identity.png" %}
 
 Next step is to allow that identity to manage blobs by granting “Storage Blob Data Contributor” role to it:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/02/app-service-to-blob/identity2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/23/app-service-to-blob/identity2.png" %}
 
 On purpose, I’ve skipped setting up Virtual Network and Private Endpoint of the storage account
 but that is what you want to do in your actual implementation.
@@ -55,11 +55,11 @@ Finally, the only thing missing is our application code!
 
 Let’s start with the download scenario where we want to download a file from the Blob storage:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/02/app-service-to-blob/blob.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/23/app-service-to-blob/blob.png" %}
 
 We’ll implement the following Blob download API to our App:
 
-{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/10/02/app-service-to-blob/download1.png" %}
+{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/09/23/app-service-to-blob/download1.png" %}
 
 The above translates to the following URL:
 
@@ -79,11 +79,11 @@ But I’m only focusing on the download mechanics in this post.
 
 Here is my very _good-looking_ user interface for this download demo scenario:
 
-{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/10/02/app-service-to-blob/download2.png" %}
+{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/09/23/app-service-to-blob/download2.png" %}
 
 User can click the download button and the file is downloaded:
 
-{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/10/02/app-service-to-blob/download3.png" %}
+{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/09/23/app-service-to-blob/download3.png" %}
 
 Here is the example download method implementation (full source available in GitHub):
 
@@ -132,19 +132,19 @@ When all chunks are uploaded, then we can commit the uploaded block blobs.
 
 We’ll implement the following Blob upload API to our App:
 
-{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/10/02/app-service-to-blob/upload0.png" %}
+{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/09/23/app-service-to-blob/upload0.png" %}
 
 Chunks also help to build a progress bar for the end user so they can see how much of the file has been uploaded. Here is my user interface for this:
 
-{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/10/02/app-service-to-blob/upload1.png" %}
+{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/09/23/app-service-to-blob/upload1.png" %}
 
 Users can select multiple files to upload:
 
-{% include imageEmbed.html width="50%" height="50%" link="/assets/posts/2024/10/02/app-service-to-blob/upload2.png" %}
+{% include imageEmbed.html width="50%" height="50%" link="/assets/posts/2024/09/23/app-service-to-blob/upload2.png" %}
 
 And then the upload starts and updates are shown to the user:
 
-{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/10/02/app-service-to-blob/upload3.png" %}
+{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/09/23/app-service-to-blob/upload3.png" %}
 
 Obviously, you can replace the above with fancy progress bars and other UI elements, but I wanted to keep this simple.
 
@@ -206,7 +206,7 @@ It then stages the block and commits the block list when all chunks have been up
 
 If you're wondering about the payload for the above method, here is an example:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/02/app-service-to-blob/formdata.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/23/app-service-to-blob/formdata.png" %}
 
 This is a very simple implementation, and you should use more advanced techniques in your real implementation.
 For example, you should store the state of the upload process in a database so have visibility of the upload processes.
