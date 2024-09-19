@@ -29,6 +29,8 @@ The problem statement is simple, and it means that we need to have an App Servic
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/23/app-service-to-blob/architecture.png" %}
 
+The above architecture allows us to even have multiple storage accounts behind the App Service.
+
 Quite often the first question when implementation starts is:
 “[Why does my request time out after 230 seconds?](https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/web-apps-performance-faqs#why-does-my-request-time-out-after-230-seconds)”.
 Reason is quite simple – App Service expects to operate in Request-Response manner but if you try to operate with large files, then you might hit these timeouts.
@@ -100,6 +102,12 @@ public async Task<ActionResult> Download(string container, string path, Cancella
 }
 ```
 
+The above code used the `DownloadStreamingAsync` method to pass the stream directly to the `File` method.
+This way we don't need to load the entire file into memory before sending it to the user.
+Here is view from Task Manager when downloading a 1000MB file:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/23/app-service-to-blob/download4.png" %}
+
 You can test the above code by running the following curl command against your deployed App Service:
 
 ```bash
@@ -107,6 +115,12 @@ curl \
  --request GET \
  --url 'https://<app>.azurewebsites.net/api/blob?container=demo1&path=upload/50MB.bin' \
  --output 50MB.bin
+```
+
+Or you can use your browser to download the file:
+
+```text
+https://<app>.azurewebsites.net/download.html
 ```
 
 So, download seemed to be just a few lines of code but let’s see what happens with our upload then.
@@ -208,11 +222,17 @@ If you're wondering about the payload for the above method, here is an example:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/23/app-service-to-blob/formdata.png" %}
 
+You can use your browser for uploading files:
+
+```text
+https://<app>.azurewebsites.net/upload.html
+```
+
 This is a very simple implementation, and you should use more advanced techniques in your real implementation.
 For example, you should store the state of the upload process in a database so have visibility of the upload processes.
 So, instead of single method call, you most likely split this to be a multi-step process.
 
-You can find the above examples in my GitHub:
+You can find the above example in my GitHub:
 
 {% include githubEmbed.html text="JanneMattila/webapp-and-folders" link="JanneMattila/webapp-and-folders" %}
 
