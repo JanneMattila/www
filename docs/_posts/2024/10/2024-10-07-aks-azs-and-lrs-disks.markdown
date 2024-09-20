@@ -57,3 +57,11 @@ tba
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/architecture3.png" %}
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/architecture4.png" %}
+
+## Upgrade cluster and storage class
+
+What if you have older clusters and you want to upgrade them to e.g., 1.30?
+
+```console
+$ kubectl get storageclasses
+```

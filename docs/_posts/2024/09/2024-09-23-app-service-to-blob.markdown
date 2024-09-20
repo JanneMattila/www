@@ -7,9 +7,13 @@ categories: azure
 tags: azure app-service blob-storage
 ---
 
-Over the years I’ve heard very similar requirements from my customers quite many times:
+Over the years I’ve heard the following requirements quite many times from my customers:
 
-> We need to allow users to upload/download large files to/from our app
+> We need to allow users to upload large files to our app
+
+Or other way around:
+
+> We need to allow users to download large files from our app
 
 And
 
@@ -33,19 +37,19 @@ The above architecture allows us to even have multiple storage accounts behind t
 
 Quite often the first question when implementation starts is:
 “[Why does my request time out after 230 seconds?](https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/web-apps-performance-faqs#why-does-my-request-time-out-after-230-seconds)”.
-Reason is quite simple – App Service expects to operate in Request-Response manner but if you try to operate with large files, then you might hit these timeouts.
+Reason is quite simple – App Service expects to operate in Request-Response manner but if you try to operate with large files, then your operation might timeout.
 
-Let’s now enhance the above architecture a bit by introducing Managed Identities to App Service:
+Let’s now enhance the above architecture a bit by introducing managed identity to App Service:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/23/app-service-to-blob/architecture2.png" %}
 
-This allows us to avoid using any storage account keys in the App Service code.
+This allows us to avoid using any storage account keys in the App Service code and just rely on Azure RBAC.
 
 Here's how you enable system assigned managed identity to the App Service:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/23/app-service-to-blob/identity.png" %}
 
-Next step is to allow that identity to manage blobs by granting “Storage Blob Data Contributor” role to it:
+Next step is to allow that identity to manage blobs in storage account by granting “Storage Blob Data Contributor” role to it:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/23/app-service-to-blob/identity2.png" %}
 
@@ -87,7 +91,7 @@ User can click the download button and the file is downloaded:
 
 {% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/09/23/app-service-to-blob/download3.png" %}
 
-Here is the example download method implementation (full source available in GitHub):
+Here is the example download method implementation (GitHub link to full source at the end of this post):
 
 ```csharp
 [HttpGet]
@@ -108,6 +112,8 @@ Here is view from Task Manager when downloading a 1000MB file:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/09/23/app-service-to-blob/download4.png" %}
 
+Download does not timeout even with large files because we are continuously streaming the file content to the user.
+
 You can test the above code by running the following curl command against your deployed App Service:
 
 ```bash
@@ -123,7 +129,7 @@ Or you can use your browser to download the file:
 https://<app>.azurewebsites.net/download.html
 ```
 
-So, download seemed to be just a few lines of code but let’s see what happens with our upload then.
+So, download seemed to be just a few lines of code but let’s see what happens with our upload scenario.
 
 But first we need to understand the difference between upload and download performance.
 It’s very common to have quite good download speeds even with mobile connections but the upload speeds might be 
@@ -131,7 +137,7 @@ quite the opposite. Build your solution with this in mind.
 
 The second thing you might bump into when you start testing is that after files get larger you start to see errors.
 Errors might indicate that the file could not be processed due to large size.
-This might lead you to a path of configuring various parameters that would allow larger and larger files to be processed. 
+This might lead you to a path of configuring various parameters that would allow larger and larger files to be uploaded. 
 However, that is not going to be a solution in the long run and we need to look for an alternative solution: **Chunking**. 
 
 From 
