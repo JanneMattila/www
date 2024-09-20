@@ -242,9 +242,9 @@ You can find the above example in my GitHub:
 
 {% include githubEmbed.html text="JanneMattila/webapp-and-folders" link="JanneMattila/webapp-and-folders" %}
 
-<!--
-{% include githubEmbed.html text="JanneMattila/python-examples/main/webapps/djangofile" link="JanneMattila/python-examples/tree/main/webapps/djangofile" %}
--->
+And the image is available in Docker Hub:
+
+{% include dockerEmbed.html text="jannemattila/webapp-fs-tester" link="r/jannemattila/webapp-fs-tester" %}
 
 ## Conclusion
 
