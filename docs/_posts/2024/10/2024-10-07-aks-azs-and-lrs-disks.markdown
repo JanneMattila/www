@@ -19,7 +19,7 @@ and I need  persistent storage for one of my apps:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/architecture1.png" %}
 
-Notice that I have `?` in the disk part of the architecture. That part has to be filled next.
+Notice that I have `?` in the disk part of the architecture. That part will be filled next.
 
 ---
 
@@ -48,7 +48,7 @@ From [Release 2024-04-28](https://github.com/Azure/AKS/releases/tag/2024-04-28):
 > AKS now utilizes **zone-redundant storage (ZRS) to create managed disks within built-in storage classes**.
 
 Unfortunately, the above scenario is not uncommon in the real world.
-In this post, I will demo the impact of this to your applications and their availability.
+In this post, I will demo the impact of this on your applications and their availability.
 I use 
 [Azure Chaos Studio](https://learn.microsoft.com/en-us/azure/chaos-studio/chaos-studio-overview)
 for simulating availability zone failure.
@@ -92,7 +92,7 @@ As you can see, `managed-csi-premium` storage class has `Premium_LRS` in the sku
 [Locally redundant storage (LRS)](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-redundancy#locally-redundant-storage-for-managed-disks).
 The other storage classes for `disk.csi.azure.com` provisioner are also LRS.
 
-I'll deploy two apps, one with disk and one without disk. `network-app` is the app without disk (app `2` in the diagram) and
+I'll deploy two apps, one with a disk and one without a disk. `network-app` is an app without disk (app `2` in the diagram) and
 `storage-app` is the app with disk (app `1` in the diagram).
 Here is the `storage-app` deployment:
 
@@ -220,7 +220,7 @@ network-app-deployment-66ffb56b96-x4m9n   1/1     Terminating         0         
 network-app-deployment-66ffb56b96-x4m9n   1/1     Terminating         0          37m
 ```
 
-But for the `storage-app` (app with disk), situation is bad we're experiencing down time as long as the node is unavailable:
+But for the `storage-app` (app with disk), situation is bad and we're experiencing down time as long as the node is unavailable:
 
 ```console
 $ kubectl get pod -n storage-app -w
@@ -239,7 +239,7 @@ storage-app-deployment-0   0/1     ContainerCreating   0          4m46s
 storage-app-deployment-0   1/1     Running             0          4m56s
 ```
 
-App was in `Pending` state for almost 5 minutes:
+The app was in `Pending` state for almost 5 minutes:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/architecture4.png" %}
 
@@ -262,7 +262,7 @@ Message from the event is:
 > **1 node(s) had volume node affinity conflict**. <br/>
 > preemption: 0/2 nodes are available: 2 Preemption is not helpful for scheduling.
 
-So the `storage-app` pod is not scheduled to the zone 1 node because of the volume node affinity conflict.
+So, the `storage-app` pod is not scheduled to the zone 1 node because of the volume node affinity conflict.
 
 After our chaos experiment is over and the node in zone 2 is available again, the `storage-app` pod is scheduled back to that node:
 
@@ -321,7 +321,7 @@ Our disk is now created as "Zone-redundant storage (ZRS)" and we can update our 
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/architecture5.png" %}
 
-Apps are running in the availability zone 2 as in the previous test:
+Apps are running in availability zone 2 as in the previous test:
 
 ```console
 $ list_pods storage-app
@@ -364,7 +364,7 @@ Let's repeat our experiment with this cluster:
 
 {% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/chaos-studio1.png" %}
 
-Next step is exactly the same as earlier, the node in zone 2 is unavailable:
+Next step is the same as earlier, the node in zone 2 is unavailable:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/architecture6.png" %}
 
@@ -406,7 +406,7 @@ After the chaos experiment is over, no big surprises, since everything is alread
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/architecture8.png" %}
 
-## But wait, I'll upgraded my cluster to 1.30. Am I safe now?
+## But wait, I've upgraded my cluster to 1.30. Am I safe now?
 
 I've upgraded my first cluster to 1.30.3, so let's see if the storage classes have been updated:
 
@@ -443,7 +443,7 @@ Events:                <none>
 ```
 
 As you can see, the storage classes are still the same as before the upgrade.
-This means that in order to use ZRS disks, you need to create new storage classes with ZRS support and update your applications to use them.
+This means that to use ZRS disks, you need to create new storage classes with ZRS support and update your applications to use them.
 
 As always, the code for this post is available in my GitHub repository:
 
@@ -457,8 +457,8 @@ Since I happen to be writing about disks, I'll mention this specific issue that 
 
 ## Conclusion
 
-Imagine that your business critical application is the `storage-app` in the above first scenario.
-You thought that you're safe because you have deployed your AKS cluster across multiple availability zones
+Imagine that your business-critical application is the `storage-app` in the above first scenario.
+You thought that you were safe because you deployed your AKS cluster across multiple availability zones,
 but you didn't realize that your disks are LRS disks.
 In the event of an availability zone failure, your application will be down until the node in the same zone is available again.
 
