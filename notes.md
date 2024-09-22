@@ -2,8 +2,7 @@
 
 ## Upcoming posts
 
-- Azure Chaos Studio
- - 2 AZs with LRS disk
+- AKS and affinity rules, pod anti-affinity, node affinity, etc.
   
 - ACS and SMTP email sending
   - App registration rest api

@@ -35,19 +35,29 @@ Kubernetes uses
 [storage classes](https://learn.microsoft.com/en-us/azure/aks/azure-disk-csi#dynamically-create-azure-disks-pvs-by-using-the-built-in-storage-classes)
 when creating dynamic volumes.
 
-As mentioned in the previous post, built-in
+As mentioned in the previous post (and [AKS Release notes](https://github.com/Azure/AKS/releases/tag/2024-04-28)), built-in
 [storage classes](https://learn.microsoft.com/en-us/azure/aks/concepts-storage#storage-classes)
 in clusters with 1.28 and below don't have
 [Zone-redundant storage (ZRS)](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-redundancy#zone-redundant-storage-for-managed-disks)
 support. This means that if you have not created a storage class with ZRS support, your disks will be created as
 [Locally redundant storage (LRS)](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-redundancy#locally-redundant-storage-for-managed-disks).
+
+From the above link:
+> Locally redundant storage (LRS) **replicates your data three times within a single data center** in the selected region
+
+and
+
+> Zone-redundant storage (ZRS) synchronously **replicates your Azure managed disk across three Azure availability zones** in the region you select.
+
+<!--
 From [Release 2024-04-28](https://github.com/Azure/AKS/releases/tag/2024-04-28):
 
 > Effective **starting with Kubernetes version 1.29**,
 > when you deploy Azure Kubernetes Service (AKS) clusters across **multiple availability zones**,
 > AKS now utilizes **zone-redundant storage (ZRS) to create managed disks within built-in storage classes**.
+-->
 
-Unfortunately, the above scenario is not uncommon in the real world.
+Unfortunately, the above unwanted scenario with LRS disks is not uncommon in the real world.
 In this post, I will demo the impact of this on your applications and their availability.
 I use 
 [Azure Chaos Studio](https://learn.microsoft.com/en-us/azure/chaos-studio/chaos-studio-overview)
@@ -203,11 +213,11 @@ Now we're ready to simulate an availability zone failure using Azure Chaos Studi
 
 {% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/chaos-studio1.png" %}
 
-When the chaos experiment is running, our node in zone 2 is unavailable:
+When the chaos experiment is running, our node in zone 2 becomes unavailable:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/architecture3.png" %}
 
-Kubernetes now tries to move the pods to the available nodes in zone 1. For the `network-app` (app without disk), this is easy:
+Kubernetes now tries to move the pods to the available nodes in our cluster. For the `network-app` (app without disk), this is easy:
 
 ```console
 $ kubectl get pods -n network-app -w
@@ -369,7 +379,7 @@ Let's repeat our experiment with this cluster:
 
 {% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/chaos-studio1.png" %}
 
-Next step is the same as earlier, the node in zone 2 is unavailable:
+Next step is the same as earlier, the node in zone 2 becomes unavailable:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/architecture6.png" %}
 
