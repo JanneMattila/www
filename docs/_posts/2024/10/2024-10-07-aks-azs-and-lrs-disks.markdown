@@ -143,7 +143,12 @@ spec:
             storage: 4Gi
 ```
 
-Here is the created disk:
+I'm using [webapp-fs-tester](https://github.com/JanneMattila/webapp-and-folders) for simulating disk operations.
+It's available in Docker Hub:
+
+{% include dockerEmbed.html text="jannemattila/webapp-fs-tester" link="r/jannemattila/webapp-fs-tester" %}
+
+Here is the dynamically created disk:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/scenario1-disk1.png" %}
 
