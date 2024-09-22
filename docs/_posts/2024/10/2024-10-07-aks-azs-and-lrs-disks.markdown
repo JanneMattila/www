@@ -244,7 +244,7 @@ storage-app-deployment-0   0/1     ContainerCreating   0          4m46s
 storage-app-deployment-0   1/1     Running             0          4m56s
 ```
 
-The app was in `Pending` state for almost 5 minutes:
+The app was in `Pending` state for almost 5 minutes (=duration of our chaos experiment):
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/architecture4.png" %}
 
