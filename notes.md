@@ -3,7 +3,6 @@
 ## Upcoming posts
 
 - AKS and affinity rules, pod anti-affinity, node affinity, etc.
-  
 - ACS and SMTP email sending
   - App registration rest api
   - https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email-smtp/smtp-authentication
