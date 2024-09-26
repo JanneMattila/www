@@ -35,11 +35,11 @@ Kubernetes uses
 [storage classes](https://learn.microsoft.com/en-us/azure/aks/azure-disk-csi#dynamically-create-azure-disks-pvs-by-using-the-built-in-storage-classes)
 when creating dynamic volumes.
 
-As mentioned in the previous post (and [AKS Release notes](https://github.com/Azure/AKS/releases/tag/2024-04-28)), built-in
+As mentioned in the previous post (and [AKS Release notes](https://github.com/Azure/AKS/releases/tag/2024-04-28)), 
 [storage classes](https://learn.microsoft.com/en-us/azure/aks/concepts-storage#storage-classes)
 in clusters with 1.28 and below don't have
 [Zone-redundant storage (ZRS)](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-redundancy#zone-redundant-storage-for-managed-disks)
-support. This means that if you have not created a storage class with ZRS support, your disks will be created as
+support built-in. This means that **if you have not created a storage class with ZRS support**, your disks will be created as
 [Locally redundant storage (LRS)](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-redundancy#locally-redundant-storage-for-managed-disks).
 
 From the above link:
@@ -163,6 +163,10 @@ Here is the dynamically created disk:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/scenario1-disk1.png" %}
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/scenario1-disk2.png" %}
+
+And below those properties very important information about Availability zone:
+
+{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/scenario1-disk3.png" %}
 
 That updates our architecture to this:
 
@@ -331,6 +335,10 @@ Here is the created disk:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/scenario2-disk1.png" %}
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/scenario2-disk2.png" %}
+
+And now the important information about Availability zone is different:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/scenario2-disk3.png" %}
 
 Our disk is now created as "Zone-redundant storage (ZRS)" and we can update our architecture to this:
 
