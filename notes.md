@@ -2,6 +2,19 @@
 
 ## Upcoming posts
 
+- ACR Cleanup
+- AFW and AZs
+
+- AppGw + mTLS
+  - https://gordon.byers.me/azure/application-gateway-mtls-letsencrypt.html
+  - https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/application-gateway/mutual-authentication-certificate-management.md
+  - https://learn.microsoft.com/en-us/azure/application-gateway/mutual-authentication-overview?tabs=powershell
+  
+- Public ACR to avoid ACI issues
+  - az acr update --name <your-registry-name> --anonymous-pull-enabled true
+  - https://github.com/Azure/acr/blob/main/docs/custom-domain/README.md
+  - az acr update --name <your-registry-name> --custom-domain <your-custom-domain>
+
 - AKS and affinity rules, pod anti-affinity, node affinity, etc.
 - ACS and SMTP email sending
   - App registration rest api
