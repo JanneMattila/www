@@ -11,7 +11,7 @@ You might have deployed Azure Firewall using the Azure Portal experience:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/create-firewall.png" %}
 
-After the deployment, you start to add network and applications rules to your firewall:
+After the deployment, you start to add network and application rules to your firewall:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/fw1.png" %}
 
@@ -32,7 +32,7 @@ You notice that the Azure Firewall you have deployed  is not using **Availabilit
 As you might have learned from my blog, I'm heavily promoting usage of _Availability Zones_ for
 critical services and **yes**, your centralized Azure Firewall is one of those services.
 
-In order to test this out, I'll use demo environment that
+To test migration to availability zones, I'll use demo environment that
 I have previously blogged about
 [Learn Azure Firewall with isolated demo environment]({% post_url 2023/10/2023-10-02-learn-azure-firewall-with-isolated-demo-environment %}).
 
@@ -40,8 +40,8 @@ Code from the demo environment is available in GitHub:
 
 {% include githubEmbed.html text="JanneMattila/azure-firewall-demo" link="JanneMattila/azure-firewall-demo" %}
 
-Since my example setup has Azure Firewall with  **Availability Zones** enabled, I'll just comment out
-that part from the demo setup in **firewall.bicep** file:
+In my demo, Azure Firewall is deployed with **Availability Zones**, so I have just commented out
+that part of the code in **firewall.bicep** file:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/vscode-diff.png" %}
 
@@ -69,7 +69,7 @@ Set-AzFirewall -AzureFirewall $azfw
 
 $azfw.Allocate($vnet, $pip)
 $azFw.Zones = 1, 2, 3
-$azfw | Set-AzFirewall
+Set-AzFirewall -AzureFirewall $azfw
 ```
 
 To better calculate the time it takes to migrate the Azure Firewall, I'll use **Measure-Command**
@@ -81,14 +81,14 @@ $pip = Get-AzPublicIpAddress -ResourceGroupName $resourceGroupName -Name "pip-fi
 $azfw = Get-AzFirewall -Name "afw-hub" -ResourceGroupName $resourceGroupName
 
 Measure-Command -Expression {
-    $azfw.Deallocate()
-    Set-AzFirewall -AzureFirewall $azfw
+  $azfw.Deallocate()
+  Set-AzFirewall -AzureFirewall $azfw
 } | Format-Table
 
 Measure-Command -Expression {
-    $azfw.Allocate($vnet, $pip)
-    $azFw.Zones = 1, 2, 3
-    $azfw | Set-AzFirewall
+  $azfw.Allocate($vnet, $pip)
+  $azFw.Zones = 1, 2, 3
+  Set-AzFirewall -AzureFirewall $azfw
 } | Format-Table
 ```
 
@@ -96,8 +96,8 @@ First part:
 
 ```powershell
 Measure-Command -Expression {
-    $azfw.Deallocate()
-    Set-AzFirewall -AzureFirewall $azfw
+  $azfw.Deallocate()
+  Set-AzFirewall -AzureFirewall $azfw
 } | Format-Table
 
 Days Hours Minutes Seconds Milliseconds
@@ -109,9 +109,9 @@ Second part:
 
 ```powershell
 Measure-Command -Expression {
-    $azfw.Allocate($vnet, $pip)
-    $azFw.Zones = 1, 2, 3
-    $azfw | Set-AzFirewall
+  $azfw.Allocate($vnet, $pip)
+  $azFw.Zones = 1, 2, 3
+  Set-AzFirewall -AzureFirewall $azfw
 } | Format-Table
 
 Days Hours Minutes Seconds Milliseconds
@@ -140,13 +140,14 @@ If you try to change the availability zone settings without deallocating the fir
 
 ## Re-deployment
 
-If for some reason you can't migrate the Azure Firewall, you can delete it and re-deploy it with the correct settings.
+If for some reason you can't execute the above migration,
+you can delete it and re-deploy it with the correct settings.
 There is related documentation available:
 [Relocate Azure Firewall to another region](https://learn.microsoft.com/en-us/azure/operational-excellence/relocation-firewall?tabs=azure-portal)
 
 There are few things to keep in mind before deleting the Azure Firewall:
 
-Export the configurations: Export template (current state) and Save template (deployment history). See 
+Save the firewall configurations: Export template (current state) and Download template (deployment history). See 
 [Choose the right export option](https://learn.microsoft.com/en-us/azure/azure-resource-manager/templates/export-template-powershell#choose-the-right-export-option)
 for more details:
 
@@ -154,7 +155,7 @@ Export template:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/exporttemplate2.png" %}
 
-Save template from deployment history:
+Download template from deployment history:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/deployments1.png" %}
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/deployments2.png" %}
@@ -163,7 +164,8 @@ If Diagnostic settings are not part of your template, then check that separately
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/fw-delete3.png" %}
 
-**Important**: Firewall rules are not in the firewall, they are in the Azure Firewall Policy - Do not delete it. Better place a lock on it and even better export it as well.
+**Important**: Firewall rules are not in the firewall, they are in the Azure Firewall Policy - Do not delete it.
+Better place a lock on it and export content of it as well.
 
 But I believe the most important part is the **private IP address** of the Azure Firewall:
 
@@ -217,8 +219,15 @@ resource firewall 'Microsoft.Network/azureFirewalls@2024-01-01' = {
 
 ## Conclusion
 
-Migration of Azure Firewall to use Availability Zones should be fairly easy and quick operation.
-But of course you need to plan it carefully and have maintenance window for it.
+If you have missed the Availability Zones setting during the deployment of Azure Firewall,
+then it's a good idea to migrate it to use Availability Zones.
+After all, it's a critical service and you want to make sure it's highly available
+and resilient to failures.
+
+Luckily, it should be fairly easy and quick operation.
+But of course you need to plan it carefully and have maintenance window for this change.
+
+I hope you find this useful!
 
 <!--
 - Azure Firewall: deployed without AZs, delete re-deploy with AZs or change location
