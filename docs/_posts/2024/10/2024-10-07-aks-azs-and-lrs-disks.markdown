@@ -58,7 +58,7 @@ From [Release 2024-04-28](https://github.com/Azure/AKS/releases/tag/2024-04-28):
 -->
 
 Unfortunately, the above unwanted scenario with LRS disks is not uncommon in the real world.
-In this post, I will demo the impact of this on your applications and their availability.
+In this post, I will demonstrate the impact of this on your applications and their availability.
 I use 
 [Azure Chaos Studio](https://learn.microsoft.com/en-us/azure/chaos-studio/chaos-studio-overview)
 for simulating availability zone failure.
@@ -154,7 +154,7 @@ spec:
 ```
 
 I'm using [webapp-fs-tester](https://github.com/JanneMattila/webapp-and-folders) for simulating disk operations.
-It's available in Docker Hub:
+It's available on Docker Hub:
 
 {% include dockerEmbed.html text="jannemattila/webapp-fs-tester" link="r/jannemattila/webapp-fs-tester" %}
 
@@ -162,9 +162,11 @@ Here is the dynamically created disk:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/scenario1-disk1.png" %}
 
+Basic information about the disk:
+
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/scenario1-disk2.png" %}
 
-And below those properties very important information about Availability zone:
+And below those properties is _very important_ information about Availability zone:
 
 {% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/scenario1-disk3.png" %}
 
@@ -182,9 +184,9 @@ $ list_pods network-app
 Pod: network-app-deployment-66ffb56b96-x4m9n, Node: aks-nodepool1-35510824-vmss000001, Zone: uksouth-2
 ```
 
-So both apps are running in the availability zone 2.
+So, both apps are running in the availability zone 2.
 
-Let's generate some files to the disk and list them using rest API of the `storage-app`:
+Let's generate some files to the disk and list them using the rest API of the `storage-app`:
 
 ```console
 $ curl -s -X POST \
@@ -468,14 +470,10 @@ Events:                <none>
 As you can see, the storage classes are still the same as before the upgrade.
 This means that to use ZRS disks, you need to create new storage classes with ZRS support and update your applications to use them.
 
-As always, the code for this post is available in my GitHub repository:
-
-{% include githubEmbed.html text="JanneMattila/aks-workshop" link="JanneMattila/aks-workshop" %}
-
 ## But wait, I want to migrate my app to use ZRS disks
 
 Okay this part gets easily complicated, but let's try to touch this topic as well.
-First, you should understand the scope and complexity of the migration.
+First, you should understand the scope and complexity of migration.
 
 Have you deployed 10s or 100s of apps with disks in your AKS cluster?
 
@@ -485,6 +483,22 @@ Are you using GitOps or do you deploy with `kubectl apply -f`?
 
 Did you install Helm charts from
 [Artifact Hub](https://artifacthub.io/) e.g., Redis and it created those disks for you?
+
+Is it an option to delete the data and start from scratch e.g., cache data?
+Or deploy a new solution side-by-side and migrate other apps to use it?
+
+Do you have a backup strategy for your data? No matter how you approach migration, you should have a backup strategy.
+This itself is a big topic and I'll cover that in a future post.
+Plan for failure and accidental disk deletion.
+
+Most likely, you must plan for a maintenance window for the migration.
+If that is not an option, then you have to plan your steps very carefully.
+
+Does your application already synchronize the data between each of its instances in the application layer?
+If that is the case, and you have your instances running in different availability zones, then does it matter if the disk is LRS or ZRS?
+Especially if you have configured the deployment to span across multiple availability zones.
+
+---
 
 If we keep the scope just in the `storage-app` in this post, then
 we can use
@@ -539,9 +553,9 @@ Filesystem                Size      Used Available Use% Mounted on
 15625
 ```
 
-So, we have no 15000+ files in the disk and they're using 1.5GB disk space.
+So, we have no 15000+ files on the disk and they're using 1.5GB disk space.
 
-Before we start the migration, we have to create a new storage class with ZRS support:
+Before we start the migration, we must create a new storage class with ZRS support:
 
 ```console
 $ cat managed-csi-premium-zrs.yaml
@@ -563,7 +577,7 @@ Next, we have to update our `storage-app` to use two disks at the same time.
 One disk is the old LRS disk and the other is the new ZRS disk created using the new storage class.
 
 In order to migrate the data from the old disk to the new disk,
-we have to create an Init Container that copies the data from the old disk to the new disk.
+we're creating an init container `migration` that copies the data from the old disk to the new disk.
 
 Old disk: `/mnt/premiumdisk` (LRS)<br/>
 New disk: `/mnt/premiumdisk-zrs` (ZRS)
@@ -582,11 +596,11 @@ else
 fi
 ```
 
-Logic of the script is simple:
+The logic of the script is simple:
 - If the file `/mnt/premiumdisk/migrated` exists, then the data has already been migrated previously.
 - If the file does not exist, then the data is copied from the old disk to the new disk.
 
-Here is the updated `storage-app` deployment with the Init Container:
+Here is the updated `storage-app` deployment with the init container:
 
 ```yaml
 apiVersion: apps/v1
@@ -622,7 +636,7 @@ spec:
             - |
               if [ -e /mnt/premiumdisk/migrated ]
               then
-                echo "$(date) - Data already migrated previously3!"
+                echo "$(date) - Data already migrated previously!"
               else
                 echo "$(date) - Migrate data from LRS to ZRS..."
                 cp -R /mnt/premiumdisk/* /mnt/premiumdisk-zrs
@@ -675,12 +689,15 @@ directly:
 
 ```console
 $ kubectl apply -f storage-app-updated.yaml
-The StatefulSet "storage-app-deployment" is invalid: spec: Forbidden: updates to statefulset spec for fields other than 'replicas', 'ordinals', 'template', 'updateStrategy', 'persistentVolumeClaimRetentionPolicy' and 'minReadySeconds' are forbidden
+The StatefulSet "storage-app-deployment" is invalid: spec: 
+Forbidden: updates to statefulset spec for fields other than 
+'replicas', 'ordinals', 'template', 'updateStrategy', 'persistentVolumeClaimRetentionPolicy'
+and 'minReadySeconds' are forbidden
 ```
 
 We have to delete the old StatefulSet and create a new one but
 luckily our disks are not deleted when we delete the StatefulSet:
-[StatefulSets -> Limitations](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations)
+[StatefulSets -> Limitations](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations):
 
 > **Deleting** and/or scaling a StatefulSet down **will not delete the volumes**
 > **associated with the StatefulSet**. This is done to ensure data safety,
@@ -711,10 +728,10 @@ storage-app-deployment-0   0/1     Init:0/1   0          5s
 
 $ kubectl logs storage-app-deployment-0 -c migration -n storage-app
 Sat Sep 28 07:10:10 UTC 2024 - Migrate data from LRS to ZRS...
-Sat Sep 28 07:10:11 UTC 2024 - Data migrate completed!
+Sat Sep 28 07:10:15 UTC 2024 - Data migrate completed!
 ```
 
-After the migration is completed, the `storage-app` pod is running and the data is available in the new disk:
+After the migration is completed, the `storage-app` pod is running, and the data is available on the new disk:
 
 ```console
 $ kubectl exec --stdin --tty storage-app-deployment-0 -n storage-app -- /bin/sh
@@ -750,7 +767,7 @@ And now we have only one disk left in our `storage-app`:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/one-disk.png" %}
 
 You can also use the Azure CLI to list the disks that are not managed by any resource.
-Be careful with this command since if you shutdown your AKS cluster, then "managedBy" will be null for all disks:
+Be careful with this command since if you stop your AKS cluster, then "managedBy" will be null for all disks:
 
 ```bash
 az disk list \
@@ -774,5 +791,9 @@ but you didn't realize that your disks are LRS disks.
 In the event of an availability zone failure, your application will be down until the node in the same zone is available again.
 
 I have just one favor to ask: **Please check your disks in all your AKS clusters**.
+
+The code for this post is based on this GitHub repository:
+
+{% include githubEmbed.html text="JanneMattila/aks-workshop" link="JanneMattila/aks-workshop" %}
 
 I hope you find this useful!

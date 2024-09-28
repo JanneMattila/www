@@ -140,6 +140,8 @@ If you try to change the availability zone settings without deallocating the fir
 
 ## Re-deployment
 
+If for some reason you can't migrate the Azure Firewall, you can always delete it and re-deploy it with the correct settings.
+It's 
 [Relocate Azure Firewall to another region](https://learn.microsoft.com/en-us/azure/operational-excellence/relocation-firewall?tabs=azure-portal)
 
 Static IP
