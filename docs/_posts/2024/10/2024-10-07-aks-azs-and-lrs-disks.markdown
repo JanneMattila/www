@@ -472,6 +472,294 @@ As always, the code for this post is available in my GitHub repository:
 
 {% include githubEmbed.html text="JanneMattila/aks-workshop" link="JanneMattila/aks-workshop" %}
 
+## But wait, I want to migrate my app to use ZRS disks
+
+Okay this part gets easily complicated, but let's try to touch this topic as well.
+First, you should understand the scope and complexity of the migration.
+
+Have you deployed 10s or 100s of apps with disks in your AKS cluster?
+
+Are you using deployments or stateful sets?
+
+Are you using GitOps or do you deploy with `kubectl apply -f`?
+
+Did you install Helm charts from
+[Artifact Hub](https://artifacthub.io/) e.g., Redis and it created those disks for you?
+
+If we keep the scope just in the `storage-app` in this post, then
+we can use
+[Init Containers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)
+for handling the data migration. 
+
+Let's see how to do this in practice. Let's get back to the first cluster with 1.28.13 version:
+
+```console
+$ kubectl get nodes
+NAME                                STATUS   ROLES   AGE     VERSION
+aks-nodepool1-15003373-vmss000000   Ready    agent   2m49s   v1.28.13
+
+$ kubectl describe storageclass managed-csi-premium
+Name:                  managed-csi-premium
+IsDefaultClass:        No
+Annotations:           <none>
+Provisioner:           disk.csi.azure.com
+Parameters:            skuname=Premium_LRS
+AllowVolumeExpansion:  True
+MountOptions:          <none>
+ReclaimPolicy:         Delete
+VolumeBindingMode:     WaitForFirstConsumer
+Events:                <none>
+```
+
+I have my `storage_app` deployed and I'll generate data to the disk:
+
+```console
+$ curl -s -X POST \
+  --data '{"path": "/mnt/premiumdisk","folders": 5,"subFolders": 5,"filesPerFolder": 5,"fileSize": 100000}' \
+  -H "Content-Type: application/json" \
+  "http://$storage_app_ip/api/generate" | jq .
+{
+  "server": "storage-app-deployment-0",
+  "path": "/mnt/premiumdisk",
+  "filesCreated": 15625,
+  "milliseconds": 9155.1445
+}
+```
+
+We can `exec` into the pod and see the used disk space:
+
+```console
+$ kubectl exec --stdin --tty storage-app-deployment-0 -n storage-app -- /bin/sh
+
+/app # df -h /mnt/premiumdisk
+Filesystem                Size      Used Available Use% Mounted on
+/dev/sdc                  3.9G      1.5G      2.3G  39% /mnt/premiumdisk
+
+/app # find /mnt/premiumdisk -type f -follow | wc -l
+15625
+```
+
+So, we have no 15000+ files in the disk and they're using 1.5GB disk space.
+
+Before we start the migration, we have to create a new storage class with ZRS support:
+
+```console
+$ cat managed-csi-premium-zrs.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: managed-csi-premium-zrs
+provisioner: disk.csi.azure.com
+parameters:
+  skuName: Premium_ZRS
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+
+$ kubectl apply -f managed-csi-premium-zrs.yaml
+```
+
+Next, we have to update our `storage-app` to use two disks at the same time.
+One disk is the old LRS disk and the other is the new ZRS disk created using the new storage class.
+
+In order to migrate the data from the old disk to the new disk,
+we have to create an Init Container that copies the data from the old disk to the new disk.
+
+Old disk: `/mnt/premiumdisk` (LRS)<br/>
+New disk: `/mnt/premiumdisk-zrs` (ZRS)
+
+Here is an example script for migrating the data:
+
+```sh
+if [ -e /mnt/premiumdisk/migrated ]
+then
+  echo "$(date) - Data already migrated previously!"
+else
+  echo "$(date) - Migrate data from LRS to ZRS..."
+  cp -R /mnt/premiumdisk/* /mnt/premiumdisk-zrs
+  echo "$(date) - Data migrate completed!"
+  touch /mnt/premiumdisk/migrated
+fi
+```
+
+Logic of the script is simple:
+- If the file `/mnt/premiumdisk/migrated` exists, then the data has already been migrated previously.
+- If the file does not exist, then the data is copied from the old disk to the new disk.
+
+Here is the updated `storage-app` deployment with the Init Container:
+
+```yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: storage-app-deployment
+  namespace: storage-app
+spec:
+  serviceName: storage-app-svc
+  podManagementPolicy: Parallel
+  replicas: 1
+  selector:
+    matchLabels:
+      app: storage-app
+  template:
+    metadata:
+      labels:
+        app: storage-app
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+      terminationGracePeriodSeconds: 10
+      initContainers:
+        - name: migration
+          image: jannemattila/webapp-fs-tester:1.1.20
+          volumeMounts:
+            - name: premiumdisk
+              mountPath: /mnt/premiumdisk
+            - name: premiumdisk-zrs
+              mountPath: /mnt/premiumdisk-zrs
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              if [ -e /mnt/premiumdisk/migrated ]
+              then
+                echo "$(date) - Data already migrated previously3!"
+              else
+                echo "$(date) - Migrate data from LRS to ZRS..."
+                cp -R /mnt/premiumdisk/* /mnt/premiumdisk-zrs
+                echo "$(date) - Data migrate completed!"
+                touch /mnt/premiumdisk/migrated
+              fi
+      containers:
+        - image: jannemattila/webapp-fs-tester:1.1.20
+          name: storage-app
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          volumeMounts:
+            - name: premiumdisk
+              mountPath: /mnt/premiumdisk
+            - name: premiumdisk-zrs
+              mountPath: /mnt/premiumdisk-zrs
+      volumes:
+        - name: premiumdisk
+          persistentVolumeClaim:
+            claimName: premiumdisk-pvc
+        - name: premiumdisk-zrs
+          persistentVolumeClaim:
+            claimName: premiumdisk-zrs-pvc
+  volumeClaimTemplates:
+    - metadata:
+        name: premiumdisk
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: managed-csi-premium
+        resources:
+          requests:
+            storage: 4Gi
+    - metadata:
+        name: premiumdisk-zrs
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: managed-csi-premium-zrs
+        resources:
+          requests:
+            storage: 4Gi
+```
+
+But wait, we can't update the
+[StatefulSet](https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/)
+directly:
+
+```console
+$ kubectl apply -f storage-app-updated.yaml
+The StatefulSet "storage-app-deployment" is invalid: spec: Forbidden: updates to statefulset spec for fields other than 'replicas', 'ordinals', 'template', 'updateStrategy', 'persistentVolumeClaimRetentionPolicy' and 'minReadySeconds' are forbidden
+```
+
+We have to delete the old StatefulSet and create a new one but
+luckily our disks are not deleted when we delete the StatefulSet:
+[StatefulSets -> Limitations](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations)
+
+> **Deleting** and/or scaling a StatefulSet down **will not delete the volumes**
+> **associated with the StatefulSet**. This is done to ensure data safety,
+> which is generally more valuable than an automatic purge of all related StatefulSet resources.
+
+```console
+$ kubectl delete -f storage-app.yaml
+statefulset.apps "storage-app-deployment" deleted
+
+$ kubectl get pv -n storage-app
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                                              STORAGECLASS          REASON   AGE
+pvc-3d7b7320-6069-49fa-8a3c-b76c50a13aa9   4Gi        RWO            Delete           Bound    storage-app/premiumdisk-storage-app-deployment-0   managed-csi-premium            27m
+
+$ kubectl get pvc -n storage-app
+NAME                                   STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS          AGE
+premiumdisk-storage-app-deployment-0   Bound    pvc-3d7b7320-6069-49fa-8a3c-b76c50a13aa9   4Gi        RWO            managed-csi-premium   27m
+```
+
+Now we can apply the updated configuration:
+
+```console
+$ kubectl apply -f storage-app-updated.yaml
+statefulset.apps/storage-app-deployment created
+
+$ kubectl get pod -n storage-app
+NAME                       READY   STATUS     RESTARTS   AGE
+storage-app-deployment-0   0/1     Init:0/1   0          5s
+
+$ kubectl logs storage-app-deployment-0 -c migration -n storage-app
+Sat Sep 28 07:10:10 UTC 2024 - Migrate data from LRS to ZRS...
+Sat Sep 28 07:10:11 UTC 2024 - Data migrate completed!
+```
+
+After the migration is completed, the `storage-app` pod is running and the data is available in the new disk:
+
+```console
+$ kubectl exec --stdin --tty storage-app-deployment-0 -n storage-app -- /bin/sh
+
+/app # df -h /mnt/premiumdisk-zrs
+Filesystem                Size      Used Available Use% Mounted on
+/dev/sdd                  3.9G      1.5G      2.3G  39% /mnt/premiumdisk-zrs
+
+/app # find /mnt/premiumdisk-zrs -type f -follow | wc -l
+15625
+```
+
+At the moment, we have two disks:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/two-disks.png" %}
+
+Now we need to update our configuration again to remove the references to the old LRS disk.
+
+After that, we can delete the old disk:
+
+```console
+$ kubectl get pvc -n storage-app
+NAME                                       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS              AGE
+premiumdisk-storage-app-deployment-0       Bound    pvc-cad6aa29-ec4d-4625-a79b-9bb30a037d81   4Gi        RWO            managed-csi-premium       11h
+premiumdisk-zrs-storage-app-deployment-0   Bound    pvc-fde02678-e3f9-4cea-b369-9bd454d22ac5   4Gi        RWO            managed-csi-premium-zrs   15m
+
+$ kubectl delete pvc premiumdisk-storage-app-deployment-0 -n storage-app
+persistentvolumeclaim "premiumdisk-storage-app-deployment-0" deleted
+```
+
+And now we have only one disk left in our `storage-app`:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/07/aks-azs-and-lrs-disks/one-disk.png" %}
+
+You can also use the Azure CLI to list the disks that are not managed by any resource.
+Be careful with this command since if you shutdown your AKS cluster, then "managedBy" will be null for all disks:
+
+```bash
+az disk list \
+  --query '[?managedBy==`null`].[id]' \
+  -g MC_rg-aks-workshop-janne_aks-janne_uksouth \
+   -o tsv
+```
+
+
 ## Did you know?
 
 Since I happen to be writing about disks, I'll mention this specific issue that has caused issues in the past:

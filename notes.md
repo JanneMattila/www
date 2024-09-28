@@ -2,9 +2,6 @@
 
 ## Upcoming posts
 
-- ACR Cleanup
-- AFW and AZs
-
 - AppGw + mTLS
   - https://gordon.byers.me/azure/application-gateway-mtls-letsencrypt.html
   - https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/application-gateway/mutual-authentication-certificate-management.md
