@@ -481,7 +481,8 @@ Are you using deployments or stateful sets?
 
 Are you using GitOps or do you deploy with `kubectl apply -f`?
 
-Did you install Helm charts from
+Did you install [Helm](https://helm.sh/)
+charts from
 [Artifact Hub](https://artifacthub.io/) e.g., Redis and it created those disks for you?
 
 Is it an option to delete the data and start from scratch e.g., cache data?
@@ -790,7 +791,11 @@ You thought that you were safe because you deployed your AKS cluster across mult
 but you didn't realize that your disks are LRS disks.
 In the event of an availability zone failure, your application will be down until the node in the same zone is available again.
 
-I have just one favor to ask: **Please check your disks in all your AKS clusters**.
+I have just one favor to ask: **Please check disks in your AKS clusters**.
+
+And still want to remind about my earlier post about
+[Testing your AKS resiliency with Chaos Studio]({% post_url 2024/08/2024-08-26-chaos-studio-and-aks %}).
+It should give you ideas how to leverage Azure Chaos Studio for testing your applications.
 
 The code for this post is based on this GitHub repository:
 

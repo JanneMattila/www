@@ -163,7 +163,7 @@ If Diagnostic settings are not part of your template, then check that separately
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/fw-delete3.png" %}
 
-Important: Firewall rules are not in the firewall, they are in the Azure Firewall Policy - Do not delete it. Better place a lock on it and even better export it as well.
+**Important**: Firewall rules are not in the firewall, they are in the Azure Firewall Policy - Do not delete it. Better place a lock on it and even better export it as well.
 
 But I believe the most important part is the **private IP address** of the Azure Firewall:
 
