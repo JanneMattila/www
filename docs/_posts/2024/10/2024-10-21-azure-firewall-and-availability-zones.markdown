@@ -140,17 +140,85 @@ If you try to change the availability zone settings without deallocating the fir
 
 ## Re-deployment
 
-If for some reason you can't migrate the Azure Firewall, you can always delete it and re-deploy it with the correct settings.
-It's 
+If for some reason you can't migrate the Azure Firewall, you can delete it and re-deploy it with the correct settings.
+There is related documentation available:
 [Relocate Azure Firewall to another region](https://learn.microsoft.com/en-us/azure/operational-excellence/relocation-firewall?tabs=azure-portal)
 
-Static IP
+There are few things to keep in mind before deleting the Azure Firewall:
 
-Diagnostic settings
+Export the configurations: Export template (current state) and Save template (deployment history). See 
+[Choose the right export option](https://learn.microsoft.com/en-us/azure/azure-resource-manager/templates/export-template-powershell#choose-the-right-export-option)
+for more details:
+
+Export template:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/exporttemplate2.png" %}
+
+Save template from deployment history:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/deployments1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/deployments2.png" %}
+
+If Diagnostic settings are not part of your template, then check that separately:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/fw-delete3.png" %}
+
+Important: Firewall rules are not in the firewall, they are in the Azure Firewall Policy - Do not delete it. Better place a lock on it and even better export it as well.
+
+But I believe the most important part is the **private IP address** of the Azure Firewall:
+
+{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/fw-delete2.png" %}
+
+**If that changes, then you need to update everything that references it e.g., route tables used in spokes**.
+However, if you delete firewall, then next deployment should select that same private IP address since it's not in use.
+Alternatively, you can use static private IP address in the deployment.
+For setting up static private IP address, you can leverage Bicep deployment.
+
+Here is example Bicep file that deploys Azure Firewall with Availability Zones and static private IP address:
+
+```bicep
+resource firewall 'Microsoft.Network/azureFirewalls@2024-01-01' = {
+  name: 'afw-hub'
+  location: resourceGroup().location
+  zones: [
+    '1'
+    '2'
+    '3'
+  ]
+  properties: {
+    threatIntelMode: 'Alert'
+    hubIPAddresses: {
+      // Static private IP address
+      privateIPAddress: '10.0.1.4'
+    }
+    sku: {
+      name: 'AZFW_VNet'
+      tier: 'Standard'
+    }
+    firewallPolicy: {
+      id: ''
+    }
+    ipConfigurations: [
+      {
+        name: 'fw-pip1'
+        properties: {
+          subnet: {
+            id: ''
+          }
+          publicIPAddress: {
+            id: ''
+          }
+        }
+      }
+    ]
+  }
+}
+```
 
 ## Conclusion
 
-TBA
+Migration of Azure Firewall to use Availability Zones should be fairly easy and quick operation.
+But of course you need to plan it carefully and have maintenance window for it.
 
 <!--
 - Azure Firewall: deployed without AZs, delete re-deploy with AZs or change location
@@ -169,19 +237,3 @@ TBA
     - https://github.com/proximagr/automation/blob/master/Import%20Azure%20Firewall%20Policy%20Rules.ps1
     - https://aidanfinn.com/?p=21584
 -->
-
-
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/arm1.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/compare.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/compare2.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/create-firewall-download-template.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/create-firewall-template.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/deployments1.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/deployments2.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/exporttemplate1.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/exporttemplate2.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/fw-delete0.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/fw-delete1.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/fw-delete2.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/fw-delete3.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/fw-delete4.png" %}
