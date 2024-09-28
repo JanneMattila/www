@@ -485,7 +485,7 @@ Did you install [Helm](https://helm.sh/)
 charts from
 [Artifact Hub](https://artifacthub.io/) e.g., Redis and it created those disks for you?
 
-Is it an option to delete the data and start from scratch e.g., cache data?
+Is it an option to delete that data and start from scratch e.g., cache data?
 Or deploy a new solution side-by-side and migrate other apps to use it?
 
 Do you have a backup strategy for your data? No matter how you approach migration, you should have a backup strategy.
