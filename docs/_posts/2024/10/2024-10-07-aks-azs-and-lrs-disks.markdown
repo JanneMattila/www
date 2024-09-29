@@ -488,7 +488,9 @@ charts from
 Is it an option to delete that data and start from scratch e.g., cache data?
 Or deploy a new solution side-by-side and migrate other apps to use it?
 
-Do you have a backup strategy for your data? No matter how you approach migration, you should have a backup strategy.
+How do you do backups currently? Surely you have strategy for your backups?
+Can you use that in this migration? 
+No matter how you approach this migration, you should have a backup implementation.
 This itself is a big topic and I'll cover that in a future post.
 Plan for failure and accidental disk deletion.
 
@@ -793,7 +795,7 @@ In the event of an availability zone failure, your application will be down unti
 
 I have just one favor to ask: **Please check disks in your AKS clusters**.
 
-And still want to remind about my earlier post about
+And I still want to remind about my earlier post about
 [Testing your AKS resiliency with Chaos Studio]({% post_url 2024/08/2024-08-26-chaos-studio-and-aks %}).
 It should give you ideas how to leverage Azure Chaos Studio for testing your applications.
 

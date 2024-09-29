@@ -11,7 +11,8 @@ I previously wrote about
 [Network security groups and existing connections]({% post_url 2024/03/2024-03-18-network-security-groups-and-existing-connections %})
 which explains how Network Security Groups (NSG) work in Azure.
 
-
+However, there is a new property `flushConnection` in
+[Network Security Group](https://learn.microsoft.com/en-us/azure/templates/microsoft.network/networksecuritygroups?pivots=deployment-language-bicep):
 <!--
 - NSG Flush Connection
   - https://learn.microsoft.com/en-us/powershell/module/az.network/new-aznetworksecuritygroup?view=azps-12.0.0
