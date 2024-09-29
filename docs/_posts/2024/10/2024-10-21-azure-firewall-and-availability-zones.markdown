@@ -11,9 +11,9 @@ You might have deployed Azure Firewall using the Azure Portal experience:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/create-firewall.png" %}
 
-After the deployment, you start to add network and application rules to your firewall:
+After the deployment, you add rules to your firewall:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/fw1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/fw-rules.png" %}
 
 After some time, you use **Azure Advisor** and its ready-made workbook about **Reliability**:
 
@@ -25,12 +25,13 @@ Under _Services -> Networking -> Azure Firewall_ you can find more information a
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/workbook2.png" %}
 
-You notice that the Azure Firewall you have deployed  is not using **Availability Zones**:
+You notice that the Azure Firewall which is deployed is not using **Availability Zones**:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/workbook3.png" %}
 
 As you might have learned from my blog, I'm heavily promoting usage of _Availability Zones_ for
 critical services and **yes**, your centralized Azure Firewall is one of those services.
+So, let's see how you can migrate your Azure Firewall to use Availability Zones.
 
 To test migration to availability zones, I'll use demo environment that
 I have previously blogged about
@@ -40,7 +41,7 @@ Code from the demo environment is available in GitHub:
 
 {% include githubEmbed.html text="JanneMattila/azure-firewall-demo" link="JanneMattila/azure-firewall-demo" %}
 
-In my demo, Azure Firewall is deployed with **Availability Zones**, so I have just commented out
+In my demo, Azure Firewall is deployed with **Availability Zones**, but now I have just commented out
 that part of the code in **firewall.bicep** file:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/vscode-diff.png" %}
@@ -140,22 +141,24 @@ If you try to change the availability zone settings without deallocating the fir
 
 ## Re-deployment
 
-If for some reason you can't execute the above migration,
-you can delete it and re-deploy it with the correct settings.
-There is related documentation available:
+If you can't execute the above migration
+(maybe you have some limitation listed
+[here](https://learn.microsoft.com/en-us/azure/firewall/firewall-faq#how-can-i-configure-availability-zones-after-deployment)),
+you can delete it and re-deploy firewall with the correct settings.
+You can find documentation with similar steps here:
 [Relocate Azure Firewall to another region](https://learn.microsoft.com/en-us/azure/operational-excellence/relocation-firewall?tabs=azure-portal)
 
 There are few things to keep in mind before deleting the Azure Firewall:
 
-Save the firewall configurations: Export template (current state) and Download template (deployment history). See 
+Save the firewall configurations. See 
 [Choose the right export option](https://learn.microsoft.com/en-us/azure/azure-resource-manager/templates/export-template-powershell#choose-the-right-export-option)
-for more details:
+for more details.
 
-Export template:
+Export template (current state):
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/exporttemplate2.png" %}
 
-Download template from deployment history:
+Download template from deployment history (initial state):
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/deployments1.png" %}
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/deployments2.png" %}
@@ -165,9 +168,11 @@ If Diagnostic settings are not part of your template, then check that separately
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/fw-delete3.png" %}
 
 **Important**: Firewall rules are not in the firewall, they are in the Azure Firewall Policy - Do not delete it.
-Better place a lock on it and export content of it as well.
+Better place a
+[lock](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/lock-resources)
+on it and export content of it as well.
 
-But I believe the most important part is the **private IP address** of the Azure Firewall:
+One important part is the **private IP address** of the Azure Firewall:
 
 {% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/fw-delete2.png" %}
 
@@ -176,7 +181,8 @@ However, if you delete firewall, then next deployment should select that same pr
 Alternatively, you can use static private IP address in the deployment.
 For setting up static private IP address, you can leverage Bicep deployment.
 
-Here is example Bicep file that deploys Azure Firewall with Availability Zones and static private IP address:
+Here is an example Bicep file that deploys Azure Firewall with Availability Zones and static private IP address
+(no other settings are included):
 
 ```bicep
 resource firewall 'Microsoft.Network/azureFirewalls@2024-01-01' = {
@@ -198,17 +204,17 @@ resource firewall 'Microsoft.Network/azureFirewalls@2024-01-01' = {
       tier: 'Standard'
     }
     firewallPolicy: {
-      id: ''
+      id: resourceId('Microsoft.Network/azureFirewallPolicies', 'afwp-hub')
     }
     ipConfigurations: [
       {
         name: 'fw-pip1'
         properties: {
           subnet: {
-            id: ''
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', 'vnet-hub', 'AzureFirewallSubnet')
           }
           publicIPAddress: {
-            id: ''
+            id: resourceId('Microsoft.Network/publicIPAddresses', 'pip-firewall')
           }
         }
       }
@@ -217,32 +223,34 @@ resource firewall 'Microsoft.Network/azureFirewalls@2024-01-01' = {
 }
 ```
 
+You can deploy the Bicep file with the following PowerShell script:
+
+```powershell
+$result = New-AzResourceGroupDeployment `
+    -DeploymentName "Firewall-with-AZs" `
+    -ResourceGroupName $resourceGroupName `
+    -TemplateFile "firewall.bicep" `
+    -Verbose
+$result
+```
+
+After the deployment, you have to, _obviously_, validate that everything is working as expected.
+
 ## Conclusion
 
 If you have missed the Availability Zones setting during the deployment of Azure Firewall,
-then it's a good idea to migrate it to use Availability Zones.
+it's not the end of the world but it might be a good idea to migrate it to use Availability Zones.
 After all, it's a critical service and you want to make sure it's highly available
 and resilient to failures.
 
 Luckily, it should be fairly easy and quick operation.
-But of course you need to plan it carefully and have maintenance window for this change.
+But of course you need to plan and test it carefully and have maintenance window for this change.
 
 I hope you find this useful!
 
 <!--
-- Azure Firewall: deployed without AZs, delete re-deploy with AZs or change location
-  - Export from deployment history
-  - Export from current state
-  - Compare
-  - Add AZs
-  - Deploy
-  - https://learn.microsoft.com/en-us/azure/firewall/firewall-faq#how-can-i-stop-and-start-azure-firewall
-  - https://learn.microsoft.com/en-us/azure/operational-excellence/relocation-firewall?tabs=azure-portal
-  - https://learn.microsoft.com/en-us/azure/azure-resource-manager/templates/export-template-powershell#choose-the-right-export-option
-  - Community
-    - https://gist.github.com/bergsj/7b6b9a8ea5fb97674c5ba7e2f2190b57
-    - https://github.com/WillyMoselhy/AzureFirewallPolicyExportImport
-    - https://github.com/proximagr/automation/blob/master/Export%20Azure%20Firewall%20Policy%20Rules.ps1
-    - https://github.com/proximagr/automation/blob/master/Import%20Azure%20Firewall%20Policy%20Rules.ps1
-    - https://aidanfinn.com/?p=21584
+  - https://gist.github.com/bergsj/7b6b9a8ea5fb97674c5ba7e2f2190b57
+  - https://github.com/WillyMoselhy/AzureFirewallPolicyExportImport
+  - https://github.com/proximagr/automation/blob/master/Export%20Azure%20Firewall%20Policy%20Rules.ps1
+  - https://github.com/proximagr/automation/blob/master/Import%20Azure%20Firewall%20Policy%20Rules.ps1
 -->
