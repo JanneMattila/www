@@ -175,7 +175,7 @@ Open up VS Code and make sure you have
 [Bicep language support for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-bicep)
 installed.
 Now you can create e.g., `firewall.bicep` file and paste the content of the exported template to it
-using `Paste JSON as Bicep`:
+using `Paste JSON as Bicep` (might be quite close to the end of the context menu):
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/export3.png" %}
 
