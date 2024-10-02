@@ -41,10 +41,12 @@ Code from the demo environment is available in GitHub:
 
 {% include githubEmbed.html text="JanneMattila/azure-firewall-demo" link="JanneMattila/azure-firewall-demo" %}
 
-In my demo, Azure Firewall is deployed with **Availability Zones**, but now I have just commented out
+In my demo, Azure Firewall is deployed with **Availability Zones**, but I can easily comment out
 that part of the code in **firewall.bicep** file:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/vscode-diff.png" %}
+
+Follow the instructions in the `run.ps1` file to deploy the demo environment.
 
 After the demo environment deployment, we can check that we don't have availability zones in our firewall defined:
 
@@ -130,7 +132,7 @@ Similarly, availability zones are visible in the properties as well:
 
 ---
 
-If you try to change the availability zone settings without deallocating the firewall, you'll get an error:
+If you try to change the availability zone settings without deallocating the firewall, you'll get the following error:
 
 > **Set-AzFirewall**: Azure Firewall /subscriptions/.../afw-hub<br/>
 > **has an existing availability zone constraint and the request**<br/>
@@ -165,6 +167,8 @@ For the export scope, I'm going to select the following resources:
 - `vnet-hub`: Virtual Network
 - `pip-firewall`: Public IP address of the firewall
 
+And you should include all the resources that you need to part of the firewall deployment.
+
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/export1.png" %}
 
 After the export has created the template, you can select all the text (shortcut: Ctrl-A) and then copy the content to your clipboard (shortcut: Ctrl-C):
@@ -192,7 +196,8 @@ For renaming of the objects, you can use `F2` key:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/export4.png" %}
 
-In this deployment template, we aren't interested having public IP and virtual network, therefore we can convert them to `existing` resources.
+In this deployment template, we aren't interested having public IP and virtual network, therefore we can convert them to `existing` resources
+and remove the parameters and properties that we don't need anymore.
 This makes it easy to reference them in our firewall resource:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/export5.png" %}
@@ -229,6 +234,7 @@ Diagnostic settings were not most likely part of your template, then check that 
 
 After the successful deployment, you have to, _obviously_, validate that everything is working as expected
 and that you have not missed anything.
+But this gives you a good starting point for managing your Azure Firewall deployment with Infrastructure as Code.
 
 ## Conclusion
 
