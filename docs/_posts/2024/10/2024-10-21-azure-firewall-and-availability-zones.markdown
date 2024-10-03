@@ -167,7 +167,7 @@ For the export scope, I'm going to select the following resources:
 - `vnet-hub`: Virtual Network
 - `pip-firewall`: Public IP address of the firewall
 
-And you should include all the resources that you need to part of the firewall deployment.
+In you export, you should include all those resources that you need to part of the firewall deployment.
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/10/21/azure-firewall-and-availability-zones/export1.png" %}
 

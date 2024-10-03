@@ -776,7 +776,7 @@ Be careful with this command since if you stop your AKS cluster, then "managedBy
 az disk list \
   --query '[?managedBy==`null`].[id]' \
   -g MC_rg-aks-workshop-janne_aks-janne_uksouth \
-   -o tsv
+  -o tsv
 ```
 
 
