@@ -7,7 +7,9 @@
   - https://gordon.byers.me/azure/application-gateway-mtls-letsencrypt.html
   - https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/application-gateway/mutual-authentication-certificate-management.md
   - https://learn.microsoft.com/en-us/azure/application-gateway/mutual-authentication-overview?tabs=powershell
-  
+
+- NVA,AFW to do NATting of VNET addresses
+
 - AKS Backup, Disk snapshots, 
 
 - Public ACR to avoid ACI issues
