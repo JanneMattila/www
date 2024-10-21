@@ -32,6 +32,9 @@ You notice that the deployed Azure Firewall is not using **Availability Zones**:
 As you might have learned from my blog, I'm heavily promoting use of _Availability Zones_ for
 critical services and **yes**, your centralized Azure Firewall is one of those services.
 So, let's see how you can migrate your Azure Firewall to use Availability Zones.
+See 
+[Azure Well-Architected Framework perspective on Azure Firewall](https://learn.microsoft.com/en-us/azure/well-architected/service-guides/azure-firewall)
+for more recommendations.
 
 To test migration to availability zones, I'll use demo environment that
 I have previously blogged about

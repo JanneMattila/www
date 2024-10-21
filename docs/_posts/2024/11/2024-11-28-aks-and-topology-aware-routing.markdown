@@ -1,7 +1,7 @@
 ---
 title: AKS and Topology Aware Routing
 image: /assets/share.png
-date: 2024-11-04 06:00:00 +0300
+date: 2024-11-28 06:00:00 +0300
 layout: posts
 categories: azure
 tags: azure chaos-studio chaos-engineering chaos-mesh kubernetes aks

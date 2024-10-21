@@ -10,20 +10,25 @@
 
 - NVA,AFW to do NATting of VNET addresses
 
-- AKS Backup, Disk snapshots, 
+- https://learn.microsoft.com/en-us/azure/sap/workloads/rise-integration
+  - https://azure.microsoft.com/en-us/updates/cross-aad-vnet-peering/
+  - https://learn.microsoft.com/en-us/azure/virtual-network/create-peering-different-subscriptions?tabs=create-peering-portal#cli
+  - https://learn.microsoft.com/en-us/azure/sap/workloads/rise-integration-network
+  - https://techcommunity.microsoft.com/t5/azure-networking-blog/network-connectivity-for-rise-with-sap-s-4hana-cloud-private/ba-p/4266263
 
-- Public ACR to avoid ACI issues
-  - az acr update --name <your-registry-name> --anonymous-pull-enabled true
-  - https://github.com/Azure/acr/blob/main/docs/custom-domain/README.md
-  - az acr update --name <your-registry-name> --custom-domain <your-custom-domain>
+- AKS Backup, Disk snapshots,
+
+- Backup SoMe videos
+
+- Azure Container Storage
+  - https://aka.ms/Azure-container-storage-ga-blog
+  - https://aka.ms/AzureContainerStorageDocs
 
 - AKS and affinity rules, pod anti-affinity, node affinity, etc.
 - ACS and SMTP email sending
   - App registration rest api
   - https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email-smtp/smtp-authentication
-- Azure Container Storage
-  - https://aka.ms/Azure-container-storage-ga-blog
-  - https://aka.ms/AzureContainerStorageDocs
+
 - What's in it for me
  - YouTube: Whitaker James - What's in it for me
    - https://www.youtube.com/watch?v=8Ia6FX-tqcE&pp=ygUYamFtZXMgd2hpdGFrZXIgbWljcm9zb2Z0
