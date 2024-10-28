@@ -1,5 +1,5 @@
 ---
-title: Managed identity and Application Permissions
+title: Managed identities, Application Permissions and Entra ID automations
 image: /assets/posts/2024/11/04/managed-identity-and-application-permissions/application-permissions.png
 date: 2024-11-04 06:00:00 +0300
 layout: posts
@@ -13,7 +13,7 @@ e.g.,
 and
 [Entra ID Group automation with PowerShell]({% post_url 2024/02/2024-02-05-entra-id-group-automation %}).
 
-Typically, when you start that work, you need to create a new app registration in Entra ID and assign it the necessary permissions based on your scenario.
+Typically, when you start working on these automations, you need to create a new app registration in Entra ID and assign it the necessary permissions based on your scenario.
 So, you end up into this Entra ID view:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/11/04/managed-identity-and-application-permissions/application-permissions.png" %}
@@ -26,15 +26,15 @@ Since we would be looking to do some kind of background processing, we would nee
 Let's try to cover the following implementation scenario:
 
 - Automation to create a new group in Entra ID
-- Simple incoming data to define the group information
+- Simple incoming data to define the group information and members
 - Group will only have users as members
-- The automation is implemented using PowerShell and Microsoft Graph API
+- Automation is implemented using PowerShell and Microsoft Graph API
 
-I would then start by adding the necessary permissions to the app registration in Entra ID. 
-First, I would need to add the following permissions in order to be able to create a new group:
+I would start by adding the necessary permissions to the app registration in Entra ID. 
+First, I would need to add the following permission in order to be able to create a new group:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/11/04/managed-identity-and-application-permissions/group-create-permission.png" %}
 
-Second, I would need to add the following permissions in order to be able to read the basic information of the users:
+Second, I would need to add the following permission in order to be able to read the basic information of the users:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/11/04/managed-identity-and-application-permissions/user-readbasic-all-permission.png" %}
 
 Here are the permissions that I've added:
@@ -105,6 +105,7 @@ The above approach works fine and a new group gets created as expected:
 
 _However_, using service principal requires you to use
 client secret, certificate or federated credentials for the authentication.
+You have to maintain and store these secrets securely.
 
 Therefore, we'll look into achieving the same using managed identity.
 Let's start by creating a new user assigned-identity:
@@ -131,14 +132,15 @@ $identity = New-AzUserAssignedIdentity `
 Unfortunately, we don't have _API Permissions_ in the managed identity view.
 Therefore, we need to assign the necessary permissions using the APIs.
 
-If quickly still get back to the previous configuration of our service principal,
+If we quickly still get back to the previous configuration of our service principal,
 we can see the permission names:
 
 {% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/11/04/managed-identity-and-application-permissions/group-create-permission2.png" %}
 
 {% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/11/04/managed-identity-and-application-permissions/user-readbasic-all-permission2.png" %}
 
-Permissions can be granted using `New-AzADServicePrincipalAppRoleAssignment` cmdlet:
+Permissions to our managed identity can be granted using<br/>
+[New-AzADServicePrincipalAppRoleAssignment](https://learn.microsoft.com/en-us/powershell/module/az.resources/new-azadserviceprincipalapproleassignment?view=azps-12.4.0) cmdlet:
 
 ```powershell
 $microsoftGraphApp = Get-AzADServicePrincipal -ApplicationId "00000003-0000-0000-c000-000000000000"
@@ -170,7 +172,7 @@ $response = Invoke-AzRestMethod `
   -Payload $appRoleJson
 ```
 
-After the permissions are granted, you can find these permissions under _Enterprise apps_:
+After the `Group.Create` and `User.ReadBasic.All` permissions are granted, you can see these permissions under _Enterprise apps_:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/11/04/managed-identity-and-application-permissions/enterprise-apps1.png" %}
 
@@ -178,7 +180,9 @@ After the permissions are granted, you can find these permissions under _Enterpr
 
 Now, we're ready to use the configured managed identity in e.g., Virtual Machine
 (or 
-[any other service that supports it](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/managed-identities-status)).
+[any other service that supports it](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/managed-identities-status)):
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/11/04/managed-identity-and-application-permissions/vm-identity.png" %}
 
 In
 [Azure PowerShell](https://learn.microsoft.com/en-us/powershell/azure/install-azps-linux?view=azps-12.4.0),
@@ -186,12 +190,11 @@ you can replace the above service principal login with the managed identity
 **and rest of the script remains the same**:
 
 ```powershell
-# Login with the managed identity
 Connect-AzAccount -Identity
 ```
 
-If you just want to just `bash` script, you can use the following approach
-based on the
+If you just want to use `bash` script, you can use the following approach
+based on this
 [tutorial](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/tutorial-windows-vm-access?pivots=windows-vm-access-lvm):
 
 ```bash
@@ -224,99 +227,44 @@ curl -X POST "https://graph.microsoft.com/v1.0/groups/$(cat id.txt)/members/\$re
 }'
 ```
 
+If you grab the access token from the above, you can see the `roles` claims
+with the help of
+[jwt.ms](https://jwt.ms/):
 
----
+{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/11/04/managed-identity-and-application-permissions/jwt.png" %}
 
-You can of course use the same approach with
+It would be nice to use
 [Azure PowerShell](https://learn.microsoft.com/en-us/powershell/azure/install-azps-linux?view=azps-12.4.0)
-but with _caveats_:
-
-```powershell
-# Login with the managed identity
-Connect-AzAccount -Identity
-
-# Create a new group
-$group = New-AzADGroup -DisplayName "Example Group 2" -Description "Example Group 2 Description" -MailNickname "examplegroup2" -SecurityEnabled
-
-# Add owner to the group
-New-AzADGroupOwner -GroupId $group.Id -OwnerId "cdbc71fd-0e73-48f0-b14c-f5216c4fb440"
-
-# Add a member to the group
-Add-AzADGroupMember -TargetGroupObjectId $group.Id -MemberObjectId "cdbc71fd-0e73-48f0-b14c-f5216c4fb440"
-```
-
-Unfortunately, `New-AzADGroup` doesn't support adding owners during the creation.
-Therefore, you'll get following error message when calling `New-AzADGroupOwner`:
-
-`Insufficient privileges to complete the operation.`
-
-It's explained in
-[Create group](https://learn.microsoft.com/en-us/graph/api/group-post-groups?view=graph-rest-1.0&tabs=http)
-documentation:
-
-> Creating a group using the `Group.Create` application permission
-> without specifying owners **creates the group anonymously and the group isn't modifiable**.
-> **Add owners to the group while creating it** so the owners can manage the group.
-
-You can overcome the above challenges by using the Graph API directly:
-
-```powershell
-$identity = Invoke-RestMethod -Headers @{"Metadata"="true"} -Uri "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://graph.microsoft.com/"
-
-$groupJson = [ordered]@{
-  displayName         = $GroupName
-  description         = $GroupDescription
-  mailEnabled         = $false
-  mailNickname        = $GroupMailNickName
-  securityEnabled     = $true
-  groupTypes          = @()
-  "owners@odata.bind" = [string[]]"https://graph.microsoft.com/v1.0/servicePrincipals(appId='$($identity.client_id)')"
-} | ConvertTo-Json
-
-$groupResponse = Invoke-AzRestMethod `
-    -Uri "https://graph.microsoft.com/v1.0/groups" `
-    -Method Post -Payload $groupJson
-$group = $groupResponse.Content | ConvertFrom-Json
-
-$bodyJson = @{
-    "@odata.id" = "https://graph.microsoft.com/v1.0/directoryObjects/cdbc71fd-0e73-48f0-b14c-f5216c4fb440"
-} | ConvertTo-Json
-
-Invoke-AzRestMethod `
-    -Uri "https://graph.microsoft.com/v1.0/groups/$($group.Id)/members/`$ref" `
-    -Method POST -Payload $bodyJson -Debug
-```
+cmdlets in this limited permissions scenario, but _unfortunately_, the
+[New-AzADGroup](https://learn.microsoft.com/en-us/powershell/module/az.resources/new-azadgroup?view=azps-12.4.0)
+doesn't support adding owners during the creation.
 
 ---
 
-Obviously, I recommend using other compute options like Azure Functions handling these automations. See my previous posts for more details:
-[Entra ID Group automation with PowerShell]({% post_url 2024/02/2024-02-05-entra-id-group-automation %}).
-
----
-
-One other typical automation scenario is automating group memberships.
-This is many times combined with the requirement to scope this this to only specific groups.
+Another very similar scenario is automating group memberships
+which is typically combined with the requirement to **scope this to only specific groups**.
 
 Typical requirements are:
 
 - We have 1000s of groups in Entra ID
-- We have a list of groups that we want to manage via automation e.g., 25
+- We have a list of groups that we want to manage via this specific automation e.g., 25
 - Permissions should be limited to only these 25 groups
 
 Here's how you can achieve this:
 
-1) Create a new app registration in Entra ID
-  - I'll start *without* any permissions
+1) Create a new app registration in Entra ID or use managed identity as shown above
+  - Start *without* any permissions
 
-2) Add this application as _owner_ to the groups that you want to manage:
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/11/04/managed-identity-and-application-permissions/group-owner-spn-api-permissions.png" %}
+
+2) Add this identity as _owner_ to the groups that you want to manage:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/11/04/managed-identity-and-application-permissions/group-owner-spn.png" %}
+
 
 Now you can add the members directly to that groups _even_ if you don't have any permissions:
 
 ```powershell
-# Get group
-Invoke-AzRestMethod `
-    -Uri "https://graph.microsoft.com/v1.0/groups/ae22a67d-ce3e-4626-8b0c-94b003525a09"
-
 # Add member
 $bodyJson = @{
     "@odata.id" = "https://graph.microsoft.com/v1.0/directoryObjects/cdbc71fd-0e73-48f0-b14c-f5216c4fb440"
@@ -325,23 +273,21 @@ $bodyJson = @{
 Invoke-AzRestMethod `
     -Uri "https://graph.microsoft.com/v1.0/groups/ae22a67d-ce3e-4626-8b0c-94b003525a09/members/`$ref" `
     -Method POST -Payload $bodyJson
-    
-# Get members
-Invoke-AzRestMethod `
-    -Uri "https://graph.microsoft.com/v1.0/groups/ae22a67d-ce3e-4626-8b0c-94b003525a09/members/`$ref"
 ```
 
-If you need to look up users, then you need to have the necessary permissions e.g., `User.ReadBasic.All`.
+As in the above first example, you would have to add _additional permissions_ if you need to look up e.g., users.
+Typical permissions for this case is same as the one used above: `User.ReadBasic.All`.
+In this scenario, our identity is limited managing only these 25 groups and it cannot manage any other groups.
 
+# Conclusion
 
-<!--
-[text](https://learn.microsoft.com/en-us/powershell/azure/create-azure-service-principal-azureps?view=azps-12.4.0)
+In this post, we've looked into how to use managed identity and application permissions to automate Entra ID operations.
+We've also looked into how to limit the permissions to only specific groups.
 
-https://techcommunity.microsoft.com/t5/azure-integration-services-blog/grant-graph-api-permission-to-managed-identity-object/ba-p/2792127
+You can find the full scripts from the following links:
 
-https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/grant-admin-consent?pivots=portal
+{% include githubEmbed.html text="entra-create-groups.ps1" link="JanneMattila/some-questions-and-some-answers/blob/master/q%26a/entra-create-groups.ps1" %}
 
-https://learn.microsoft.com/en-us/graph/api/resources/approleassignment?view=graph-rest-1.0
+{% include githubEmbed.html text="entra-managed-identity.ps1" link="JanneMattila/some-questions-and-some-answers/blob/master/q%26a/entra-managed-identity.ps1" %}
 
-https://learn.microsoft.com/en-us/graph/api/serviceprincipal-post-approleassignedto?view=graph-rest-1.0&tabs=http
--->
+I hope you find this useful!
