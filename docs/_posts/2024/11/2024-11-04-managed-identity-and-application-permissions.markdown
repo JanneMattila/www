@@ -28,7 +28,7 @@ Let's try to cover the following implementation scenario:
 - Automation to create a new group in Entra ID
 - Simple incoming data to define the group information
 - Group will only have users as members
-- The automation is implemented using PowerShell and the Microsoft Graph API
+- The automation is implemented using PowerShell and Microsoft Graph API
 
 I would then start by adding the necessary permissions to the app registration in Entra ID. 
 First, I would need to add the following permissions in order to be able to create a new group:
@@ -61,17 +61,18 @@ Connect-AzAccount -ServicePrincipal -Credential $credentials -TenantId $tenantId
 ```
 
 After the login, I can execute my script to create a new group in Entra ID.
-Here is _abbreviated_ version of the script but you can find the link full script at
+Here is _abbreviated and simplified_ version of the script but you can find the link full script at
 the end of the post: 
 
 ```powershell
 $groupJson = @{
-  displayName     = $GroupName
-  description     = $GroupDescription
-  mailEnabled     = $false
-  mailNickname    = $GroupMailNickName
-  securityEnabled = $true
-  groupTypes      = @()
+  displayName         = $GroupName
+  description         = $GroupDescription
+  mailEnabled         = $false
+  mailNickname        = $GroupMailNickName
+  securityEnabled     = $true
+  groupTypes          = @()
+  "owners@odata.bind" = [string[]]"https://graph.microsoft.com/v1.0/servicePrincipals(appId='$($ClientId)')"
 } | ConvertTo-Json
 
 $groupResponse = Invoke-AzRestMethod `
@@ -90,6 +91,13 @@ $memberIds | ForEach-Object {
     -Method POST -Payload $bodyJson
 }
 ```
+
+Notice that we're using `members@odata.bind` to add owner to the group during the
+[create operation](https://learn.microsoft.com/en-us/graph/api/group-post-groups?view=graph-rest-1.0&tabs=http):
+
+> Creating a group using the `Group.Create` application permission
+> without specifying owners **creates the group anonymously and the group isn't modifiable**.
+> **Add owners to the group while creating it** so the owners can manage the group.
 
 The above approach works fine and a new group gets created as expected:
 
@@ -155,7 +163,6 @@ $appRoleJson = [ordered]@{
     | Where-Object { $_.Value -eq "Group.Create" } `
     | Select-Object -ExpandProperty Id)
 } | ConvertTo-Json
-$appRoleJson
 
 $response = Invoke-AzRestMethod `
   -Method Post `
@@ -173,19 +180,25 @@ Now, we're ready to use the configured managed identity in e.g., Virtual Machine
 (or 
 [any other service that supports it](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/managed-identities-status)).
 
-Here are commands executed inside Linux Virtual Machine:
+In
+[Azure PowerShell](https://learn.microsoft.com/en-us/powershell/azure/install-azps-linux?view=azps-12.4.0),
+you can replace the above service principal login with the managed identity
+**and rest of the script remains the same**:
 
 ```powershell
-# tba
+# Login with the managed identity
+Connect-AzAccount -Identity
 ```
 
-[text](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/tutorial-windows-vm-access?pivots=windows-vm-access-lvm)
+If you just want to just `bash` script, you can use the following approach
+based on the
+[tutorial](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/tutorial-windows-vm-access?pivots=windows-vm-access-lvm):
 
 ```bash
 # Get the identity information including token
 curl -s \
  'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://graph.microsoft.com/' \
- -H Metadata:true > identity.json
+ -H 'Metadata: true' > identity.json
 
 # Create a new group
 curl -s -X POST 'https://graph.microsoft.com/v1.0/groups' \
@@ -211,8 +224,6 @@ curl -X POST "https://graph.microsoft.com/v1.0/groups/$(cat id.txt)/members/\$re
 }'
 ```
 
-You can use `members@odata.bind` to add members to the group during the
-[create operation](https://learn.microsoft.com/en-us/graph/api/group-post-groups?view=graph-rest-1.0&tabs=http).
 
 ---
 
