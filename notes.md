@@ -2,6 +2,12 @@
 
 ## Upcoming posts
 
+- Azure DevOps
+  - Managed Identity / Service Principal to run some automations e.g., backup of repositories
+  - https://learn.microsoft.com/en-us/azure/devops/organizations/security/data-protection?view=azure-devops
+  - https://learn.microsoft.com/en-us/rest/api/azure/devops/git/repositories/restore-repository-from-recycle-bin?view=azure-devops-rest-7.1
+  - https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/service-principal-managed-identity?view=azure-devops
+
 - AppGw and cert chain
 - AppGw + mTLS
   - https://gordon.byers.me/azure/application-gateway-mtls-letsencrypt.html
