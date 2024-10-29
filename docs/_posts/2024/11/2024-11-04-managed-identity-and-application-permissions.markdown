@@ -27,14 +27,14 @@ Let's try to cover the following implementation scenario:
 
 - Automation to create a new group in Entra ID
 - Simple incoming data to define the group information and members
-- Group will only have users as members
+- The group will only have users as members
 - Automation is implemented using PowerShell and Microsoft Graph API
 
 I would start by adding the necessary permissions to the app registration in Entra ID. 
-First, I would need to add the following permission in order to be able to create a new group:
+First, I would need to add the following permission to be able to create a new group:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/11/04/managed-identity-and-application-permissions/group-create-permission.png" %}
 
-Second, I would need to add the following permission in order to be able to read the basic information of the users:
+Second, I would need to add the following permission to be able to read the basic information of the users:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/11/04/managed-identity-and-application-permissions/user-readbasic-all-permission.png" %}
 
 Here are the permissions that I've added:
@@ -61,7 +61,7 @@ Connect-AzAccount -ServicePrincipal -Credential $credentials -TenantId $tenantId
 ```
 
 After the login, I can execute my script to create a new group in Entra ID.
-Here is _abbreviated and simplified_ version of the script but you can find the link full script at
+Here is _an abbreviated and simplified_ version of the script but you can find the link full script at
 the end of the post: 
 
 ```powershell
@@ -99,15 +99,15 @@ Notice that we're using `members@odata.bind` to add owner to the group during th
 > without specifying owners **creates the group anonymously and the group isn't modifiable**.
 > **Add owners to the group while creating it** so the owners can manage the group.
 
-The above approach works fine and a new group gets created as expected:
+The above approach works fine, and a new group gets created as expected:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/11/04/managed-identity-and-application-permissions/new-group.png" %}
 
 _However_, using service principal requires you to use
-client secret, certificate or federated credentials for the authentication.
-You have to maintain and store these secrets securely.
+client secrets, certificates or federated credentials for the authentication.
+You must maintain and store these secrets securely.
 
-Therefore, we'll look into achieving the same using managed identity.
+Therefore, we'll investigate achieving the same using managed identity.
 Let's start by creating a new user assigned-identity:
 
 ```powershell
@@ -262,7 +262,7 @@ Here's how you can achieve this:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/11/04/managed-identity-and-application-permissions/group-owner-spn.png" %}
 
 
-Now you can add the members directly to that groups _even_ if you don't have any permissions:
+Now you can add the members directly to those groups _even_ if you don't have any permissions:
 
 ```powershell
 # Add member
@@ -275,14 +275,14 @@ Invoke-AzRestMethod `
     -Method POST -Payload $bodyJson
 ```
 
-As in the above first example, you would have to add _additional permissions_ if you need to look up e.g., users.
-Typical permissions for this case is same as the one used above: `User.ReadBasic.All`.
+As in the above first example, you will have to add _additional permissions_ if you need to look up e.g., users.
+Typical permissions for this case is the same as the one used above: `User.ReadBasic.All`.
 In this scenario, our identity is limited managing only these 25 groups and it cannot manage any other groups.
 
 # Conclusion
 
 In this post, we've looked into how to use managed identity and application permissions to automate Entra ID operations.
-We've also looked into how to limit the permissions to only specific groups.
+We've also saw how to limit the permissions to only specific groups.
 
 You can find the full scripts from the following links:
 
