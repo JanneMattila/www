@@ -9,9 +9,10 @@ tags: azure graph managed-identity application-permissions
 
 I have previously blogged about various Azure and Entra ID automation topics
 e.g., 
-[Automating maintenance tasks with Azure Functions and PowerShell]({% post_url 2023/10/2023-10-30-automating-maintenance-tasks-part1 %})
+[Automating maintenance tasks with Azure Functions and PowerShell]({% post_url 2023/10/2023-10-30-automating-maintenance-tasks-part1 %}),
+[Entra ID Group automation with PowerShell]({% post_url 2024/02/2024-02-05-entra-id-group-automation %}),
 and
-[Entra ID Group automation with PowerShell]({% post_url 2024/02/2024-02-05-entra-id-group-automation %}).
+[Automations with Azure Pipelines or GitHub Actions]({% post_url 2024/05/2024-05-27-automations-with-azure-pipelines-or-github-actions %}).
 
 Typically, when you start working on these automations, you need to create a new app registration in Entra ID and assign it the necessary permissions based on your scenario.
 So, you end up into this Entra ID view:
@@ -25,9 +26,9 @@ Since we would be looking to do some kind of background processing, we would nee
 
 Let's try to cover the following implementation scenario:
 
-- Automation to create a new group in Entra ID
+- Automation to create **a new group** in Entra ID
 - Simple incoming data to define the group information and members
-- The group will only have users as members
+- The group will **only have users as members**
 - Automation is implemented using PowerShell and Microsoft Graph API
 
 I would start by adding the necessary permissions to the app registration in Entra ID. 
@@ -61,7 +62,7 @@ Connect-AzAccount -ServicePrincipal -Credential $credentials -TenantId $tenantId
 ```
 
 After the login, I can execute my script to create a new group in Entra ID.
-Here is _an abbreviated and simplified_ version of the script but you can find the link full script at
+Here is _an abbreviated and simplified_ version of the script but you can find the link to the full script at
 the end of the post: 
 
 ```powershell

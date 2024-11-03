@@ -2,6 +2,34 @@
 
 ## Upcoming posts
 
+- APIM, LA, App Service, Easy Auth
+  if(empty(triggerBody()),'HEADER',triggerBody())
+  https://techcommunity.microsoft.com/t5/azure-integration-services-blog/trigger-workflows-in-standard-logic-apps-with-easy-auth/ba-p/3207378
+  "logicAppsAccessControlConfiguration": {
+    "triggers": {
+        "sasAuthenticationPolicy": {
+            "State": "Disabled"
+        }
+    }
+}
+https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-securing-a-logic-app?tabs=azure-portal#check-for-triggers-with-sas-enabled-or-disabled
+
+{
+  "id: "...",
+  "name": "workflow00000010",
+  "type": "Microsoft.Web/sites",
+  "kind": "functionapp,workflowapp",
+  "properties": {
+    "logicAppsAccessControlConfiguration": {
+      "triggers": {
+          "sasAuthenticationPolicy": {
+              "State": "Disabled"
+          }
+      }
+  }
+}
+
+
 - Azure DevOps
   - Managed Identity / Service Principal to run some automations e.g., backup of repositories
   - https://learn.microsoft.com/en-us/azure/devops/organizations/security/data-protection?view=azure-devops
