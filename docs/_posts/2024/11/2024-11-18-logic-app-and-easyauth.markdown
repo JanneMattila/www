@@ -1,5 +1,5 @@
 ---
-title: Standard Logic App and EasyAuth
+title: Standard Logic App and authentication with EasyAuth
 image: /assets/posts/2024/11/18/logic-app-and-easyauth/authentication1.png
 date: 2024-11-18 06:00:00 +0300
 layout: posts
@@ -12,7 +12,7 @@ I've previously blogged about EasyAuth e.g.,
 and
 [Application Gateway and App Service authentication]({% post_url 2024/04/2024-04-08-appgw-and-app-service-authentication %}).
 
-In this post, I'll show how to use EasyAuth with a
+In this post, I'll show how to use authentication with EasyAuth in a
 [Standard Logic App](https://learn.microsoft.com/en-us/azure/logic-apps/single-tenant-overview-compare#standard-logic-app-and-workflow).
 This post _heavily_ builds on top of the post: 
 [Trigger workflows in Standard logic apps with Easy Auth](https://techcommunity.microsoft.com/t5/azure-integration-services-blog/trigger-workflows-in-standard-logic-apps-with-easy-auth/ba-p/3207378).
@@ -25,11 +25,11 @@ Scenario:
 - PowerShell to create necessary Entra ID app registrations
 - Infrastructure as code in Bicep
 
-We'll create 3 app registrations, so that we can test the EasyAuth with Logic App:
+We'll create 3 app registrations, so that we can test authentication with Logic App:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/11/18/logic-app-and-easyauth/easyauth.svg" %}
 
-First, we'll create the app registration used by the Logic App EasyAuth:
+First, we'll create the app registration used by the Logic App authentication:
 
 ```powershell
 # Workflow application:
@@ -58,9 +58,9 @@ Repeat the above for the other client applications:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/11/18/logic-app-and-easyauth/app-regs.png" %}
 
-Next, we'll prepare for the Infrastructure-as-Code deployment.
+Next, we'll prepare for the infrastructure-as-Code deployment.
 We have to pass _clientId_ and _integrationClientIds_ as parameters, so that the
-Logic App can be configured with the correct EasyAuth settings.
+Logic App can be configured with the correct authentication settings.
 _IntegrationClientIds_ is an array of client application IDs that are allowed to call the Logic App.
 No other client applications are allowed to call the Logic App.
 Here's the deployment:
@@ -68,9 +68,9 @@ Here's the deployment:
 ```powershell
 # Prepare parameters for the deployment:
 $clientId = $integrationApp.AppId
-$integrationClientIds = @($integrationClientApp1.AppId, $integrationClientApp2.AppId)
+$integrationClientIds = $integrationClientApp1.AppId, $integrationClientApp2.AppId
 
-# Deploy the Standard Logic App with EasyAuth enabled:
+# Deploy the Standard Logic App with authentication enabled:
 $deployment = .\deploy.ps1 -ClientId $clientId -IntegrationClientIds $integrationClientIds
 $deployment.outputs.uri.value
 ```
@@ -86,11 +86,11 @@ After the deployment, we can see the following resources in the resource group:
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/11/18/logic-app-and-easyauth/resource-group.png" %}
 
-Now, we can implement simple HTTP trigger based workflow using Azure Portal and leverage ready-made templates:
+Now, we can implement simple HTTP trigger-based workflow using Azure Portal and leverage ready-made templates:
 
-{% include imageEmbed.html width="90%" height="90%" link="/assets/posts/2024/11/18/logic-app-and-easyauth/template.png" %}
+{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/11/18/logic-app-and-easyauth/template.png" %}
 
-{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/11/18/logic-app-and-easyauth/workflow1.png" %}
+{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/11/18/logic-app-and-easyauth/workflow1.png" %}
 
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/11/18/logic-app-and-easyauth/workflow2.png" %}
 
@@ -98,11 +98,9 @@ I'll add simple payload to the response:
 
 {% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/11/18/logic-app-and-easyauth/workflow4.png" %}
 
-I'll copy the URL from the HTTP trigger, so that we can test the configuration:
+---
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/11/18/logic-app-and-easyauth/workflow3.png" %}
-
-I'll test first with the `Integration Client 1` application:
+Now, we are ready to test our Logic App. I'll first test with the `Integration Client 1` application. Let's get the token for the application:
 
 ```powershell
 # Integration Client 1 test:
@@ -117,14 +115,14 @@ $integrationClient1Token.Token | ConvertFrom-SecureString -AsPlainText | Set-Cli
 
 Let's quickly study the token in [jwt.ms](https://jwt.ms/):
 
-{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/11/18/logic-app-and-easyauth/jwt1.png" %}
+{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/11/18/logic-app-and-easyauth/jwt1.png" %}
 
 We can see that:
 
-- Intended audience of the token matches the `Integration Workflow`
-- AppId matches the `Integration Client 1`
+- The intended audience (`aud`) of the token matches the `Integration Workflow`
+- Application ID (`appid`) matches the `Integration Client 1`
 
-Now, we can test the Logic App with the `client1` application:
+Now, we can test invoking the Logic App with the token:
 
 ```powershell
 Invoke-RestMethod `
@@ -140,11 +138,12 @@ Hello Client App!
 ```
 
 We can repeat the same steps for the `Integration Client 2` application and see the same response.
+Everything works as expected.
 
 Let's test with the `Integration Client 3 - Not enabled` application.
 Token seems to be similar as before and AppId matches our configured app:
 
-{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/11/18/logic-app-and-easyauth/jwt2.png" %}
+{% include imageEmbed.html width="70%" height="70%" link="/assets/posts/2024/11/18/logic-app-and-easyauth/jwt2.png" %}
 
 _However_, when we try to call the Logic App with the `Integration Client 3 - Not enabled` application, we get:
 
@@ -176,11 +175,9 @@ What is the difference between `allowedApplications` and `identities` in the con
 
 - You can use `identities` to limit the access to specific directory object ids (`oid`)
 - You can use `allowedApplications` to limit the access to specific client ids (`appid` or `azp`)
-- When you have application that accesses the API as the signed-in user (=_delegated_ permissions), then the object id (=`oid`) is the user's object id
+- When you have an application that accesses the API as the signed-in user (_delegated_ permissions), then the object id (`oid`) is the user's object id
 
-I'll leave the _delegated_ permissions scenario for another blog post:
-
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/11/18/logic-app-and-easyauth/permissions1.png" %}
+I'll leave the _delegated_ permissions scenario for another blog post.
 
 You can further down narrow the access by defining more granular application roles:
 [Daemon client application (service-to-service calls)](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad?tabs=workforce-configuration#daemon-client-application-service-to-service-calls)
@@ -190,15 +187,16 @@ example about it.
 
 ## Conclusion
 
-The above steps showed how to secure a Standard Logic App with EasyAuth.
+The above steps showed how to secure a Standard Logic App with EasyAuth authentication.
 Please remember, that this was only about the identity part.
 There are other aspects to consider when securing your Logic App including network restrictions etc.
 
-This scenarios was only about the incoming requests to the Logic App.
-If you need to call other services from the Logic App, you need to consider the outgoing requests as well.
-That is, _again_, a topic for another blog post.
+This scenario was about the *incoming requests to Logic App*.
+If you need to *call other services from the Logic App, you need to consider the outgoing requests* as well.
+Typically, you would use Managed Identity for that.
 
-You can find the full source code from my GitHub repository:
+You can find the full source code from my GitHub repository. Just open `setup.ps1` and run commands line by line
+and you have the same setup as I had in this blog post:
 
 {% include githubEmbed.html text="JanneMattila/azure-logic-apps-demos/easyauth" link="JanneMattila/azure-logic-apps-demos/tree/main/easyauth" %}
 

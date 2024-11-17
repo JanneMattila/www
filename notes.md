@@ -5,6 +5,26 @@
 - APIM, LA, App Service, Easy Auth
   if(empty(triggerBody()),'HEADER',triggerBody())
 
+- azure-ad-on-behalf-of.http
+- Alert rule and Teams chat notification (requires json conversion)
+
+- PowerShell webserver to able to receive token from url
+  
+- LB Keepalive
+netsh int tcp set global tcpkeepalive=enabled
+netsh int tcp show global
+Registry Settings: You can also configure keepalive settings through the registry:
+
+Open the Registry Editor by typing regedit in the Run dialog (Win + R).
+Navigate to HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters.
+Create or modify the following DWORD values:
+KeepAliveTime: Determines how often TCP sends keep-alive transmissions. The default value is 7200000 milliseconds (2 hours)2.
+KeepAliveInterval: Determines the interval between keep-alive retransmissions until a response is received. The default value is 1000 milliseconds (1 second)2.
+The default TCP keepalive timeout for Windows is 2 hours, and the keepalive interval is 1 second2.
+https://learn.microsoft.com/en-us/windows/win32/winsock/so-keepalive
+https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2003/cc782936(v=ws.10)
+https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2003/cc758083(v=ws.10)
+
 - Azure DevOps
   - Managed Identity / Service Principal to run some automations e.g., backup of repositories
   - https://learn.microsoft.com/en-us/azure/devops/organizations/security/data-protection?view=azure-devops
