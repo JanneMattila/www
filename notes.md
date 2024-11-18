@@ -25,6 +25,7 @@ https://learn.microsoft.com/en-us/windows/win32/winsock/so-keepalive
 https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2003/cc782936(v=ws.10)
 https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2003/cc758083(v=ws.10)
 
+
 - Azure DevOps
   - Managed Identity / Service Principal to run some automations e.g., backup of repositories
   - https://learn.microsoft.com/en-us/azure/devops/organizations/security/data-protection?view=azure-devops
@@ -48,6 +49,8 @@ https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-serve
 - AKS Backup, Disk snapshots,
 
 - Backup SoMe videos
+ - yt-dlp.exe -k "https://www.youtube.com/watch?v=..."
+ - 
 
 - Azure Container Storage
   - https://aka.ms/Azure-container-storage-ga-blog
