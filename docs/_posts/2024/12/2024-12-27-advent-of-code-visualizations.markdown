@@ -148,7 +148,10 @@ I picked few examples:
 
 ### In closing
 
-_Again_, I want to give a big shout out to [Eric Wastl](https://twitter.com/ericwastl) for creating 10th Advent of Code event.
+_Again_, I want to give a big shout out to [Eric Wastl](https://twitter.com/ericwastl) for creating 10th Advent of Code event:
+
+{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/12/27/advent-of-code/aoc-stars.png" %}
+
 Every year it manages to surprise me how well arranged event it is and how amazing puzzles you get to solve during December.
 
 Already waiting for next year. See you there!
