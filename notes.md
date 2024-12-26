@@ -2,6 +2,15 @@
 
 ## Upcoming posts
 
+- Advent of Code day 2 in Logic App
+
+- https://learn.microsoft.com/en-us/azure/application-gateway/configuration-http-settings#connection-draining
+
+- Connection Monitor
+
+- Managed disks and:
+  You might notice traffic towards "md-*.blob.storage.azure.net" endpoint. This endpoint is used for internal components of Azure Managed Disks. Blocking access to this endpoint from your firewall should not cause any issues.
+
 - APIM, LA, App Service, Easy Auth
   if(empty(triggerBody()),'HEADER',triggerBody())
 
