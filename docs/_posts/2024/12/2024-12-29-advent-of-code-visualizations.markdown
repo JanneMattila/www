@@ -52,13 +52,6 @@ This illustration helped me to to understand that I'm looking for largest _full 
 {% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/12/30/advent-of-code/day23-graphviz1
 .png" %}
 
-But I couldn't find out fast enough solution without help from the community: 
-
-[https://www.reddit.com/r/adventofcode](r/adventofcode)
-
-There are excellent discussions around the solutions and people help each other out with hints and
-their solutions. 
-
 #### Day 24
 
 It was clear from the start that part 2 is not going to be solvable for me without graph illustrations.
@@ -74,7 +67,7 @@ Adding colors made it slightly more easier to study:
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/12/30/advent-of-code/day24-graph3.png" %}
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/12/30/advent-of-code/day24-graph4.png" %}
 
-Comparing these also to GraphViz versions:
+Here is GraphViz version of the graph:
 
 {% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/12/30/advent-of-code/day24-graphviz1.png" %}
 {% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/12/30/advent-of-code/day24-graphviz2.png" %}
@@ -134,7 +127,13 @@ And last fix for `z33`:
 
 #### Community visualizations
 
-As every year, community has built amazing visualizations around these puzzles.
+There are lively discussions in the  community around the solutions.
+People help each other out and explain their solutions so that others can benefit from them.
+
+[https://www.reddit.com/r/adventofcode](r/adventofcode)
+
+As every year, many people have built amazing visualizations around these puzzles.
+
 I picked few examples:
 
 [[2024 Day 16] Optimal Path Finding](https://www.reddit.com/r/adventofcode/comments/1hfxrc1/2024_day_16_optimal_path_finding/)
@@ -147,3 +146,5 @@ I picked few examples:
 
 _Again_, I want to give a big shout out to [Eric Wastl](https://twitter.com/ericwastl) for creating 10th Advent of Code event.
 Every year it manages to surprise me how well arranged event it is and how amazing puzzles you get to solve during December.
+
+Already waiting for next year. See you there!
