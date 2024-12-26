@@ -1,8 +1,8 @@
 ---
 layout: posts
 title:  "My Advent of Code 2024 visualizations"
-image: /assets/posts/2024/12/30/advent-of-code/day14.png
-date:   2024-12-30 06:00:00 +0300
+image: /assets/posts/2024/12/27/advent-of-code/day14.png
+date:   2024-12-27 06:00:00 +0300
 categories: appdev
 tags: appdev advent-of-code aoc fun
 ---
@@ -15,6 +15,8 @@ Here are my visualizations for Advent of Code 2024:
 
 #### Day 6
 
+Traditional map visualization:
+
 {% include youtubeEmbed.html id="wZkEh1X708g" %}
 
 #### Day 14
@@ -23,7 +25,7 @@ Day 14 was fun since I first didn't quite understand how to find the _Easter egg
 Therefore, I started creating the visualization just to find out that by accident I managed to see
 flash of this Christmas tree when my animation was running:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/12/30/advent-of-code/day14.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/12/27/advent-of-code/day14.png" %}
 
 Here is the full animation:
 
@@ -31,26 +33,28 @@ Here is the full animation:
 
 #### Day 15
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/12/30/advent-of-code/day15.png" %}
-
 Warehouse robot pushing boxes around:
+
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/12/27/advent-of-code/day15.png" %}
 
 {% include youtubeEmbed.html id="_nVoe1oQ2xY" %}
 
 #### Day 23
 
-Immediately, when I saw this task, I thought that I have to use some graphs to understand it better.
+Immediately, when I saw this puzzle, I thought that I have to use graphs to understand it better.
 So, I created few illustrations using 
 [Mermaid](https://mermaid.live/) and
 [GraphvizOnline](https://dreampuf.github.io/GraphvizOnline)
 from the example dataset:
 
-{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/12/30/advent-of-code/day23-graph1.png" %}
+{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/12/27/advent-of-code/day23-graph1.png" %}
 
 This illustration helped me to to understand that I'm looking for largest _full mesh_ in the network:
 
-{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/12/30/advent-of-code/day23-graphviz1
+{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/12/27/advent-of-code/day23-graphviz1
 .png" %}
+
+Much easier to implement when you have clear picture what to do!
 
 #### Day 24
 
@@ -58,19 +62,19 @@ It was clear from the start that part 2 is not going to be solvable for me witho
 
 I started with just overview diagram (it really is humongous!):
 
-{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/12/30/advent-of-code/day24-graph.png" %}
+{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/12/27/advent-of-code/day24-graph.png" %}
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/12/30/advent-of-code/day24-graph2.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/12/27/advent-of-code/day24-graph2.png" %}
 
 Adding colors made it slightly more easier to study:
 
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/12/30/advent-of-code/day24-graph3.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/12/30/advent-of-code/day24-graph4.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/12/27/advent-of-code/day24-graph3.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/12/27/advent-of-code/day24-graph4.png" %}
 
 Here is GraphViz version of the graph:
 
-{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/12/30/advent-of-code/day24-graphviz1.png" %}
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/12/30/advent-of-code/day24-graphviz2.png" %}
+{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/12/27/advent-of-code/day24-graphviz1.png" %}
+{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/12/27/advent-of-code/day24-graphviz2.png" %}
 
 Snippet from the above [mermaid](https://mermaid.live/) diagram:
 
@@ -112,18 +116,18 @@ They also contain some incredible solutions like
 
 I ended up by running the calculation and always stop to first bit that did not produce the correct value.
 I then studied the graph and tried to find correct wires to swap. Here is the first fix to correct the `z09` value:
-{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/12/30/advent-of-code/day24-fix1.png" %}
+{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/12/27/advent-of-code/day24-fix1.png" %}
 
 Here is the second fix to correct value in `z13`:
-{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/12/30/advent-of-code/day24-fix2.png" %}
+{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/12/27/advent-of-code/day24-fix2.png" %}
 
 Third fix for `z19`:
 
-{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/12/30/advent-of-code/day24-fix3.png" %}
+{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/12/27/advent-of-code/day24-fix3.png" %}
 
 And last fix for `z33`:
 
-{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/12/30/advent-of-code/day24-fix4.png" %}
+{% include imageEmbed.html width="60%" height="60%" link="/assets/posts/2024/12/27/advent-of-code/day24-fix4.png" %}
 
 #### Community visualizations
 
