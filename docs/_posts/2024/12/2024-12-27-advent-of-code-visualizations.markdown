@@ -7,7 +7,7 @@ categories: appdev
 tags: appdev advent-of-code aoc fun
 ---
 
-This year I want to continue the tradition from
+This year I wanted to continue the tradition from
 [last year]({% post_url 2023/12/2023-12-29-advent-of-code-visualizations %})
 and share my visualizations for [Advent of Code 2024](https://adventofcode.com/).
 
