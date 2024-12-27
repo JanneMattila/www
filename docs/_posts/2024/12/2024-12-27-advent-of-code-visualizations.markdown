@@ -132,7 +132,7 @@ And last fix for `z33`:
 There are lively discussions in the  community around the solutions.
 People help each other out and explain their solutions so that others can benefit from them.
 
-[https://www.reddit.com/r/adventofcode](r/adventofcode)
+[https://www.reddit.com/r/adventofcode](https://www.reddit.com/r/adventofcode)
 
 As every year, many people have built amazing visualizations around these puzzles.
 
