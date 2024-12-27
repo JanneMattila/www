@@ -11,8 +11,6 @@ This year I wanted to continue the tradition from
 [last year]({% post_url 2023/12/2023-12-29-advent-of-code-visualizations %})
 and share my visualizations for [Advent of Code 2024](https://adventofcode.com/).
 
-Here are my visualizations for Advent of Code 2024:
-
 #### Day 6
 
 Traditional map visualization:
@@ -42,7 +40,7 @@ Warehouse robot pushing boxes around:
 #### Day 23
 
 Immediately, when I saw this puzzle, I thought that I have to use graphs to understand it better.
-So, I created few illustrations using 
+So, I created a few illustrations using 
 [Mermaid](https://mermaid.live/) and
 [GraphvizOnline](https://dreampuf.github.io/GraphvizOnline)
 from the example dataset:
@@ -138,7 +136,7 @@ People help each other out and explain their solutions so that others can benefi
 
 As every year, many people have built amazing visualizations around these puzzles.
 
-I picked few examples:
+I picked a few examples:
 
 [[2024 Day 16] Optimal Path Finding](https://www.reddit.com/r/adventofcode/comments/1hfxrc1/2024_day_16_optimal_path_finding/)
 
