@@ -1,6 +1,8 @@
+{% assign width = include.imagesize | default: include.width | default: "100%"%}
+{% assign height = include.imagesize | default: include.height | default: "100%"%}
 <div class="image-section">
     <a href="{{ include.target | default: include.link }}" target="_blank" style="vertical-align: middle"><img
-            src="{{ include.link }}" width="{{ include.width | 100% }}" height="{{ include.height | 100% }}"
-            alt="{{ include.link }}" class="image-embedded-section" />
+            src="{{ include.link }}" width="{{ width }}" height="{{ height }}" alt="{{ include.link }}"
+            class="image-embedded-section" />
     </a>
 </div>
