@@ -7,6 +7,9 @@ categories: azure
 tags: appdev azure openai unity
 ---
 
+https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-config-app-trust-managed-identity?tabs=microsoft-entra-admin-center
+
+
 When I saw post
 [Effortlessly access cloud resources across Azure tenants without using secrets](https://devblogs.microsoft.com/identity/access-cloud-resources-across-tenants-without-secrets/)
 I immediately wanted to take it for a spin.
@@ -55,6 +58,10 @@ resource myApp 'Microsoft.Graph/applications@v1.0' = {
   }
 }
 ```
+
+The above uses 
+[Bicep templates for Microsoft Graph](https://learn.microsoft.com/en-us/graph/templates/overview-bicep-templates-for-graph)
+for creating app registration to Entra ID.
 
 Couple of important parts from the above:
 
@@ -223,23 +230,28 @@ Let's review documentation about [How and why applications are added to Microsof
 > is **referenced by one or more service principals in each of the directories where it operates**
 > (including the application's home directory).
 
-<!-- 
-[Grant tenant-wide admin consent to an application](https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/grant-admin-consent)
- -->
+So we need to provision the app into the _Litware_ tenant.
+Read more about 
+[Grant tenant-wide admin consent to an application](https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/grant-admin-consent).
 
+In this scenario, _Litware_ admins use
 [New-AzADServicePrincipal](https://learn.microsoft.com/en-us/powershell/module/az.resources/new-azadserviceprincipal?view=azps-13.0.0)
+to create a new service principal with existing application identifier:
 
 ```powershell
 New-AzADServicePrincipal -ApplicationId "d70...c6f"
 ```
 
+Here is the same in 
+[Azure Cloud Shell](https://learn.microsoft.com/en-us/azure/cloud-shell/overview):
+
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/new-spn.png" %}
 
-You can find this in the _Enterprise apps_:
+After the command, you can find this application in the _Enterprise apps_:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/enterprise-apps.png" %}
 
-If we now repeat the above test at the _Contoso_ side, then we wouldn't get anymore errors
+If we now repeat the above test at the _Contoso_ side, then we wouldn't get errors anymore
 and we would get correct token:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/jwt-another-tenant.png" %}
@@ -342,3 +354,5 @@ Authorization: Bearer {{entraManagementTokenResponse.response.body.access_token}
 
 TBA: Close relative to my previous post ...cross tenant access.
 You want to monitor SPNs coming from another tenant.
+
+[text](https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-block-using-azure-policy)
