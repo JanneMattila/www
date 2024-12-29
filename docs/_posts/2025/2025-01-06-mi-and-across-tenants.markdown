@@ -1,7 +1,7 @@
 ---
 layout: posts
 title: Managed Identity access across tenants
-image: /assets/posts/2025/01/06/mi-across-tenants/umi3.png
+image: /assets/posts/2025/01/06/mi-across-tenants/mi-across-tenants.png
 date: 2025-01-06 06:00:00 +0300
 categories: azure
 tags: appdev azure openai unity
@@ -256,6 +256,10 @@ Now _Contoso_ can change the code to request token for managing Azure:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/jwt-another-tenant-management.png" %}
 
+### Code
+
+Here is the full code snippet used in the above:
+
 ```powershell
 {% raw %}
 @managed_identity_client_id = {{$dotenv managed_identity_client_id}}
@@ -333,6 +337,8 @@ Content-Type: application/application/json
 Authorization: Bearer {{entraManagementTokenResponse.response.body.access_token}}
 {% endraw %}
 ```
+
+## Conclusion
 
 TBA: Close relative to my previous post ...cross tenant access.
 You want to monitor SPNs coming from another tenant.
