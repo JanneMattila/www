@@ -456,7 +456,11 @@ You can find all the above code examples in my GitHub repo:
 
 ## Conclusion
 
-TBA: Close relative to my previous post ...cross tenant access.
-You want to monitor SPNs coming from another tenant.
+This feature announced at the post
+[Effortlessly access cloud resources across Azure tenants without using secrets](https://devblogs.microsoft.com/identity/access-cloud-resources-across-tenants-without-secrets/)
+is powerful and will be most likely used in various automations and deployments across tenants.
 
-[text](https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-block-using-azure-policy)
+Of course monitoring of these federated identity credentials is natural next step.
+Maybe that's a topic for future blog post.
+
+I hope you find this useful!
