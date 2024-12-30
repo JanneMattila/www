@@ -1,8 +1,8 @@
 ---
 layout: posts
 title: Managed Identity access across tenants
-image: /assets/posts/2025/01/06/mi-across-tenants/mi-across-tenants.png
-date: 2025-01-06 06:00:00 +0300
+image: /assets/posts/2024/12/31/mi-across-tenants/mi-across-tenants.png
+date: 2024-12-31 06:00:00 +0300
 categories: azure
 tags: azure managed-identify federation
 ---
@@ -14,7 +14,7 @@ _For background information, please check out the article first._
 
 Jumping directly to my demo architecture:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/mi-across-tenants-start.png" %}
+{% include imageEmbed.html link="/assets/posts/2024/12/31/mi-across-tenants/mi-across-tenants-start.png" %}
 
 As you can see from my diagram, I have my two favorite companies _Contoso_ and _Litware_
 wanting to collaborate across their environments. 
@@ -72,23 +72,23 @@ For more information read
 
 Here is the managed identity that was created:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/umi.png" %}
+{% include imageEmbed.html link="/assets/posts/2024/12/31/mi-across-tenants/umi.png" %}
 
 Here is the app registration that got created:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/umi-app-reg-multitenant2.png" %}
+{% include imageEmbed.html link="/assets/posts/2024/12/31/mi-across-tenants/umi-app-reg-multitenant2.png" %}
 
 It's configured to be _multitenant_:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/umi-app-reg-multitenant.png" %}
+{% include imageEmbed.html link="/assets/posts/2024/12/31/mi-across-tenants/umi-app-reg-multitenant.png" %}
 
 And finally, here are the _Federated credentials_:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/umi2.png" %}
+{% include imageEmbed.html link="/assets/posts/2024/12/31/mi-across-tenants/umi2.png" %}
 
 Here are the configuration details of the _Federated credentials_:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/umi3.png" %}
+{% include imageEmbed.html link="/assets/posts/2024/12/31/mi-across-tenants/umi3.png" %}
 
 Important parts from the above _Federated credentials_:
 
@@ -97,12 +97,12 @@ Important parts from the above _Federated credentials_:
 `Subject` is set to be managed identity `02d...57d`.
 It matches the managed identity _Object (principal) ID_:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/umi-principal.png" %}
+{% include imageEmbed.html link="/assets/posts/2024/12/31/mi-across-tenants/umi-principal.png" %}
 
 To test this out, I'll just create Virtual Machine and assign that
 managed identity to it:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/umi4.png" %}
+{% include imageEmbed.html link="/assets/posts/2024/12/31/mi-across-tenants/umi4.png" %}
 
 Before I jump into code, I'll give these links for you to study for more background information
 on how managed identities and federate credentials work:
@@ -126,15 +126,15 @@ and
 extension.
 
 To connect to a remote machine, just use the _Remote-SSH_ commands:
-{% include imageEmbed.html imagesize="60%" link="/assets/posts/2025/01/06/mi-across-tenants/vscode-remote-ssh.png" %}
+{% include imageEmbed.html imagesize="60%" link="/assets/posts/2024/12/31/mi-across-tenants/vscode-remote-ssh.png" %}
 
 The bottom left corner shows that you're connected to the remote:
 
-{% include imageEmbed.html imagesize="40%" link="/assets/posts/2025/01/06/mi-across-tenants/vscode-remote-ssh2.png" %}
+{% include imageEmbed.html imagesize="40%" link="/assets/posts/2024/12/31/mi-across-tenants/vscode-remote-ssh2.png" %}
 
 Now we're ready with VS Code setup:
 
-{% include imageEmbed.html size="100%" link="/assets/posts/2025/01/06/mi-across-tenants/vscode.png" %}
+{% include imageEmbed.html size="100%" link="/assets/posts/2024/12/31/mi-across-tenants/vscode.png" %}
 
 Since I'm now directly connected to my Azure VM, I can start executing HTTP requests directly from the editor.
 
@@ -165,7 +165,7 @@ Here's the output:
 I'll copy the received access token to 
 [https://jwt.ms](https://jwt.ms/) for analysis:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/jwt-umi.png" %}
+{% include imageEmbed.html link="/assets/posts/2024/12/31/mi-across-tenants/jwt-umi.png" %}
 
 Here is the abbreviated version of the content:
 
@@ -186,7 +186,7 @@ From the above token everything else is as expected
 except `aud` (audience) with value `fb60f99c-7a34-4190-8149-302f77469936`.
 That value happens to be _AAD Token Exchange Endpoint_ application so it's synonymous to `api://AzureADTokenExchange`:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/aad-token-endpoint.png" %}
+{% include imageEmbed.html link="/assets/posts/2024/12/31/mi-across-tenants/aad-token-endpoint.png" %}
 
 Home tenant of that above app is `f8cdef31-a31e-4b4a-93e4-5f571e91255a` which is
 [Microsoft Service's Microsoft Entra tenant ID](https://learn.microsoft.com/en-us/troubleshoot/entra/entra-id/governance/verify-first-party-apps-sign-in#verify-a-first-party-microsoft-service-principal-through-powershell).
@@ -222,7 +222,7 @@ Here's the output:
 
 This is the token received from the above:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/jwt-home-tenant-storage.png" %}
+{% include imageEmbed.html link="/assets/posts/2024/12/31/mi-across-tenants/jwt-home-tenant-storage.png" %}
 
 Here is the abbreviated version of the content:
 
@@ -245,7 +245,7 @@ create _service principal_ into our home tenant since we don't plan use it for e
 access. Here is an another _Multi-Tenant Example App 2_ application which has a service principal created
 and that can be used in role assignments:
 
-{% include imageEmbed.html imagesize="80%" link="/assets/posts/2025/01/06/mi-across-tenants/app-reg2.png" %}
+{% include imageEmbed.html imagesize="80%" link="/assets/posts/2024/12/31/mi-across-tenants/app-reg2.png" %}
 
 The above setup was pretty clear and now we're able to continue the collaboration
 with _Litware_ and we will share details about our app with them.
@@ -311,19 +311,19 @@ New-AzADServicePrincipal -ApplicationId "d70...c6f"
 They can use 
 [Azure Cloud Shell](https://learn.microsoft.com/en-us/azure/cloud-shell/overview) for that:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/new-spn.png" %}
+{% include imageEmbed.html link="/assets/posts/2024/12/31/mi-across-tenants/new-spn.png" %}
 
 The application identifier used in the above (`"d70...c6f"`) matches _Application (client) ID_
 of the multi-tenant app in the _Contoso_ tenant:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/multi-tenant-client-id.png" %}
+{% include imageEmbed.html link="/assets/posts/2024/12/31/mi-across-tenants/multi-tenant-client-id.png" %}
 
 Remember that the above command works **only** if _Contoso_ has remembered
 to create their application as multitenant app.
 
 After the command has successfully finished, _Litware_ admins can find this application in their _Enterprise apps_ view:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/enterprise-apps.png" %}
+{% include imageEmbed.html link="/assets/posts/2024/12/31/mi-across-tenants/enterprise-apps.png" %}
 
 Let's now repeat the previous test again with updated application identifier `target_client_id`
 in _Contoso_ environment:
@@ -355,7 +355,7 @@ Here's the output:
 }
 ```
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/jwt-another-tenant-storage.png" %}
+{% include imageEmbed.html link="/assets/posts/2024/12/31/mi-across-tenants/jwt-another-tenant-storage.png" %}
 
 Here is the abbreviated version of the content:
 
@@ -381,7 +381,7 @@ Azure subscriptions so that _Contoso_ can do their required actions on those res
 
 E.g., `Reader` access to `NetworkWatcherRG` resource group:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/grant-reader-access.png" %}
+{% include imageEmbed.html link="/assets/posts/2024/12/31/mi-across-tenants/grant-reader-access.png" %}
 
 Now _Contoso_ can change their code to request token for managing Azure (scope `https://management.azure.com/.default`):
 
@@ -411,7 +411,7 @@ Here's the output:
 }
 ```
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/jwt-another-tenant-azure.png" %}
+{% include imageEmbed.html link="/assets/posts/2024/12/31/mi-across-tenants/jwt-another-tenant-azure.png" %}
 
 Here is the abbreviated version of the content:
 
@@ -460,7 +460,7 @@ Here's the output:
 
 Here's our updated architecture diagram:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/mi-across-tenants.png" %}
+{% include imageEmbed.html link="/assets/posts/2024/12/31/mi-across-tenants/mi-across-tenants.png" %}
 
 ### Code
 
