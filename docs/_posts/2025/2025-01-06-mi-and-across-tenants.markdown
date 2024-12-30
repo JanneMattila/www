@@ -165,8 +165,28 @@ I'll copy the received access token to
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/jwt-umi.png" %}
 
+Here is the abbreviated version of the content:
+
+```json
+{
+  "aud": "fb60f99c-7a34-4190-8149-302f77469936",
+  "iss": "https://login.microsoftonline.com/f96...0d2f/v2.0",
+  "azp": "f31...d43",
+  "azpacr": "2",
+  "idtyp": "app",
+  "oid": "02d...57d",
+  "sub": "02d...57d",
+  "tid": "f96...d2f",
+}
+```
+
 From the above token everything else is as expected
-except `aud` (audience) with value `f8cdef31-a31e-4b4a-93e4-5f571e91255a`. That value happens to be
+except `aud` (audience) with value `fb60f99c-7a34-4190-8149-302f77469936`.
+That value happens to be _AAD Token Exchange Endpoint_ application so it's synonymous to `api://AzureADTokenExchange`:
+
+{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/aad-token-endpoint.png" %}
+
+Home tenant of that above app is `f8cdef31-a31e-4b4a-93e4-5f571e91255a` which is
 [Microsoft Service's Microsoft Entra tenant ID](https://learn.microsoft.com/en-us/troubleshoot/entra/entra-id/governance/verify-first-party-apps-sign-in#verify-a-first-party-microsoft-service-principal-through-powershell).
 
 Since we happen to have this setup in our _Contoso_ tenant, 
@@ -202,11 +222,25 @@ This is the token received from the above:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/jwt-home-tenant-storage.png" %}
 
+Here is the abbreviated version of the content:
+
+```json
+{
+  "aud": "https://storage.azure.com",
+  "iss": "https://login.microsoftonline.com/f96...0d2f/v2.0",
+  "appid": "d70...c6f",
+  "appidacr": "2",
+  "idp": "https://sts.windows.net/f96...d2f/",
+  "idtyp": "app",
+  "tid": "f96...d2f"
+}
+```
+
 So ,we have now tested that we can use the federated credentials for acquiring access tokens in our _Contoso_ tenant.
 
 If you paid attention in the above _app registration_ view, then you noticed that we didn't
 create _service principal_ into our home tenant because we don't plan to use that there for granting
-access. Here is an another _Multi-Tenant Example App 2_ application which has a service principal
+access. Here is an another _Multi-Tenant Example App 2_ application which has a service principal created
 and that can be used in role assignments:
 
 {% include imageEmbed.html imagesize="80%" link="/assets/posts/2025/01/06/mi-across-tenants/app-reg2.png" %}
@@ -282,7 +316,9 @@ of the multi-tenant app in the _Contoso_ tenant:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/multi-tenant-client-id.png" %}
 
-After the command, _Litware_ admins can find this application in the _Enterprise apps_ view:
+Remember that the above commands works for the multitenant apps.
+
+After the command has successfully finished, _Litware_ admins can find this application in the _Enterprise apps_ view:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/enterprise-apps.png" %}
 
@@ -318,6 +354,22 @@ Here's the output:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/jwt-another-tenant-storage.png" %}
 
+Here is the abbreviated version of the content:
+
+```json
+{
+  "aud": "https://storage.azure.com",
+  "iss": "https://sts.windows.net/eac...691/",
+  "appid": "d70...c6f",
+  "appidacr": "2",
+  "idp": "https://sts.windows.net/eac...691/",
+  "idtyp": "app",
+  "oid": "9b5...477",
+  "sub": "9b5...477",
+  "tid": "eac...691"
+}
+```
+
 From the above token, we can see that identifiers have been changed to match
 _Litware_ tenant identifiers, and everything is as expected.
 
@@ -329,7 +381,6 @@ E.g., `Reader` access to `NetworkWatcherRG` resource group:
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/grant-reader-access.png" %}
 
 Now _Contoso_ can change their code to request token for managing Azure (scope `https://management.azure.com/.default`):
-
 
 ```powershell
 {% raw %}
@@ -358,6 +409,22 @@ Here's the output:
 ```
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/jwt-another-tenant-azure.png" %}
+
+Here is the abbreviated version of the content:
+
+```json
+{
+  "aud": "https://management.azure.com",
+  "iss": "https://sts.windows.net/eac...691/",
+  "appid": "d70...c6f",
+  "appidacr": "2",
+  "idp": "https://sts.windows.net/eac...691/",
+  "idtyp": "app",
+  "oid": "9b5...477",
+  "sub": "9b5...477",
+  "tid": "eac...691"
+}
+```
 
 That token can be used to call Azure Rest APIs:
 
