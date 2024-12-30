@@ -92,7 +92,7 @@ Here are the configuration details of the _Federated credentials_:
 
 Important parts from the above _Federated credentials_:
 
-`Issuer` is set to be tenant `f96...d2f` (Contoso). 
+`Issuer` is set to be tenant `f96...d2f` (_Contoso_). 
 
 `Subject` is set to be managed identity `02d...57d`.
 It matches the managed identity _Object (principal) ID_:
@@ -135,6 +135,8 @@ The bottom left corner shows that you're connected to the remote:
 Now we're ready with VS Code setup:
 
 {% include imageEmbed.html size="100%" link="/assets/posts/2025/01/06/mi-across-tenants/vscode.png" %}
+
+Since I'm now directly connected to my Azure VM, I can start executing HTTP requests directly from the editor.
 
 First, we'll fetch the managed identity token for resource `api://AzureADTokenExchange`:
 
@@ -189,7 +191,7 @@ That value happens to be _AAD Token Exchange Endpoint_ application so it's synon
 Home tenant of that above app is `f8cdef31-a31e-4b4a-93e4-5f571e91255a` which is
 [Microsoft Service's Microsoft Entra tenant ID](https://learn.microsoft.com/en-us/troubleshoot/entra/entra-id/governance/verify-first-party-apps-sign-in#verify-a-first-party-microsoft-service-principal-through-powershell).
 
-Since we happen to have this setup in our _Contoso_ tenant, 
+Since we happen to have this setup ready in our _Contoso_ tenant, 
 we can try to use that directly against our home tenant:
 
 ```powershell
@@ -236,10 +238,10 @@ Here is the abbreviated version of the content:
 }
 ```
 
-So ,we have now tested that we can use the federated credentials for acquiring access tokens in our _Contoso_ tenant.
+So, we have now tested that we can use the federated credentials for acquiring access tokens in our _Contoso_ tenant.
 
 If you paid attention in the above _app registration_ view, then you noticed that we didn't
-create _service principal_ into our home tenant because we don't plan to use that there for granting
+create _service principal_ into our home tenant since we don't plan use it for e.g., granting
 access. Here is an another _Multi-Tenant Example App 2_ application which has a service principal created
 and that can be used in role assignments:
 
@@ -316,13 +318,14 @@ of the multi-tenant app in the _Contoso_ tenant:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/multi-tenant-client-id.png" %}
 
-Remember that the above commands works for the multitenant apps.
+Remember that the above command works **only** if _Contoso_ has remembered
+to create their application as multitenant app.
 
-After the command has successfully finished, _Litware_ admins can find this application in the _Enterprise apps_ view:
+After the command has successfully finished, _Litware_ admins can find this application in their _Enterprise apps_ view:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/enterprise-apps.png" %}
 
-Let's now repeat the above test with updated application identifier `target_client_id`
+Let's now repeat the previous test again with updated application identifier `target_client_id`
 in _Contoso_ environment:
 
 ```powershell
@@ -432,7 +435,7 @@ That token can be used to call Azure Rest APIs:
 {% raw %}
 ### Query resource groups from Litware subscription
 GET https://management.azure.com/subscriptions/{{target_subscription_id}}/resourceGroups?api-version=2024-08-01
-Content-Type: application/application/json
+Content-Type: application/json
 Authorization: Bearer {{entraManagementTokenResponse.response.body.access_token}}
 {% endraw %}
 ```
@@ -512,7 +515,7 @@ scope=https://management.azure.com/.default
 
 ### Query resource groups from Litware subscription
 GET https://management.azure.com/subscriptions/{{target_subscription_id}}/resourceGroups?api-version=2024-08-01
-Content-Type: application/application/json
+Content-Type: application/json
 Authorization: Bearer {{entraManagementTokenResponse.response.body.access_token}}
 {% endraw %}
 ```
@@ -527,7 +530,7 @@ This feature announced at the post
 [Effortlessly access cloud resources across Azure tenants without using secrets](https://devblogs.microsoft.com/identity/access-cloud-resources-across-tenants-without-secrets/)
 is powerful and will be most likely used in various automations and deployments across tenants.
 
-Of course, monitoring these federated identity credentials is natural next step.
+Of course, monitoring and managing these federated identity credentials is natural next step.
 Maybe that's a topic for future blog posts.
 
 I hope you find this useful!
