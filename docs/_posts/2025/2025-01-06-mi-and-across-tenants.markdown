@@ -4,11 +4,8 @@ title: Managed Identity access across tenants
 image: /assets/posts/2025/01/06/mi-across-tenants/mi-across-tenants.png
 date: 2025-01-06 06:00:00 +0300
 categories: azure
-tags: appdev azure openai unity
+tags: azure managed-identify federation
 ---
-
-https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-config-app-trust-managed-identity?tabs=microsoft-entra-admin-center
-
 
 When I saw post
 [Effortlessly access cloud resources across Azure tenants without using secrets](https://devblogs.microsoft.com/identity/access-cloud-resources-across-tenants-without-secrets/)
@@ -17,7 +14,7 @@ _For background information, please checkout the article first._
 
 Jumping directly to my demo architecture:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/mi-across-tenants.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/mi-across-tenants-start.png" %}
 
 As you can see from my diagram, I have my two favorite companies _Contoso_ and _Litware_
 wanting to collaborate across their tenants. 
@@ -27,7 +24,7 @@ use the above setup for access management solution.
 
 Let's start the setup from _Contoso_ side first.
 
-### Contoso setup
+### Contoso
 
 Contoso starts their setup by creating managed identity and app registration.
 Here's the Bicep of that setup:
@@ -68,8 +65,8 @@ Couple of important parts from the above:
 `AzureADMultipleOrgs` as the `signInAudience` value means that it's multi-tenant app
 and can be used from other tenants as well.
 
-`api://AzureADTokenExchange` as the `audiences` value is used to
-establish a connection between your managed identity and Entra ID.
+`api://AzureADTokenExchange` is the value for `audiences`
+that can appear in the external token for Microsoft Entra ID.
 For more information read 
 [Overview of federated identity credentials in Microsoft Entra ID](https://learn.microsoft.com/en-us/graph/api/resources/federatedidentitycredentials-overview?view=graph-rest-1.0).
 
@@ -77,11 +74,19 @@ Here is the managed identity that got created:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/umi.png" %}
 
-Here is the app registration that got created and it's _Federated credentials_:
+Here is the app registration that got created:
+
+{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/umi-app-reg-multitenant2.png" %}
+
+It's configured to be _multitenant_:
+
+{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/umi-app-reg-multitenant.png" %}
+
+And finally, here are the _Federated credentials_:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/umi2.png" %}
 
-Here are the details of the _Federated credentials_:
+Here are the configuration details of the _Federated credentials_:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/umi3.png" %}
 
@@ -106,13 +111,19 @@ how managed identities and federate credentials work:
 
 [Access token request with a federated credential](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-client-creds-grant-flow#third-case-access-token-request-with-a-federated-credential)
 
+[Configure an application to trust a managed identity](https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-config-app-trust-managed-identity?tabs=microsoft-entra-admin-center)
+
 Okay now we're ready to execute _Raw HTTP Requests_ and study how this setup works.
-I'm using extremely powerful combo:
+_Obviously_, in real applications you would use higher-level libraries and SDKs for handling
+all of this but I want this to be as low-level as possible so that you would understand what 
+happens in those libraries.
+
+For this demo setup I'm using extremely powerful combo:
 [VS Code](https://code.visualstudio.com/),
 [Remote Development using SSH](https://code.visualstudio.com/docs/remote/ssh),
 and
 [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
-extension in my demo setup.
+extension.
 
 To connect to remote machine, just use the _Remote-SSH_ commands:
 {% include imageEmbed.html imagesize="60%" link="/assets/posts/2025/01/06/mi-across-tenants/vscode-remote-ssh.png" %}
@@ -134,6 +145,21 @@ GET http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01
 Metadata: true
 ```
 
+Here's the output:
+
+```json
+{
+  "access_token": "eyJ0...1Q",
+  "client_id": "f31...d43",
+  "expires_in": "86400",
+  "expires_on": "1735625546",
+  "ext_expires_in": "86399",
+  "not_before": "1735538846",
+  "resource": "api://AzureADTokenExchange",
+  "token_type": "Bearer"
+}
+```
+
 I'll copy the received access token to 
 [https://jwt.ms](https://jwt.ms/) for analysis:
 
@@ -144,18 +170,16 @@ except `aud` (audience) with value `f8cdef31-a31e-4b4a-93e4-5f571e91255a`. That 
 [Microsoft Service's Microsoft Entra tenant ID](https://learn.microsoft.com/en-us/troubleshoot/entra/entra-id/governance/verify-first-party-apps-sign-in#verify-a-first-party-microsoft-service-principal-through-powershell).
 
 Since we happen to have this setup in our _Contoso_ tenant, 
-we can try to use that directly against our home tenant. 
-I don't think this has use case (federated credentials in your home tenant)
-but we can certainly try that:
+we can try to use that directly against our home tenant:
 
 ```powershell
 {% raw %}
-### Home tenant
+### Get Storage token to Contoso tenant
 # @name entraTokenResponse
 POST https://login.microsoftonline.com/{{home_tenant_id}}/oauth2/v2.0/token
 Content-Type: application/x-www-form-urlencoded
 
-scope=api://AzureADTokenExchange/.default
+scope=https://storage.azure.com/.default
 &client_id={{home_client_id}}
 &client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer
 &client_assertion={{miTokenResponse.response.body.access_token}}
@@ -163,19 +187,34 @@ scope=api://AzureADTokenExchange/.default
 {% endraw %}
 ```
 
+Here's the output:
+
+```json
+{
+  "token_type": "Bearer",
+  "expires_in": 3599,
+  "ext_expires_in": 3599,
+  "access_token": "eyJ...c1g"
+}
+```
+
 This is the token received from the above:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/jwt-home-tenant.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/jwt-home-tenant-storage.png" %}
 
-TBA: Test with e.g., Management Azure. Grant RBAC and test. Explain that you can do this directly without federated setup.
+So we have now tested that we can use the federated credentials for acquiring access tokens in our _Contoso_ tenant.
 
-TBD: Again, no big surprises here. 
+If you paid attention in the above _app registration_ view, then you noticed that we didn't
+create _service principal_ into our home tenant because we don't plan to use that there for granting
+access. Here is an another _Multi-Tenant Example App 2_ application which has service principal
+and that can be used in role assignments:
 
-Now, we can communicate with _Litware_ to enable this access from their end.
+{% include imageEmbed.html imagesize="80%" link="/assets/posts/2025/01/06/mi-across-tenants/app-reg2.png" %}
 
-### Litware setup
+The above setup was pretty clear and now we're able to continue the collaboration
+with _Litware_ and we will share details about our app with them.
 
-TBA: Contoso to share these details to Litware.
+### Litware
 
 You **might at first think** that the setup starts by creating _a new App Registration_
 at the _Litware_ tenant with same values as in the above _Contoso_ setup
@@ -185,19 +224,19 @@ for _Issuer_ and _Subject_:
 
 `Subject` is set to be identifier of the managed identity in the _Contoso_ tenant: `02d...57d`.
 
-If you _would_ do the above, and you would test this at setup at the _Contoso_, then 
-you would run into issues:
-
-TBA: Litware to share tenant id and client id to Contoso.
+If you _would_ do the above, and share your newly created
+_Application (client) ID_ `target_client_id` and
+_Directory (tenant) ID_ `target_tenant_id` and 
+ask them to test at _Contoso_, then you would run into issues:
 
 ```powershell
 {% raw %}
-### To Litware tenant
-# @name entraTokenResponse
+### Get Storage token to Litware tenant
+# @name entraStorageTokenResponse
 POST https://login.microsoftonline.com/{{target_tenant_id}}/oauth2/v2.0/token
 Content-Type: application/x-www-form-urlencoded
 
-scope=api://AzureADTokenExchange/.default
+scope=https://storage.azure.com/.default
 &client_id={{target_client_id}}
 &client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer
 &client_assertion={{miTokenResponse.response.body.access_token}}
@@ -205,23 +244,14 @@ scope=api://AzureADTokenExchange/.default
 {% endraw %}
 ```
 
-TBD: Scope.
-
-- You have manually created new app reg to target tenant:
-
-> **AADSTS700213**: No matching federated identity record found for
-> presented assertion subject '02d...57d'.
-> Check your federated identity credential Subject,
-> Audience and Issuer against the presented assertion.
-
-- You update the subject to match '02d...57d'
+The request would fail with following error message:
 
 > **AADSTS700236**: Entra ID tokens issued by issuer
 > 'https://login.microsoftonline.com/f96...d2f/v2.0'
 > may not be used for federated identity credential
 > flows for applications or managed identities registered in this tenant. 
 
-Okay adding this via _a new app registration_ is not the way to go.
+Connecting this federation via _a new app registration_ is not the way to go.
 Let's review documentation about [How and why applications are added to Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity-platform/how-applications-are-added):
 
 > A reference back to an application object through the application ID property<br/>
@@ -230,7 +260,7 @@ Let's review documentation about [How and why applications are added to Microsof
 > is **referenced by one or more service principals in each of the directories where it operates**
 > (including the application's home directory).
 
-So we need to provision the app into the _Litware_ tenant.
+So we need to **provision the app into the _Litware_ tenant**.
 Read more about 
 [Grant tenant-wide admin consent to an application](https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/grant-admin-consent).
 
@@ -242,40 +272,132 @@ to create a new service principal with existing application identifier:
 New-AzADServicePrincipal -ApplicationId "d70...c6f"
 ```
 
-Here is the same in 
-[Azure Cloud Shell](https://learn.microsoft.com/en-us/azure/cloud-shell/overview):
+They can use 
+[Azure Cloud Shell](https://learn.microsoft.com/en-us/azure/cloud-shell/overview) for that:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/new-spn.png" %}
 
-After the command, you can find this application in the _Enterprise apps_:
+The application identifier used in the above (`"d70...c6f"`) matches _Application (client) ID_
+of the multi-tenant app in the _Contoso_ tenant:
+
+{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/multi-tenant-client-id.png" %}
+
+After the command, _Litware_ admins can find this application in the _Enterprise apps_ view:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/enterprise-apps.png" %}
 
-If we now repeat the above test at the _Contoso_ side, then we wouldn't get errors anymore
-and we would get correct token:
+Let's now repeat the above test with updated application identifier `target_client_id`
+in _Contoso_ environment:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/jwt-another-tenant.png" %}
+```powershell
+{% raw %}
+### Get Storage token to Litware tenant
+# @name entraStorageTokenResponse
+POST https://login.microsoftonline.com/{{target_tenant_id}}/oauth2/v2.0/token
+Content-Type: application/x-www-form-urlencoded
+
+scope=https://storage.azure.com/.default
+&client_id={{target_client_id}}
+&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer
+&client_assertion={{miTokenResponse.response.body.access_token}}
+&grant_type=client_credentials
+{% endraw %}
+```
+
+Here's the output:
+
+```json
+
+{
+  "token_type": "Bearer",
+  "expires_in": 3598,
+  "ext_expires_in": 3598,
+  "access_token": "eyJ...WfQ"
+}
+```
+
+{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/jwt-another-tenant-storage.png" %}
 
 From the above token, we can see that identifiers have been changed to match
-_Litware_ tenant.
+_Litware_ tenant identifiers and everything is as expected.
 
-_Litware_ admins can now grant access to that application. 
+_Litware_ admins can now proceed to grant required accesses to that application to their
+Azure subscriptions so that _Contoso_ can do their required actions on those resources.
+
 E.g., `Reader` access to `NetworkWatcherRG` resource group:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/grant-reader-access.png" %}
 
-Now _Contoso_ can change the code to request token for managing Azure:
+Now _Contoso_ can change their code to request token for managing Azure (scope `https://management.azure.com/.default`):
 
-{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/jwt-another-tenant-management.png" %}
-
-### Code
-
-Here is the full code snippet used in the above:
 
 ```powershell
 {% raw %}
-@managed_identity_client_id = {{$dotenv managed_identity_client_id}}
+### Get ARM token to Litware tenant
+# @name entraManagementTokenResponse
+POST https://login.microsoftonline.com/{{target_tenant_id}}/oauth2/v2.0/token
+Content-Type: application/x-www-form-urlencoded
 
+scope=https://management.azure.com/.default
+&client_id={{target_client_id}}
+&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer
+&client_assertion={{miTokenResponse.response.body.access_token}}
+&grant_type=client_credentials
+{% endraw %}
+```
+
+Here's the output:
+
+```json
+{
+  "token_type": "Bearer",
+  "expires_in": 3598,
+  "ext_expires_in": 3598,
+  "access_token": "eyJ...WfQ"
+}
+```
+
+{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/jwt-another-tenant-azure.png" %}
+
+That token can be used to call Azure Rest APIs:
+
+```powershell
+{% raw %}
+### Query resource groups from Litware subscription
+GET https://management.azure.com/subscriptions/{{target_subscription_id}}/resourceGroups?api-version=2024-08-01
+Content-Type: application/application/json
+Authorization: Bearer {{entraManagementTokenResponse.response.body.access_token}}
+{% endraw %}
+```
+
+Here's the output:
+
+```json
+{
+  "value": [
+    {
+      "id": "/subscriptions/04d...824/resourceGroups/NetworkWatcherRG",
+      "name": "NetworkWatcherRG",
+      "type": "Microsoft.Resources/resourceGroups",
+      "location": "northeurope",
+      "properties": {
+        "provisioningState": "Succeeded"
+      }
+    }
+  ]
+}
+```
+
+Here's our updated architecture diagram:
+
+{% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/mi-across-tenants.png" %}
+
+### Code
+
+Here is the full code snippet used in the above examples:
+
+```powershell
+{% raw %}
 @home_tenant_id = {{$dotenv home_tenant_id}}
 @home_client_id = {{$dotenv home_client_id}}
 
@@ -288,18 +410,7 @@ Here is the full code snippet used in the above:
 GET http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=api://AzureADTokenExchange
 Metadata: true
 
-### Home tenant ✅
-# @name entraTokenResponse
-POST https://login.microsoftonline.com/{{home_tenant_id}}/oauth2/v2.0/token
-Content-Type: application/x-www-form-urlencoded
-
-scope=api://AzureADTokenExchange/.default
-&client_id={{home_client_id}}
-&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer
-&client_assertion={{miTokenResponse.response.body.access_token}}
-&grant_type=client_credentials
-
-### Home tenant to specific service ✅
+### Get Storage token to Contoso tenant
 # @name entraTokenResponse
 POST https://login.microsoftonline.com/{{home_tenant_id}}/oauth2/v2.0/token
 Content-Type: application/x-www-form-urlencoded
@@ -310,18 +421,7 @@ scope=https://storage.azure.com/.default
 &client_assertion={{miTokenResponse.response.body.access_token}}
 &grant_type=client_credentials
 
-### To another tenant (after admin adding SPN) ✅
-# @name entraTokenResponse
-POST https://login.microsoftonline.com/{{target_tenant_id}}/oauth2/v2.0/token
-Content-Type: application/x-www-form-urlencoded
-
-scope=api://AzureADTokenExchange/.default
-&client_id={{target_client_id}}
-&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer
-&client_assertion={{miTokenResponse.response.body.access_token}}
-&grant_type=client_credentials
-
-### To another tenant to specific service ✅
+### Get Storage token to Litware tenant
 # @name entraStorageTokenResponse
 POST https://login.microsoftonline.com/{{target_tenant_id}}/oauth2/v2.0/token
 Content-Type: application/x-www-form-urlencoded
@@ -332,7 +432,7 @@ scope=https://storage.azure.com/.default
 &client_assertion={{miTokenResponse.response.body.access_token}}
 &grant_type=client_credentials
 
-### To another tenant to specific service ✅
+### Get ARM token to Litware tenant
 # @name entraManagementTokenResponse
 POST https://login.microsoftonline.com/{{target_tenant_id}}/oauth2/v2.0/token
 Content-Type: application/x-www-form-urlencoded
@@ -343,12 +443,16 @@ scope=https://management.azure.com/.default
 &client_assertion={{miTokenResponse.response.body.access_token}}
 &grant_type=client_credentials
 
-### Query resource groups ✅
+### Query resource groups from Litware subscription
 GET https://management.azure.com/subscriptions/{{target_subscription_id}}/resourceGroups?api-version=2024-08-01
 Content-Type: application/application/json
 Authorization: Bearer {{entraManagementTokenResponse.response.body.access_token}}
 {% endraw %}
 ```
+
+You can find all the above code examples in my GitHub repo:
+
+{% include githubEmbed.html text="JanneMattila/bicep-demos/graph" link="JanneMattila/bicep-demos/tree/master/graph" %}
 
 ## Conclusion
 
