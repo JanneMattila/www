@@ -10,16 +10,16 @@ tags: azure managed-identify federation
 When I saw post
 [Effortlessly access cloud resources across Azure tenants without using secrets](https://devblogs.microsoft.com/identity/access-cloud-resources-across-tenants-without-secrets/)
 I immediately wanted to take it for a spin.
-_For background information, please checkout the article first._
+_For background information, please check out the article first._
 
 Jumping directly to my demo architecture:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/mi-across-tenants-start.png" %}
 
 As you can see from my diagram, I have my two favorite companies _Contoso_ and _Litware_
-wanting to collaborate across their tenants. 
-_Contoso_ provides some services to _Litware_ and needs Azure access to do that.
-Obviously, _Litware_ wants to control the access and they've now agreed to 
+wanting to collaborate across their environments. 
+_Contoso_ provides some services for _Litware_ and needs Azure access to do that.
+Obviously, _Litware_ wants to control that access and they've now agreed to 
 use the above setup for access management solution.
 
 Let's start the setup from _Contoso_ side first.
@@ -63,14 +63,14 @@ for creating app registration to Entra ID.
 Couple of important parts from the above:
 
 `AzureADMultipleOrgs` as the `signInAudience` value means that it's multi-tenant app
-and can be used from other tenants as well.
+and can be used by other tenants as well.
 
 `api://AzureADTokenExchange` is the value for `audiences`
 that can appear in the external token for Microsoft Entra ID.
 For more information read 
 [Overview of federated identity credentials in Microsoft Entra ID](https://learn.microsoft.com/en-us/graph/api/resources/federatedidentitycredentials-overview?view=graph-rest-1.0).
 
-Here is the managed identity that got created:
+Here is the managed identity that was created:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/umi.png" %}
 
@@ -99,13 +99,13 @@ It matches the managed identity _Object (principal) ID_:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/umi-principal.png" %}
 
-In order to test this out, I'll just create Virtual Machine and assign that
+To test this out, I'll just create Virtual Machine and assign that
 managed identity to it:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/umi4.png" %}
 
 Before I jump into code, I'll give these links for you to study for more background information
-how managed identities and federate credentials work:
+on how managed identities and federate credentials work:
 
 [How managed identities for Azure resources work with Azure virtual machines](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/how-managed-identities-work-vm)
 
@@ -113,9 +113,9 @@ how managed identities and federate credentials work:
 
 [Configure an application to trust a managed identity](https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-config-app-trust-managed-identity?tabs=microsoft-entra-admin-center)
 
-Okay now we're ready to execute _Raw HTTP Requests_ and study how this setup works.
+Okay, now we're ready to execute _Raw HTTP Requests_ and study how this setup works.
 _Obviously_, in real applications you would use higher-level libraries and SDKs for handling
-all of this but I want this to be as low-level as possible so that you would understand what 
+all of this, but I want this to be as low-level as possible so that you would understand what 
 happens in those libraries.
 
 For this demo setup I'm using extremely powerful combo:
@@ -125,7 +125,7 @@ and
 [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
 extension.
 
-To connect to remote machine, just use the _Remote-SSH_ commands:
+To connect to a remote machine, just use the _Remote-SSH_ commands:
 {% include imageEmbed.html imagesize="60%" link="/assets/posts/2025/01/06/mi-across-tenants/vscode-remote-ssh.png" %}
 
 The bottom left corner shows that you're connected to the remote:
@@ -202,11 +202,11 @@ This is the token received from the above:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/jwt-home-tenant-storage.png" %}
 
-So we have now tested that we can use the federated credentials for acquiring access tokens in our _Contoso_ tenant.
+So ,we have now tested that we can use the federated credentials for acquiring access tokens in our _Contoso_ tenant.
 
 If you paid attention in the above _app registration_ view, then you noticed that we didn't
 create _service principal_ into our home tenant because we don't plan to use that there for granting
-access. Here is an another _Multi-Tenant Example App 2_ application which has service principal
+access. Here is an another _Multi-Tenant Example App 2_ application which has a service principal
 and that can be used in role assignments:
 
 {% include imageEmbed.html imagesize="80%" link="/assets/posts/2025/01/06/mi-across-tenants/app-reg2.png" %}
@@ -244,7 +244,7 @@ scope=https://storage.azure.com/.default
 {% endraw %}
 ```
 
-The request would fail with following error message:
+The request would fail with the following error message:
 
 > **AADSTS700236**: Entra ID tokens issued by issuer
 > 'https://login.microsoftonline.com/f96...d2f/v2.0'
@@ -260,7 +260,7 @@ Let's review documentation about [How and why applications are added to Microsof
 > is **referenced by one or more service principals in each of the directories where it operates**
 > (including the application's home directory).
 
-So we need to **provision the app into the _Litware_ tenant**.
+So, we need to **provision the app into the _Litware_ tenant**.
 Read more about 
 [Grant tenant-wide admin consent to an application](https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/grant-admin-consent).
 
@@ -319,9 +319,9 @@ Here's the output:
 {% include imageEmbed.html link="/assets/posts/2025/01/06/mi-across-tenants/jwt-another-tenant-storage.png" %}
 
 From the above token, we can see that identifiers have been changed to match
-_Litware_ tenant identifiers and everything is as expected.
+_Litware_ tenant identifiers, and everything is as expected.
 
-_Litware_ admins can now proceed to grant required accesses to that application to their
+_Litware_ admins can now proceed to grant required access to that application to their
 Azure subscriptions so that _Contoso_ can do their required actions on those resources.
 
 E.g., `Reader` access to `NetworkWatcherRG` resource group:
@@ -460,7 +460,7 @@ This feature announced at the post
 [Effortlessly access cloud resources across Azure tenants without using secrets](https://devblogs.microsoft.com/identity/access-cloud-resources-across-tenants-without-secrets/)
 is powerful and will be most likely used in various automations and deployments across tenants.
 
-Of course monitoring of these federated identity credentials is natural next step.
-Maybe that's a topic for future blog post.
+Of course, monitoring these federated identity credentials is natural next step.
+Maybe that's a topic for future blog posts.
 
 I hope you find this useful!
