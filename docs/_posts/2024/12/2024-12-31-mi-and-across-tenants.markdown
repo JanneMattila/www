@@ -458,7 +458,9 @@ Here's the output:
 }
 ```
 
-Here's our updated architecture diagram:
+**Hurray!** We have now verified that _Contoso_ can now access _Litware_ resources without sharing any secrets.
+
+Here's our updated architecture diagram to illustrate the above:
 
 {% include imageEmbed.html link="/assets/posts/2024/12/31/mi-across-tenants/mi-across-tenants.png" %}
 
