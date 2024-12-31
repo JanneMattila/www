@@ -27,7 +27,7 @@ Let's start the setup from _Contoso_ side first.
 ### Contoso
 
 Contoso starts their setup by creating managed identity and app registration.
-Here's the Bicep of that setup:
+Here's the Bicep of that setup (this is slightly modified version of the article's example):
 
 ```powershell
 extension microsoftGraphV1
@@ -184,15 +184,14 @@ Here is the abbreviated version of the content:
 
 From the above token everything else is as expected
 except `aud` (audience) with value `fb60f99c-7a34-4190-8149-302f77469936`.
-That value happens to be _AAD Token Exchange Endpoint_ application so it's synonymous to `api://AzureADTokenExchange`:
+That value happens to be _AAD Token Exchange Endpoint_ application so it's synonymous to `api://AzureADTokenExchange`
+(that application, _as many other applications_, is from [Microsoft Service's Microsoft Entra tenant ID](https://learn.microsoft.com/en-us/troubleshoot/entra/entra-id/governance/verify-first-party-apps-sign-in#verify-a-first-party-microsoft-service-principal-through-powershell)):
 
 {% include imageEmbed.html link="/assets/posts/2024/12/31/mi-across-tenants/aad-token-endpoint.png" %}
 
-Home tenant of that above app is `f8cdef31-a31e-4b4a-93e4-5f571e91255a` which is
-[Microsoft Service's Microsoft Entra tenant ID](https://learn.microsoft.com/en-us/troubleshoot/entra/entra-id/governance/verify-first-party-apps-sign-in#verify-a-first-party-microsoft-service-principal-through-powershell).
-
 Since we happen to have this setup ready in our _Contoso_ tenant, 
-we can try to use that directly against our home tenant:
+we can try to use that directly against our home tenant.
+Let's try to get a token for `https://storage.azure.com/.default` scope:
 
 ```powershell
 {% raw %}
@@ -263,7 +262,7 @@ for _Issuer_ and _Subject_:
 If you _would_ do the above, and share your newly created
 _Application (client) ID_ `target_client_id` and
 _Directory (tenant) ID_ `target_tenant_id` and 
-ask them to test at _Contoso_, then you would run into issues:
+ask them to test at _Contoso_, then you would run into error:
 
 ```powershell
 {% raw %}
@@ -374,7 +373,7 @@ Here is the abbreviated version of the content:
 ```
 
 From the above token, we can see that identifiers have been changed to match
-_Litware_ tenant identifiers, and everything is as expected.
+_Litware_ environment specific identifiers, and everything is as expected.
 
 _Litware_ admins can now proceed to grant required access to that application to their
 Azure subscriptions so that _Contoso_ can do their required actions on those resources.
@@ -429,7 +428,7 @@ Here is the abbreviated version of the content:
 }
 ```
 
-That token can be used to call Azure Rest APIs:
+That token can be used to call Azure Rest APIs to e.g., list resource groups:
 
 ```powershell
 {% raw %}
@@ -458,7 +457,7 @@ Here's the output:
 }
 ```
 
-**Hurray!** We have now verified that _Contoso_ can now access _Litware_ resources without sharing any secrets.
+**Hurray!** We have now verified that _Contoso_ can access _Litware_ resources without sharing any secrets.
 
 Here's our updated architecture diagram to illustrate the above:
 
@@ -528,7 +527,7 @@ You can find all the above code examples in my GitHub repo:
 
 ## Conclusion
 
-This feature announced at the post
+This new capability announced at the post
 [Effortlessly access cloud resources across Azure tenants without using secrets](https://devblogs.microsoft.com/identity/access-cloud-resources-across-tenants-without-secrets/)
 is powerful and will be most likely used in various automations and deployments across tenants.
 

@@ -2,8 +2,6 @@
 
 ## Upcoming posts
 
-- Advent of Code day 2 in Logic App
-
 - https://learn.microsoft.com/en-us/azure/application-gateway/configuration-http-settings#connection-draining
 
 - Connection Monitor
