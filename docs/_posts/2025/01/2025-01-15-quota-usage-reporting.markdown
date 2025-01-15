@@ -60,7 +60,7 @@ Here is an example output from the above query:
 
 {% include imageEmbed.html link="/assets/posts/2025/01/15/quota-usage-reporting/results.png" %}
 
-This can exported to a CSV file directly from the view.
+This can be exported to a CSV file directly from the view.
 Alternatively, you can
 [Run queries with the Azure Resource Graph Power BI connector](https://learn.microsoft.com/en-us/azure/governance/resource-graph/power-bi-connector-quickstart?tabs=power-bi-desktop).
 
