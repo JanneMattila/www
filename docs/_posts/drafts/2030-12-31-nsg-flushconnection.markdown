@@ -20,8 +20,8 @@ However, there is a new property `flushConnection` in
   - https://learn.microsoft.com/en-us/dotnet/api/microsoft.azure.management.network.models.networksecuritygroup.flushconnection?view=azure-dotnet
 -->
 
-> flushConnection
-> When enabled, flows created from Network Security Group connections will be re-evaluated when rules are updates.
+> **flushConnection**<br/>
+> When enabled, **flows created from Network Security Group connections will be re-evaluated when rules are updates**.
 > Initial enablement will trigger re-evaluation.
 
 ```powershell

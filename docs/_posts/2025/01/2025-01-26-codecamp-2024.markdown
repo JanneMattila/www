@@ -1,8 +1,8 @@
 ---
 layout: posts
 title: Codecamp 2025 summary
-image: /assets/posts/2025/01/14/codecamp-2025/dog-painting.png
-date: 2025-01-19 06:00:00 +0300
+image: /assets/posts/2025/01/26/codecamp-2025/dog-painting.png
+date: 2025-01-26 06:00:00 +0300
 categories: appdev
 tags: appdev azure openai unity
 ---
