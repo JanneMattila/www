@@ -1,5 +1,5 @@
 ---
-title: NSG FlushConnection
+title: Network security groups and Flush Connection property
 image: /assets/share.png
 date: 2030-12-31 06:00:00 +0300
 layout: posts
@@ -24,22 +24,14 @@ However, there is a new property `flushConnection` in
 > When enabled, **flows created from Network Security Group connections will be re-evaluated when rules are updates**.
 > Initial enablement will trigger re-evaluation.
 
-```powershell
-New-AzResourceGroupDeployment: C:\GitHub\JanneMattila\bicep-demos\nsg\deploy.ps1:38:11
-Line |
-  38 |  $result = New-AzResourceGroupDeployment `
-     |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     | 11.00.00 - The deployment 'Local-2024-06-25-10-59-44' failed with error(s). Showing 1 out of 1 error(s). Status Message: Network Security Group Connection Flushing is 
-     | not enabled yet for uksouth region. Please set networkSecurityGroup.FlushConnection property to false. (Code: FlushingNetworkSecurityGroupConnectionIsNotEnabled)      
-     | CorrelationId: 674b9a1f-7516-44d0-81c2-db7666973e76
-```
+To enable this functionality, you need to set `flushConnection` to `true`:
 
 ```bicep
 resource nsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
   name: nsgName
   location: location
   properties: {
-    flushConnection: true
+    flushConnection: true // <- This is the new property
     securityRules: [
       {
         name: 'HttpInbound'
@@ -59,3 +51,14 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
 }
 ```
 
+Let's see how it looks in practice. I'll repeat the same example as in the previous post but with the new property.
+
+```powershell
+New-AzResourceGroupDeployment: C:\GitHub\JanneMattila\bicep-demos\nsg\deploy.ps1:38:11
+Line |
+  38 |  $result = New-AzResourceGroupDeployment `
+     |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | 11.00.00 - The deployment 'Local-2024-06-25-10-59-44' failed with error(s). Showing 1 out of 1 error(s). Status Message: Network Security Group Connection Flushing is 
+     | not enabled yet for uksouth region. Please set networkSecurityGroup.FlushConnection property to false. (Code: FlushingNetworkSecurityGroupConnectionIsNotEnabled)      
+     | CorrelationId: 674b9a1f-7516-44d0-81c2-db7666973e76
+```

@@ -7,102 +7,19 @@ categories: appdev
 tags: appdev azure openai unity
 ---
 
-This post continues the series of  I wanted to continue the tradition from
-[last year]({% post_url 2024/01/2024-01-14-codecamp-2024 %})
-and share my visualizations for [Advent of Code 2024](https://adventofcode.com/).
+This post continues the series of posting summary from our
+Codecamp. See my post from [last year]({% post_url 2024/01/2024-01-14-codecamp-2024 %})
+to better understand the context.
 
-We have a habit of starting a new year with a Codecamp
-with my friend [Jarmo Hämäläinen](https://www.linkedin.com/in/jarmo-h%C3%A4m%C3%A4l%C3%A4inen-821337a/).
-This year was no exception. Intensive coding from Thursday to Sunday.
-We used over 50 hours per person making it a total of over 100 hours of coding
-in just a few days.
+Another year, another intensive coding session from Thursday to Sunday.
+Fun, learning, failing, and succeeding. That's what Codecamp is all about.
 
-As always, we had a lot of fun and learned a lot of new things.
-During the Codecamp you also always have struggles and problems
-but that's part of the learning process.
-It is sometimes hard to explain all the things we did but let me try.
+This year we continued expanding Jarmo's existing [Unity](https://unity.com) 
+functionality and dynamic crafting of the world using voice commands.
 
-This year we expanded Jarmo's existing [Unity](https://unity.com) examples 
-with different AI capabilities from [Azure AI services](https://learn.microsoft.com/en-us/azure/ai-services/) portfolio. 
+<!-- 
 You can find more existing videos
 from [Jarmo's LinkedIn posts](https://www.linkedin.com/in/jarmo-h%C3%A4m%C3%A4l%C3%A4inen-821337a/recent-activity/all/).
-
-Our _Avatar City_ is a virtual world where you can walk around
-and talk with different AI enhanced avatars.
-Avatars themselves are also walking around freely in the world.
-You experience it with VR headset and hand controllers to make it more immersive.
-
-Experience is **not scripted** or **pre-recorded**, 
-so you can talk with them about anything you want.
-
-We're using Finnish language because _finally_ AI has reached the level
-that we don't have to rely on English language anymore.
-
-Our world has a lot of different characters, but let me introduce a few of them to you:
-
-_Noora_ is an artist. She sells her art.
-
-_Selma_ sells various antique items. She tells you about the items and their history.
-
-_Harri_ is a busy business guy, and he is pretty grumpy.
-
-_Talyn_ is from Mars, and he is quite an interesting character!
-
----
-
-Technically our solution can be illustrated with the following diagrams from _client_ and _server_ perspectives.
-
-Here is client-side flow:
-
-{% include mermaid.html text="
-flowchart TD
-    A[Client] --> |Walk in the world<br/>Find Avatar you want to talk with<br/>Start talking| B(Avatar)
-    B --> |Speech audio is collected<br/><br/>After pause in speaking| C(Audio clip)
-    C --> |Send audio to server| D(\"Server<br/>(see below flow)\")
-    D --> |Server responds| E{Contains<br/>image?}
-    E --> |No| G(Play response audio)
-    E --> |Yes| F(Show image)
-    F --> G
-    G --> |Continue| B
-" %}
-
-Here is server-side flow:
-
-{% include mermaid.html text="
-flowchart TD
-    A[Server receives request] --> |Use avatars parameters| B(Convert speech to text)
-    B --> C{Image<br/>required?}
-    C -->|Yes| D(Generate image)
-    C --> |No|E(Generate response text)
-    D --> E
-    E --> F(Convert text to speech)
-    F --> End(Return response to client)
-" %}
-
-Here are a few images and links to videos:
-
-Talking with _Noora_:
-
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/01/14/codecamp-2024/dog-painting.png" %}
-
-Talking with _Talyn_:
-
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/01/14/codecamp-2024/talyn.png" %}
-
-Talking with _Selma_:
-
-{% include imageEmbed.html width="100%" height="100%" link="/assets/posts/2024/01/14/codecamp-2024/art.png" %}
-
-Videos have been recorded from VR headset and you can see them from [Jarmo's YouTube channel](https://www.youtube.com/@Jarmo_Hamalainen). 
-Here's the summary video:
-
-{% include youtubeEmbed.html id="wW5rwugJ5ic" %}
-
-You can follow him in the [LinkedIn](https://www.linkedin.com/in/jarmo-h%C3%A4m%C3%A4l%C3%A4inen-821337a/)
-to get notified when he posts new videos.
-
----
-
-We had a lot of fun at our Codecamp.
+-->
 
 I hope you enjoyed reading about our experience!

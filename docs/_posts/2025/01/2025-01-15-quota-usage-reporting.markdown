@@ -1,8 +1,8 @@
 ---
 layout: posts
 title:  Quota usage reporting with Azure Resource Graph
-image: /assets/posts/2025/01/16/quota-usage-reporting/results.png
-date: 2025-01-16 06:00:00 +0300
+image: /assets/posts/2025/01/15/quota-usage-reporting/results.png
+date: 2025-01-15 06:00:00 +0300
 categories: azure
 tags: azure resource-graph
 ---
@@ -11,13 +11,13 @@ You can find your
 [Quota](https://learn.microsoft.com/en-us/azure/quotas/quotas-overview)
 usage by opening **Quotas > My quotas** in the Azure portal:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/16/quota-usage-reporting/myquotas.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/01/15/quota-usage-reporting/myquotas.png" %}
 
 It allows you to see if you're approaching your quota limits and allows you to
 [act](https://learn.microsoft.com/en-us/azure/quotas/quickstart-increase-quota-portal)
 before you hit the limit:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/16/quota-usage-reporting/myquotas2.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/01/15/quota-usage-reporting/myquotas2.png" %}
 
 You can also
 [create alerts for quotas](https://learn.microsoft.com/en-us/azure/quotas/how-to-guide-monitoring-alerting).
@@ -56,12 +56,23 @@ expands quota values into separate records.
 | where usagePercent > 80
 ```
 
-Here is an example output from the query:
+Here is an example output from the above query:
 
-{% include imageEmbed.html link="/assets/posts/2025/01/16/quota-usage-reporting/results.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/01/15/quota-usage-reporting/results.png" %}
 
-This can be then exported to a CSV file directly from the view.
+This can exported to a CSV file directly from the view.
 Alternatively, you can
 [Run queries with the Azure Resource Graph Power BI connector](https://learn.microsoft.com/en-us/azure/governance/resource-graph/power-bi-connector-quickstart?tabs=power-bi-desktop).
+
+_Of course_, you can use Azure PowerShell and the
+[Search-AzGraph](https://learn.microsoft.com/en-us/powershell/module/az.resourcegraph/search-azgraph?view=azps-13.0.0)
+cmdlet to get the same information and implement your own custom processing.
+See some examples about that in my repository
+e.g., 
+[find-subscriptions-without-policy.ps1](https://github.com/JanneMattila/some-questions-and-some-answers/blob/master/q%26a/find-subscriptions-without-policy.ps1),
+[scan-private-endpoint-connections.ps1](https://github.com/JanneMattila/some-questions-and-some-answers/blob/master/q%26a/scan-private-endpoint-connections.ps1),
+or search for _Search-AzGraph_ in the repository:
+
+{% include githubEmbed.html text="JanneMattila/some-questions-and-some-answers" link="search?q=repo%3AJanneMattila%2Fsome-questions-and-some-answers%20Search-AzGraph&type=code" %}
 
 I hope you find this useful!
