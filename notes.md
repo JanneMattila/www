@@ -6,6 +6,8 @@
 
 - Connection Monitor
 
+- [Testing your Teams chatbot with DemoType](https://www.cloudappie.nl/testing-teams-chatbot-demotype/)
+
 - Managed disks and:
   You might notice traffic towards "md-*.blob.storage.azure.net" endpoint. This endpoint is used for internal components of Azure Managed Disks. Blocking access to this endpoint from your firewall should not cause any issues.
 
