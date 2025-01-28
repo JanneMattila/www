@@ -5,65 +5,12 @@ image: /assets/posts/2025/01/26/codecamp-2025/specs.jpg
 date: 2025-01-26 06:00:00 +0300
 categories: appdev
 tags: appdev azure openai unity
+hidden: "true"
 ---
 
-This post continues the series of posting summary from our
-Codecamp. See my post from [last year]({% post_url 2024/01/2024-01-14-codecamp-2024 %})
-to better understand the context.
+Redirecting to updated [post]({% post_url 2025/01/2025-01-26-codecamp-2025 %}) url...
 
-Another year, another **intensive 50+ hour** coding session from Thursday to Sunday.
-Fun, learning, failing, and **finding completely new innovative ideas** on the fly. That's what Codecamp is all about.
-
-This year we continued expanding Jarmo's existing [Unity](https://unity.com) 
-functionality and dynamic crafting of the world using voice commands.
-
-Jarmo posted to LinkedIn when we 
-[started](https://www.linkedin.com/feed/update/urn:li:activity:7288182256764919808/)
-the Codecamp.
-
-You can find **summary video** on
-[Jarmo's LinkedIn post](https://www.linkedin.com/posts/jarmo-h%C3%A4m%C3%A4l%C3%A4inen-821337a_unity-unity3d-activity-7289245348051505152-Z92r).
-
----
-
-Here's my hand-drawn specs and actual model that got created side by side: 
-
-{% include imageEmbed.html link="/assets/posts/2025/01/26/codecamp-2025/specs.jpg" %}
-
-Together with Jarmo, we measured the physical world and then I drew the specs on paper. 
-Then I started walking around our virtual world and used voice commands to generate items
-such as walls, doors, and windows.
-To create a wall next to existing wall, I could just tap the wall and say something like this:
-
-{% include imageEmbed.html link="/assets/posts/2025/01/26/codecamp-2025/dialog1.jpg" %}
-
-```
-wall 300 to east
-```
-
-The above command would create a wall with length of 300 centimeters towards the east of the wall I tapped.
-To add a door to the wall, I could say:
-
-{% include imageEmbed.html link="/assets/posts/2025/01/26/codecamp-2025/dialog2.jpg" %}
-
-```
-door 100
-```
-
-The above command would create a door with of 100 centimeters to the location I just tapped.
-
-Here is a picture of one room:
-
-{% include imageEmbed.html link="/assets/posts/2025/01/26/codecamp-2025/kitchen.jpg" %}
-
-Late in the Saturday evening, Jarmo came up with an idea to store these voice commands so that we can later
-re-play them to generate the same world again. Before this we just _normal way of storing the world_.
-Now creating the world is readable and understandable by just reading the commands.
-If you want to edit that definition, you can just edit the commands 
-(e.g., `door 100` to `door 80`) and re-run them.
-
----
-
-As always, we had a lot of fun at our Codecamp.
-
-I hope you enjoyed reading about our experience!
+{%- capture _page_url -%}
+  {% post_url 2025/01/2025-01-26-codecamp-2025 %}
+{%- endcapture -%}
+{% include redirect.html link=_page_url %}
