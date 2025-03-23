@@ -1,7 +1,7 @@
 ---
 title: Load Balancer
 image: /assets/posts/2024/11/18/logic-app-and-easyauth/authentication1.png
-date: 2020-12-31 06:00:00 +0300
+date: 2030-12-31 06:00:00 +0300
 layout: posts
 categories: azure
 tags: azure networking load-balancer

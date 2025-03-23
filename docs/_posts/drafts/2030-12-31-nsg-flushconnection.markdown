@@ -15,9 +15,11 @@ However, there is a new property `flushConnection` in
 [Network Security Group](https://learn.microsoft.com/en-us/azure/templates/microsoft.network/networksecuritygroups?pivots=deployment-language-bicep):
 <!--
 - NSG Flush Connection
-  - https://learn.microsoft.com/en-us/powershell/module/az.network/new-aznetworksecuritygroup?view=azps-12.0.0
+  - https://learn.microsoft.com/en-us/powershell/module/az.network/new-aznetworksecuritygroup?view=azps-13.3.0
   - https://learn.microsoft.com/en-us/azure/templates/microsoft.network/networksecuritygroups?pivots=deployment-language-bicep
   - https://learn.microsoft.com/en-us/dotnet/api/microsoft.azure.management.network.models.networksecuritygroup.flushconnection?view=azure-dotnet
+
+https://learn.microsoft.com/en-us/dotnet/api/microsoft.azure.management.network.models.virtualnetwork.flowtimeoutinminutes?view=azure-dotnet
 -->
 
 > **flushConnection**<br/>

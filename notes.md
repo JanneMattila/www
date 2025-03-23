@@ -2,6 +2,10 @@
 
 ## Upcoming posts
 
+- 2 AZ app, front and backend, LBs in between, how to force traffic to stay in AZ
+
+- Traffic manager and private app in two regions
+
 - https://learn.microsoft.com/en-us/azure/application-gateway/configuration-http-settings#connection-draining
 
 - Connection Monitor
