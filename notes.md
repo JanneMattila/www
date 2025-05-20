@@ -3,6 +3,7 @@
 ## Upcoming posts
 
 - 2 AZ app, front and backend, LBs in between, how to force traffic to stay in AZ
+  - https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview?tabs=azure-cli#physical-and-logical-availability-zones
 
 - Traffic manager and private app in two regions
 
