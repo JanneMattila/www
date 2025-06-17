@@ -39,3 +39,5 @@ az acr update --name "jannemattila" --anonymous-pull-enabled true
   - 
   - https://github.com/Azure/acr/blob/main/docs/custom-domain/README.md
   - az acr update --name <your-registry-name> --custom-domain <your-custom-domain>
+
+  az acr import --name jannemattila --source docker.io/jannemattila/web-navigator:latest --image web-navigator

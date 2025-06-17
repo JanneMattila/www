@@ -2,6 +2,15 @@
 
 ## Upcoming posts
 
+- https://azure.microsoft.com/en-us/updates?id=492953
+  
+
+- Deployment custom role:
+  - deployment/write for ARM template
+  - Other permissions still required
+  - Azure Portal uses ARM templates
+  - Download template at the end of the resource creation wizard
+
 - 2 AZ app, front and backend, LBs in between, how to force traffic to stay in AZ
   - https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview?tabs=azure-cli#physical-and-logical-availability-zones
 
