@@ -49,8 +49,7 @@ from the example dataset:
 
 This illustration helped me to to understand that I'm looking for largest _full mesh_ in the network:
 
-{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/12/27/advent-of-code/day23-graphviz1
-.png" %}
+{% include imageEmbed.html width="80%" height="80%" link="/assets/posts/2024/12/27/advent-of-code/day23-graphviz1.png" %}
 
 Much easier to implement when you have clear picture what to do!
 
