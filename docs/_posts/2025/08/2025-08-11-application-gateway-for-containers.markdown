@@ -1,7 +1,7 @@
 ---
 layout: posts
 title: Azure Web Application Firewall on Application Gateway for Containers
-image: /assets/posts/2025/08/11/waf-on-application-gateway-for-containers/waf1.png
+image: /assets/posts/2025/08/11/waf-on-application-gateway-for-containers/waf-policy.png
 date: 2025-08-11 06:00:00 +0300
 categories: azure
 tags: azure aks appgw containers waf
