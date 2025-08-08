@@ -13,7 +13,7 @@ I had to immediately take it for a spin and update my AKS workshop demo when the
 ---
 
 If you're a new to 
-[Application Gateway for Containers](https://learn.microsoft.com/en-us/azure/application-gateway/for-containers/overview)
+[Application Gateway for Containers](https://learn.microsoft.com/en-us/azure/application-gateway/for-containers/overview),
 then I highly recommend to read 
 [Application Gateway for Containers components](https://learn.microsoft.com/en-us/azure/application-gateway/for-containers/application-gateway-for-containers-components)
 and
@@ -239,15 +239,15 @@ This association link can be seen in Application Gateway for Containers in `secu
 
 {% include imageEmbed.html link="/assets/posts/2025/08/11/waf-on-application-gateway-for-containers/alb2.png" %}
 
-That association resource can be seen when you enable _Show hidden types_ in the resource group:
+The above association links to this resource that can be seen when you enable _Show hidden types_ in the resource group:
 
 {% include imageEmbed.html link="/assets/posts/2025/08/11/waf-on-application-gateway-for-containers/alb3.png" %}
 
-It contains a link to the WAF Policy:
+It contains a link to the actual WAF Policy:
 
 {% include imageEmbed.html link="/assets/posts/2025/08/11/waf-on-application-gateway-for-containers/alb4.png" %}
 
-7) **Finally**, after all the above configurations, we're ready to test WAF Policy:
+7) **Finally**, after all the above configurations, we're ready to test our WAF Policy:
 
 ```bash
 curl $aks_agc_gateway_address
@@ -266,6 +266,8 @@ curl -X POST --data 'alert(document.cookie);' "$aks_agc_gateway_address/api/comm
 ```
 
 As you can see, the last two requests were blocked by the WAF policy since they contained potentially malicious payloads.
+Similarly, if you would make many requests in a short period of time, you would be rate-limited according to the deployed Custom rules.
+
 Luckily, I had Azure Policy based diagnostics already enabled:
 
 {% include imageEmbed.html link="/assets/posts/2025/08/11/waf-on-application-gateway-for-containers/alb-diag1.png" %}
