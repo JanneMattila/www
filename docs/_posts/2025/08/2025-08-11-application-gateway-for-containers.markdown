@@ -7,8 +7,10 @@ categories: azure
 tags: azure aks appgw containers waf
 ---
 
-[Public Preview: Web Application Firewall on Application Gateway for Containers](https://azure.microsoft.com/en-us/updates/?id=499308) has been a long waited feature so I had to right away update my AKS workshop demo
-the public preview started.
+[Public Preview for Web Application Firewall on Application Gateway for Containers](https://azure.microsoft.com/en-us/updates/?id=499308) has been a long waited feature.
+I had to immediately take it for a spin and update my AKS workshop demo when the public preview started.
+
+---
 
 If you're a new to 
 [Application Gateway for Containers](https://learn.microsoft.com/en-us/azure/application-gateway/for-containers/overview)
@@ -30,7 +32,7 @@ Application Gateway for Containers related snippets are in `08-agc.sh` file:
 
 {% include githubEmbed.html text="08-agc.sh" link="JanneMattila/aks-workshop/blob/main/08-agc.sh" %}
 
-First part of the script is about setting up AGC:
+First part of the script is about setting up Application Gateway for Containers:
 
 - Create managed identity
 - Grant necessary roles for that identity
@@ -45,7 +47,7 @@ The above is fairly straight forward process.
 > **Privilege escalation container is not allowed**: cleanup<br/>
 > You need to either disable Azure Policy or modify the policy configurations to allow this installation to proceed.
 
-Second part of the script is about configuring AGC.
+Second part of the script is about configuring Application Gateway for Containers.
 
 1) Create Application Gateway for Containers:
 
