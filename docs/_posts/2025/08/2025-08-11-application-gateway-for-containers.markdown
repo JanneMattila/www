@@ -7,7 +7,8 @@ categories: azure
 tags: azure aks appgw containers waf
 ---
 
-[Public Preview: Web Application Firewall on Application Gateway for Containers](https://azure.microsoft.com/en-us/updates/?id=499308) has been a long waited feature so I had to update my AKS workshop demo right away.
+[Public Preview: Web Application Firewall on Application Gateway for Containers](https://azure.microsoft.com/en-us/updates/?id=499308) has been a long waited feature so I had to right away update my AKS workshop demo
+the public preview started.
 
 If you're a new to 
 [Application Gateway for Containers](https://learn.microsoft.com/en-us/azure/application-gateway/for-containers/overview)
