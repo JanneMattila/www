@@ -14,7 +14,7 @@ I had to immediately take it for a spin and update my AKS workshop demo when the
 
 If you're a new to 
 [Application Gateway for Containers](https://learn.microsoft.com/en-us/azure/application-gateway/for-containers/overview),
-then I highly recommend to read 
+then I highly recommend for you to read 
 [Application Gateway for Containers components](https://learn.microsoft.com/en-us/azure/application-gateway/for-containers/application-gateway-for-containers-components)
 and
 [Azure Web Application Firewall on Application Gateway for Containers](https://learn.microsoft.com/en-us/azure/application-gateway/for-containers/web-application-firewall)
@@ -273,11 +273,11 @@ Luckily, I had Azure Policy based diagnostics already enabled:
 {% include imageEmbed.html link="/assets/posts/2025/08/11/waf-on-application-gateway-for-containers/alb-diag1.png" %}
 {% include imageEmbed.html imagesize="60%" link="/assets/posts/2025/08/11/waf-on-application-gateway-for-containers/alb-diag2.png" %}
 
-And therefore, I can view the WAF logs from the centralized Log Analytics workspace:
+Since I had diagnostic setting configured for logging, I can view the WAF logs from the centralized Log Analytics workspace:
 
 {% include imageEmbed.html link="/assets/posts/2025/08/11/waf-on-application-gateway-for-containers/log1.png" %}
 
-As mentioned, full example can be found here so you can easily test this yourself:
+As mentioned, full example of the above can be found from GitHub so you can easily test this scenario yourself:
 
 {% include githubEmbed.html text="JanneMattila/aks-workshop" link="JanneMattila/aks-workshop" %}
 
