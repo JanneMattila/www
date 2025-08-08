@@ -86,7 +86,7 @@ spec:
         namespaces:
 ```
 
-3) Create Service to explose my previously deployed `network-app`:
+3) Create Service to expose my previously deployed `network-app`:
 
 ```yaml
 apiVersion: v1
