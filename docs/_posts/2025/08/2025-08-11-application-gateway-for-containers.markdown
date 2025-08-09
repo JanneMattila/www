@@ -8,7 +8,7 @@ tags: azure aks appgw containers waf
 ---
 
 [Public Preview for Web Application Firewall on Application Gateway for Containers](https://azure.microsoft.com/en-us/updates/?id=499308) has been a long waited feature.
-I had to immediately take it for a spin and update my AKS workshop demo when the public preview started.
+I had to immediately take it for a spin when public preview started.
 
 ---
 
@@ -18,11 +18,11 @@ then I highly recommend for you to read
 [Application Gateway for Containers components](https://learn.microsoft.com/en-us/azure/application-gateway/for-containers/application-gateway-for-containers-components)
 and
 [Azure Web Application Firewall on Application Gateway for Containers](https://learn.microsoft.com/en-us/azure/application-gateway/for-containers/web-application-firewall)
-first, before diving into the demo.
+first, before reading this post.
 
 ---
 
-I decided to update my AKS Workshop materials to use Web Application Firewall.
+I decided to update my AKS Workshop materials to include Web Application Firewall.
 It's the most comprehensive demo material that I've built for AKS, so it's quite natural
 place for me to add this. You can find the full workshop material from GitHub:
 
@@ -249,20 +249,20 @@ It contains a link to the actual WAF Policy:
 
 7) **Finally**, after all the above configurations, we're ready to test our WAF Policy:
 
-```bash
-curl $aks_agc_gateway_address
-# Hello there!
+```console
+$ curl $aks_agc_gateway_address
+Hello there!
 
-curl -X POST --data 'INFO HOSTNAME' "$aks_agc_gateway_address/api/commands"
-# -> Start: INFO HOSTNAME
-# HOSTNAME: network-app-deployment-6956bdf4fc-8qnx2
-# <- End: INFO HOSTNAME 4.777ms
+$ curl -X POST --data 'INFO HOSTNAME' "$aks_agc_gateway_address/api/commands"
+-> Start: INFO HOSTNAME
+HOSTNAME: network-app-deployment-6956bdf4fc-8qnx2
+<- End: INFO HOSTNAME 4.777ms
 
-curl -X POST --data '--; DROP TABLE Logs' "$aks_agc_gateway_address/api/commands" --verbose
-# 403 Access Forbidden
+$ curl -X POST --data '--; DROP TABLE Logs' "$aks_agc_gateway_address/api/commands" --verbose
+Access Forbidden
 
-curl -X POST --data 'alert(document.cookie);' "$aks_agc_gateway_address/api/commands" --verbose
-# 403 Access Forbidden
+$ curl -X POST --data 'alert(document.cookie);' "$aks_agc_gateway_address/api/commands" --verbose
+Access Forbidden
 ```
 
 As you can see, the last two requests were blocked by the WAF policy since they contained potentially malicious payloads.
