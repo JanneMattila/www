@@ -1,8 +1,8 @@
 ---
 layout: posts
 title: Azure Web Application Firewall on Application Gateway for Containers
-image: /assets/posts/2025/08/11/waf-on-application-gateway-for-containers/waf-policy.png
-date: 2025-08-11 06:00:00 +0300
+image: /assets/posts/2025/08/09/waf-on-application-gateway-for-containers/waf-policy.png
+date: 2025-08-09 06:00:00 +0300
 categories: azure
 tags: azure aks appgw containers waf
 ---
@@ -14,11 +14,11 @@ I had to immediately take it for a spin when public preview started.
 
 If you're a new to 
 [Application Gateway for Containers](https://learn.microsoft.com/en-us/azure/application-gateway/for-containers/overview),
-then I highly recommend for you to read 
-[Application Gateway for Containers components](https://learn.microsoft.com/en-us/azure/application-gateway/for-containers/application-gateway-for-containers-components)
-and
-[Azure Web Application Firewall on Application Gateway for Containers](https://learn.microsoft.com/en-us/azure/application-gateway/for-containers/web-application-firewall)
-first, before reading this post.
+then I recommend that you read about its
+[components](https://learn.microsoft.com/en-us/azure/application-gateway/for-containers/application-gateway-for-containers-components)
+and official documentation about
+[Azure Web Application Firewall on Application Gateway for Containers](https://learn.microsoft.com/en-us/azure/application-gateway/for-containers/web-application-firewall), 
+before reading this post.
 
 ---
 
@@ -64,7 +64,7 @@ spec:
 
 The above takes a few minutes while it creates this resource:
 
-{% include imageEmbed.html link="/assets/posts/2025/08/11/waf-on-application-gateway-for-containers/alb.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/08/09/waf-on-application-gateway-for-containers/alb.png" %}
 
 
 2) Create Gateway API resource with `azure-alb-external` gateway class that
@@ -207,15 +207,15 @@ aks_agc_waf_policy_id=$(az deployment group create \
 
 Here is the deployed WAF Policy:
 
-{% include imageEmbed.html link="/assets/posts/2025/08/11/waf-on-application-gateway-for-containers/waf-policy.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/08/09/waf-on-application-gateway-for-containers/waf-policy.png" %}
 
 Here are the configured Managed rules:
 
-{% include imageEmbed.html link="/assets/posts/2025/08/11/waf-on-application-gateway-for-containers/waf-rule1.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/08/09/waf-on-application-gateway-for-containers/waf-rule1.png" %}
 
 Here are the deployed Custom rules:
 
-{% include imageEmbed.html link="/assets/posts/2025/08/11/waf-on-application-gateway-for-containers/waf-rule2.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/08/09/waf-on-application-gateway-for-containers/waf-rule2.png" %}
 
 6) Associate WAF Policy with Gateway:
 
@@ -237,15 +237,15 @@ spec:
 
 This association link can be seen in Application Gateway for Containers in `securityPolicies`:
 
-{% include imageEmbed.html link="/assets/posts/2025/08/11/waf-on-application-gateway-for-containers/alb2.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/08/09/waf-on-application-gateway-for-containers/alb2.png" %}
 
 The above association links to this resource that can be seen when you enable _Show hidden types_ in the resource group:
 
-{% include imageEmbed.html link="/assets/posts/2025/08/11/waf-on-application-gateway-for-containers/alb3.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/08/09/waf-on-application-gateway-for-containers/alb3.png" %}
 
 It contains a link to the actual WAF Policy:
 
-{% include imageEmbed.html link="/assets/posts/2025/08/11/waf-on-application-gateway-for-containers/alb4.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/08/09/waf-on-application-gateway-for-containers/alb4.png" %}
 
 7) **Finally**, after all the above configurations, we're ready to test our WAF Policy:
 
@@ -270,12 +270,12 @@ Similarly, if you would make many requests in a short period of time, you would 
 
 Luckily, I had Azure Policy based diagnostics already enabled:
 
-{% include imageEmbed.html link="/assets/posts/2025/08/11/waf-on-application-gateway-for-containers/alb-diag1.png" %}
-{% include imageEmbed.html imagesize="60%" link="/assets/posts/2025/08/11/waf-on-application-gateway-for-containers/alb-diag2.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/08/09/waf-on-application-gateway-for-containers/alb-diag1.png" %}
+{% include imageEmbed.html imagesize="60%" link="/assets/posts/2025/08/09/waf-on-application-gateway-for-containers/alb-diag2.png" %}
 
 Since I had diagnostic setting configured for logging, I can view the WAF logs from the centralized Log Analytics workspace:
 
-{% include imageEmbed.html link="/assets/posts/2025/08/11/waf-on-application-gateway-for-containers/log1.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/08/09/waf-on-application-gateway-for-containers/log1.png" %}
 
 As mentioned, full example of the above can be found from GitHub so you can easily test this scenario yourself:
 
