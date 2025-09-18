@@ -33,6 +33,10 @@ Let's start by creating a Logic App that triggers when a new email arrives in a 
 
 {% include imageEmbed.html imagesize="50%" link="/assets/posts/2025/09/21/automated-order-processing/la1.png" %}
 
+You can set various filters to ensure that only relevant emails trigger the workflow:
+
+{% include imageEmbed.html imagesize="50%" link="/assets/posts/2025/09/21/automated-order-processing/la1-1.png" %}
+
 If we now study the email content when the email had the order inline, we can see that the email body is in HTML format.
 Here is _an abbreviated version_ of the email body:
 
@@ -53,15 +57,15 @@ Here is _an abbreviated version_ of the email body:
 </div></body></html>
 ```
 
-Oh boy, that's a lot of HTML tags and metadata! We need to clean this up to get the actual content of the email.
+Oh boy, that's a lot of HTML tags! We need to clean this up to get the relevant content from the email.
 
-Before we do that, let's also process any potential order details from attachments:
+Before we do that, let's also process any potential orders from attachments:
 
 {% include imageEmbed.html imagesize="50%" link="/assets/posts/2025/09/21/automated-order-processing/la2.png" %}
 
-In this step we process one attachment at a time. For now, we'll simplify things and plan to only process Excel files
+In this step we process one attachment at a time using Azure Functions.
+We'll simplify this step and plan to only process Excel files
 with [MarkItDown](https://github.com/microsoft/markitdown).
-
 It is such a powerful library that it can convert many different formats into markdown format. 
 Here's the full code of our Azure Function that uses MarkItDown to convert the attachment content into markdown format:
 
@@ -89,7 +93,7 @@ To deploy this Python function to Azure, you can follow the instructions here:
 
 {% include imageEmbed.html imagesize="50%" link="/assets/posts/2025/09/21/automated-order-processing/la3.png" %}
 
-{% include imageEmbed.html imagesize="50%" link="/assets/posts/2025/09/21/automated-order-processing/la3-1.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/09/21/automated-order-processing/la3-1.png" %}
 
 ```plain
 There is content from email from the user. It might be in plain text or HTML or whatever format. Clean it up to be markdown format:
@@ -97,7 +101,7 @@ There is content from email from the user. It might be in plain text or HTML or 
 @{variables('emailContent')}
 ```
 
-{% include imageEmbed.html imagesize="50%" link="/assets/posts/2025/09/21/automated-order-processing/la3-2.png" %}
+{% include imageEmbed.html imagesize="60%" link="/assets/posts/2025/09/21/automated-order-processing/la3-2.png" %}
 
 Here's the expression used in the above step:
 
@@ -205,3 +209,13 @@ Here is an example output when the order details were in an attachment:
   ]
 }
 ```
+
+Here's the entire Logic App workflow:
+
+{% include imageEmbed.html imagesize="60%" link="/assets/posts/2025/09/21/automated-order-processing/la5.png" %}
+
+You can find the source code of the Function App here:
+
+{% include githubEmbed.html text="JanneMattila/azure-ai-demos/pythonfunc" link="JanneMattila/azure-ai-demos/tree/main/src/pythonfunc" %}
+
+Hope you found this useful!
