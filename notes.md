@@ -2,6 +2,55 @@
 
 ## Upcoming posts
 
+- Logic Apps as remote MCP server
+ - https://techcommunity.microsoft.com/blog/integrationsonazureblog/introducing-logic-apps-mcp-servers-public-preview/4450419
+ - https://learn.microsoft.com/en-us/azure/logic-apps/set-up-model-context-protocol-server-standard
+ - https://techcommunity.microsoft.com/blog/integrationsonazureblog/logic-apps---mcp-demos/4452175
+ 
+- AKS & KEP-1442
+ - https://kubernetes.io/blog/2025/04/23/kubernetes-v1-33-release/#secret-less-image-pulls-with-kubelet
+ - Pull images with managed identity from different tenant
+
+- AKS & Blobfuse2
+ - https://youtu.be/FmMDHrdM5TE
+ - https://github.com/Azure/azure-storage-fuse
+ - Single process to fetch up to date data
+ - Multiple processes operating these data assets
+
+- Create your own MCP server
+  - You own a data asset that company wants to share to other users
+  - Hosting MCP server at the sidecar of App Service.
+  - https://mcp.azure.com/
+
+- Windows voice dictations
+ - Windows + H
+ - Language change
+ - https://support.microsoft.com/fi-fi/windows/windowsin-puheentunnistuksen-komennot-9d25ef36-994d-f367-a81a-a326160128c7
+ - https://support.microsoft.com/en-us/windows/windows-speech-recognition-commands-9d25ef36-994d-f367-a81a-a326160128c7
+ - https://support.microsoft.com/en-us/windows/open-the-dictation-toolbar-2013a632-3a3f-230e-475d-4ad035ec0102
+ - Use this with when discussing Copilot. I want to "type fast" but I can read fast so I don't want computer to speak to me
+ - 
+
+- AppGw + WAF
+  - Cookie "sql" with SQL injection
+  - Developer tools, show encoded and unencoded data
+  - Application Gateway WAF logs
+  - Show management studio query example
+
+- IP based filtering in solutions and migrations
+ - Pre-create Public IP Prefix
+ - Let customer know well in advance
+ - If possible, add capability to application to check if there is access to the new IP address
+ - Deploy AKS with Public IP Prefix
+ - https://learn.microsoft.com/en-us/azure/aks/configure-static-egress-gateway
+
+ - MCP & AKS: https://github.com/Azure/aks-mcp
+
+ - Deployment safe guards: https://learn.microsoft.com/en-us/azure/aks/deployment-safeguards
+
+- Change Analysis
+  - E.g., incorrect image in infra deployment
+
 - https://azure.microsoft.com/en-us/updates?id=492953
   
 
