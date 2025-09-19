@@ -66,7 +66,7 @@ Before we do that, let's also process any potential orders from attachments:
 In this step we process one attachment at a time using Azure Functions.
 We want to convert the attachment content into markdown format so that we can use it in the next step.
 We'll use [MarkItDown](https://github.com/microsoft/markitdown)
-which is such a powerful Python library that can convert many different formats into markdown format.
+which is very handy Python library for converting many different file formats to markdown format.
 
 Here's the full code of our Azure Function that uses MarkItDown to convert the attachment content into markdown format:
 
