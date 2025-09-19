@@ -233,6 +233,14 @@ Of course, this implementation just a starting point. In a real-world scenario, 
 
 etc.
 
+Alternatively, you might want to start with a semi-automated process where the system extracts the order details,
+validates it and sends them to a human for review before finalizing the order.
+It can also create a prebaked email draft to the user.
+User can then just review the email and click button to send it.
+Here's a mockup of such user interface:
+
+{% include imageEmbed.html imagesize="70%" link="/assets/posts/2025/09/21/automated-order-processing/automated-order-processing.png" %}
+
 You can find the source code of the Function App here:
 
 {% include githubEmbed.html text="JanneMattila/azure-ai-demos/pythonfunc" link="JanneMattila/azure-ai-demos/tree/main/src/pythonfunc" %}
