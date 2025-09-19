@@ -221,13 +221,16 @@ Here's an example of an email that did not have any attachment since the user fo
 
 Similarly, the user might provide invalid product IDs or quantities that are not numbers or formatting of 
 attachment might be something that MarkItDown cannot handle.
+Or that product IDs are okay but you don't have them in your inventory.
+Or user might be still trying to order older products that you no longer sell.
 
-Of course, this implementation just a starting point. In a real-world scenario, you would need to add more steps to handle:
+Of course, implementation in this blog post is just a starting point.
+In a real-world scenario, you would need to add more steps to handle:
 
 - You need to consider error scenarios, logging, monitoring, alerting etc.
-- Store the original email, extracted order details and any errors to a database or storage for auditing and troubleshooting.
+- For auditing and troubleshooting purposes, you would want to store the original email, extracted order details and any errors found during the process.
 - Validate the extracted product IDs and quantities against your product catalog.
-- Design human-in-the-loop (HITL) processes for cases where the system is unsure about the order details.
+- Design human-in-the-loop (HITL) processes for cases where the system cannot confidently process the order.
 - Integrate with your order management system to create the order automatically.
 - Send a confirmation email to the user with the extracted order details.
 
@@ -236,7 +239,7 @@ etc.
 Alternatively, you might want to start with a semi-automated process where the system extracts the order details,
 validates it and sends them to a human for review before finalizing the order.
 It can also create a prebaked email draft to the user.
-User can then just review the email and click button to send it.
+User can then just review the email, and if they want add some personal touch to it, and click button to send it.
 Here's a mockup of such user interface:
 
 {% include imageEmbed.html imagesize="70%" link="/assets/posts/2025/09/21/automated-order-processing/automated-order-processing.png" %}
