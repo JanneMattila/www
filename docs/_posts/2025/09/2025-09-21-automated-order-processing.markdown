@@ -64,9 +64,10 @@ Before we do that, let's also process any potential orders from attachments:
 {% include imageEmbed.html imagesize="50%" link="/assets/posts/2025/09/21/automated-order-processing/la2.png" %}
 
 In this step we process one attachment at a time using Azure Functions.
-We'll simplify this step and plan to only process Excel files
-with [MarkItDown](https://github.com/microsoft/markitdown).
-It is such a powerful library that it can convert many different formats into markdown format. 
+We want to convert the attachment content into markdown format so that we can use it in the next step.
+We'll use [MarkItDown](https://github.com/microsoft/markitdown)
+which is such a powerful Python library that can convert many different formats into markdown format.
+
 Here's the full code of our Azure Function that uses MarkItDown to convert the attachment content into markdown format:
 
 ```python
@@ -267,7 +268,7 @@ Here's an example of an email that did not have any attachment since the user fo
 
 {% include imageEmbed.html link="/assets/posts/2025/09/21/automated-order-processing/email-no-attachment.png" %}
 
-Similarly, the user might provide invalid product IDs or quantities that are not numbers or formatting of 
+Similarly, the user might have provided invalid product IDs or quantities that are not numbers or formatting of
 attachment might be something that MarkItDown cannot handle.
 Or that product IDs are okay but you don't have them in your inventory.
 Or user might be still trying to order older products that you no longer sell.
@@ -279,7 +280,7 @@ In a real-world scenario, you would need to add more steps to handle:
 - For auditing and troubleshooting purposes, you would want to store the original email, extracted order details and any errors found during the process.
 - Validate the extracted product IDs and quantities against your product catalog.
 - Design human-in-the-loop (HITL) processes for cases where the system cannot confidently process the order.
-- Integrate with your order management system to create the order automatically.
+- Integrate with your IT systems to create the order automatically.
 - Send a confirmation email to the user with the extracted order details.
 
 etc.
