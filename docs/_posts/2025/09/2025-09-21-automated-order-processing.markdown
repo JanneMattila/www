@@ -214,6 +214,25 @@ Here's the entire Logic App workflow:
 
 {% include imageEmbed.html imagesize="60%" link="/assets/posts/2025/09/21/automated-order-processing/la5.png" %}
 
+Unfortunately, many different kind of errors can happen in this process.
+Here's an example of an email that did not have any attachment since the user forgot to add it:
+
+{% include imageEmbed.html link="/assets/posts/2025/09/21/automated-order-processing/email-no-attachment.png" %}
+
+Similarly, the user might provide invalid product IDs or quantities that are not numbers or formatting of 
+attachment might be something that MarkItDown cannot handle.
+
+Of course, this implementation just a starting point. In a real-world scenario, you would need to add more steps to handle:
+
+- You need to consider error scenarios, logging, monitoring, alerting etc.
+- Store the original email, extracted order details and any errors to a database or storage for auditing and troubleshooting.
+- Validate the extracted product IDs and quantities against your product catalog.
+- Design human-in-the-loop (HITL) processes for cases where the system is unsure about the order details.
+- Integrate with your order management system to create the order automatically.
+- Send a confirmation email to the user with the extracted order details.
+
+etc.
+
 You can find the source code of the Function App here:
 
 {% include githubEmbed.html text="JanneMattila/azure-ai-demos/pythonfunc" link="JanneMattila/azure-ai-demos/tree/main/src/pythonfunc" %}
