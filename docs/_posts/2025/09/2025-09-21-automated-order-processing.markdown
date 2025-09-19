@@ -90,22 +90,59 @@ that can process documents in various formats.
 To deploy this Python function to Azure, you can follow the instructions here:
 [Create a function in Azure from the command line](https://learn.microsoft.com/en-us/azure/azure-functions/how-to-create-function-azure-cli?pivots=programming-language-python&tabs=windows%2Cpowershell%2Cazure-cli)
 
+You can test the deployed function using
+[REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
+extension in [VS Code](https://code.visualstudio.com/):
+
+```python
+@func = https://<funcapp>.azurewebsites.net/
+
+### Upload excel file
+POST {{func}}/api/Converter HTTP/1.1
+Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+
+< ./products.xlsx
+```
+
+Here's the test Excel file I used:
+
+{% include imageEmbed.html link="/assets/posts/2025/09/21/automated-order-processing/email3-attachment.png" %}
+
+And here's the output from MarkItDown:
+
+```markdown
+## Sheet1
+| Unnamed: 0 | Unnamed: 1 | Unnamed: 2 | Unnamed: 3 |
+| --- | --- | --- | --- |
+| NaN | Product | Qty | Comment |
+| NaN | P123 | 5 | We need this before end of the month |
+| NaN | P345 | 4 | NaN |
+```
+
+Now that we have our email content collected, let's clean it up:
 
 {% include imageEmbed.html imagesize="50%" link="/assets/posts/2025/09/21/automated-order-processing/la3.png" %}
 
 {% include imageEmbed.html link="/assets/posts/2025/09/21/automated-order-processing/la3-1.png" %}
 
+Here's the prompt used in this step:
+
 ```plain
-There is content from email from the user. It might be in plain text or HTML or whatever format. Clean it up to be markdown format:
+There is content from email from the user.
+It might be in plain text or HTML or whatever format. Clean it up to be markdown format:
 
 @{variables('emailContent')}
 ```
 
+We can now get the cleaned email content from the output of the above step to a variable:
+
 {% include imageEmbed.html imagesize="60%" link="/assets/posts/2025/09/21/automated-order-processing/la3-2.png" %}
 
-Here's the expression used in the above step:
+Here's the expression used when setting the variable:
 
 ```plain
+Here is the data:
+
 first(body('Clean_user_inputs')['choices'])?['message']?['content']
 ```
 
@@ -134,27 +171,38 @@ Attachment — orders-2025.xlsx (Sheet1)
 | P345 | 4 |  |
 ```
 
+Now that we have the cleaned email content, we can use Azure OpenAI to extract the order details from it
+and convert it into structured JSON format:
+
 {% include imageEmbed.html imagesize="50%" link="/assets/posts/2025/09/21/automated-order-processing/la4.png" %}
 
 ```plain
-You are sales agent trying to identity what product user is trying to buy. User might provide this information in any kind of format. From their provided material you should identify list of products and their quantities. If user has some other important information that impacts their order, then collect this information as well. Example: "I would need this by end of this week" which would be hard requirement to their purchase. This information can be also product specific and not entire order specific.
+You are agent trying to identity what products user is trying to order.
+User might have provided this information in any kind of format.
+From their provided material you should be able to identify list of products
+and their quantities.
+If user has some other important information that impacts their order,
+then collect this information as well.
+Example: "I would need this by end of this week" which would be
+hard requirement to their order.
+This information can be also product specific and not entire order specific.
 
 Summarize this information into this format:
 {
-  "text": "insert original user text here",
-  "description": "insert any additional information that user has provided e.g., hard requirements here",
-  "products": [
-    {
-      "productId": "first product id",
-      "qty": 2,
-      "description": "any product specific information from user"
-    },
-    {
-      "productId": "second product id",
-      "qty": 5,
-      "description": "any product specific information from user"
-    }
-  ]
+ "text": "insert original user text here",
+ "description": "insert any additional information that user has provided e.g., hard requirements here",
+ "products": [
+  {
+   "productId": "first product id",
+   "qty": 2,
+   "description": "any product specific information from user"
+  },
+  {
+   "productId": "second product id",
+   "qty": 5,
+   "description": "any product specific information from user"
+  }
+ ]
 }
 
 Here is the user provided information:
@@ -162,7 +210,7 @@ Here is the user provided information:
 @{variables('emailContentText')}
 ```
 
-Similarly, here's the expression used to extract the response from Azure OpenAI:
+Similarly, here's the expression used to extract the response from Azure OpenAI to a variable:
 
 ```plain
 first(body('Convert_users_input_text_to_JSON')['choices'])?['message']?['content']
@@ -172,20 +220,20 @@ Here's the expected output format:
 
 ```json
 {
-  "text": "insert original user text here",
-  "description": "insert any additional information that user has provided e.g., hard requirements here",
-  "products": [
-    {
-      "productId": "first product id",
-      "qty": 2,
-      "description": "any product specific information from user"
-    },
-    {
-      "productId": "second product id",
-      "qty": 5,
-      "description": "any product specific information from user"
-    }
-  ]
+ "text": "insert original user text here",
+ "description": "insert any additional information that user has provided e.g., hard requirements here",
+ "products": [
+  {
+   "productId": "first product id",
+   "qty": 2,
+   "description": "any product specific information from user"
+  },
+  {
+   "productId": "second product id",
+   "qty": 5,
+   "description": "any product specific information from user"
+  }
+ ]
 }
 ```
 
@@ -193,20 +241,20 @@ Here is an example output when the order details were in an attachment:
 
 ```json
 {
-  "text": "Subject: Order from Jack\n\nBody:\n\nHello there!\n\nFind my orders from the attachment.\n\nThanks!\n\nJack\n\nAttachment — orders-2025.xlsx (Sheet1)\n\n| Product | Qty | Comment |\n| --- | ---: | --- |\n| P123 | 5 | We need this before end of the month |\n| P345 | 4 |  |",
-  "description": "Order details provided in attachment orders-2025.xlsx (Sheet1). No additional global constraints, but P123 has a timing requirement (see product-specific info).",
-  "products": [
-    {
-      "productId": "P123",
-      "qty": 5,
-      "description": "We need this before end of the month"
-    },
-    {
-      "productId": "P345",
-      "qty": 4,
-      "description": ""
-    }
-  ]
+ "text": "Subject: Order from Jack\n\nBody:\n\nHello there!\n\nFind my orders from the attachment.\n\nThanks!\n\nJack\n\nAttachment — orders-2025.xlsx (Sheet1)\n\n| Product | Qty | omment |\n| --- | ---: | --- |\n| P123 | 5 | We need this before end of the month |\n| P345 | 4 |  |",
+ "description": "Order details provided in attachment orders-2025.xlsx (Sheet1). No additional global constraints, but P123 has a timing requirement (see product-specific info).",
+ "products": [
+  {
+   "productId": "P123",
+   "qty": 5,
+   "description": "We need this before end of the month"
+  },
+  {
+   "productId": "P345",
+   "qty": 4,
+   "description": ""
+  }
+ ]
 }
 ```
 
@@ -214,7 +262,7 @@ Here's the entire Logic App workflow:
 
 {% include imageEmbed.html imagesize="60%" link="/assets/posts/2025/09/21/automated-order-processing/la5.png" %}
 
-Unfortunately, many different kind of errors can happen in this process.
+_Unfortunately_, many different kind of errors can happen in this process.
 Here's an example of an email that did not have any attachment since the user forgot to add it:
 
 {% include imageEmbed.html link="/assets/posts/2025/09/21/automated-order-processing/email-no-attachment.png" %}
@@ -244,8 +292,21 @@ Here's a mockup of such user interface:
 
 {% include imageEmbed.html imagesize="70%" link="/assets/posts/2025/09/21/automated-order-processing/automated-order-processing.png" %}
 
+### Security considerations
+
+> Remember that you should **always** consider **security implications** when using automated processing based on external inputs.
+> This includes **prompt injection attacks** which might manipulate the input to the system in unintended ways and cause data leaks or other security issues.
+> <br/>This brings us to the topics such as:
+> [Evaluations](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/observability),
+> [Risk and safety evaluators](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/evaluation-evaluators/risk-safety-evaluators)
+> [AI Red Teaming](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/ai-red-teaming-agent), 
+> [Prompt shields content filtering](https://learn.microsoft.com/en-us/azure/ai-foundry/openai/concepts/content-filter-prompt-shields),
+> etc. but these are topics for another blog post.
+
 You can find the source code of the Function App here:
 
 {% include githubEmbed.html text="JanneMattila/azure-ai-demos/pythonfunc" link="JanneMattila/azure-ai-demos/tree/main/src/pythonfunc" %}
 
 Hope you found this useful!
+
+_Kudos to [Timo Salomäki](https://www.linkedin.com/in/hankidesign) for reminding me about the prompt injection attacks!_
