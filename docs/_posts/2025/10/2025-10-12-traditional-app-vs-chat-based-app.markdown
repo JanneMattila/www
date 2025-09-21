@@ -14,7 +14,7 @@ However, I've found myself debating that maybe some of these applications could 
 traditional, _and good old_, CRUD (**C**reate, **R**ead, **U**pdate, **D**elete) applications. 
 I know, _I know_, they're not as exciting and trendy but they still have their time and place.
 
-In this post, we'll explore a couple of scenarios and compare the two approaches.
+In this post, we'll explore two of scenarios and compare the two different approaches.
 
 ## Scenario 1: Order processing support tool
 
@@ -121,15 +121,15 @@ know what to ask from the system.
 From technical perspective, you also need to keep in mind that you cannot flood the AI model with too much information.
 This means that you need to carefully place _just enough information_
 to the context so that model starts to work correctly.
-You need to plan and test it with the LLM.
+Then you need to test that it works with the LLM well.
 
 From the 
 [Function calling](https://learn.microsoft.com/en-us/semantic-kernel/concepts/ai-services/chat-completion/function-calling/?pivots=programming-language-csharp) documentation
 you can find some guidance and tips on this topic:
 
-> Verbosity of function schema – Serializing functions for the model to use doesn't come for free.
-> The more verbose the schema, the more tokens the model has to process,
-> which can slow down the response time and increase costs.
+> Verbosity of function schema – Serializing functions for the model to use **doesn't come for free**.
+> **The more verbose the schema, the more tokens the model has to process**,
+> which can **slow down the response time and increase costs**.
 > <br/> <br/>
 > Keep your functions as simple as possible.
 > ..., you'll notice that not all functions have descriptions
@@ -143,18 +143,53 @@ user interface and make the experience more efficient for the user.
 
 ## Scenario 2: Travel booking
 
-TBA
+In this scenario, we want to implement a system that allows our corporate employees to book travel arrangements.
+This includes flights, hotels, and car rentals.
 
-## Scenario 3: Customer support
+Here is user interface of a traditional applications for travel booking scenario.
+They typically start by looking for flights:
 
-TBA
+{% include imageEmbed.html link="/assets/posts/drafts/traditional-app-vs-chat-based-app/crud-app2.png" %}
+
+The above is of course just a first step of the travel booking process.
+After selecting the flights, user would typically find the hotel and then proceed to look for
+additional services like car rentals, etc. Corporate travel tools don't typically have other capabilities.
+
+Here is the same travel booking scenario as a chat-based experience:
+
+{% include imageEmbed.html link="/assets/posts/drafts/traditional-app-vs-chat-based-app/chat-app2.png" %}
+
+Technical implementation of these chat-based experiences is very similar to the ones described
+in the previous scenario. 
+Two additional capabilities that are very useful in this scenario are:
+
+- [Retrieval Augmented Generation (RAG)](https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview?tabs=docs)
+- [Grounding with Bing Search](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/tools/bing-grounding)
+- SharePoint or other document repository integration for company specific policies and guidelines
+- User profile database for pulling user specific information and preferences to context
+
+{% include imageEmbed.html link="/assets/posts/drafts/traditional-app-vs-chat-based-app/agent-service3.png" %}
+
+In this user experience, users can describe their travel needs in a more natural way.
+This experience really feels like your personal travel assistant helping you to find the best options
+based on your preferences and requirements.
+It "knows" you based on your previous travel history and can make personalized recommendations.
+
+---
+
+For me, in scenario 2, the chat-based experience seems to be a better solution.
 
 ## Conclusion
 
-This post reminded me from one of my presentation from 2020:
+In conclusion, both structured traditional CRUD-like applications and chat-based applications have their own strengths and weaknesses.
+The choice between the two approaches depends on the specific use case and user needs.
+
+This post reminded me from one of my presentation from 2020. Here's the summary slide from that presentation:
 
 {% include imageEmbed.html link="/assets/posts/drafts/traditional-app-vs-chat-based-app/right-tool-for-the-right-job.png" %}
 
-> The right tool for the right job.
+> Use the right tool for the right job
+
+GitHub link
 
 Hope you found this post useful!
