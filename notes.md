@@ -2,6 +2,24 @@
 
 ## Upcoming posts
 
+- Good old CRUD app vs. Chat-based app
+ - User experience and interaction
+ - Real-time data updates
+ - Integration with other services
+ - "I have a businness requirement to... solutions is Chat-based app"
+ - Azure AI Found Agent Service and use of tools e.g., Logic Apps e.g, troubleshooting order status
+ - Right tool for the right job
+   - Options for Building and Running Your App in the Cloud presenation from 2020
+  - Dilbert_Kubernetes.png
+- Possibility for error in different UI types
+ - CRUD app: Form validation, required fields, data types, etc.
+ - Chat-based app: Misunderstandings, ambiguous queries, context loss, etc.
+ - Error handling and recovery mechanisms
+ - User feedback and error reporting
+ - Testing and quality assurance
+ - Monitoring and analytics
+
+
 - IP based filtering in solutions and migrations
  - Pre-create Public IP Prefix
  - Let customer know well in advance
