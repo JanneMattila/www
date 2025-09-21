@@ -2,6 +2,15 @@
 
 ## Upcoming posts
 
+- IP based filtering in solutions and migrations
+ - Pre-create Public IP Prefix
+ - Let customer know well in advance
+ - If possible, add capability to application to check if there is access to the new IP address
+ - Deploy AKS with Public IP Prefix
+ - https://learn.microsoft.com/en-us/azure/aks/configure-static-egress-gateway
+ - Chart overtime to shift traffic to new IP address
+ - 
+
 - Logic Apps as remote MCP server
  - https://techcommunity.microsoft.com/blog/integrationsonazureblog/introducing-logic-apps-mcp-servers-public-preview/4450419
  - https://learn.microsoft.com/en-us/azure/logic-apps/set-up-model-context-protocol-server-standard
@@ -36,13 +45,6 @@
   - Developer tools, show encoded and unencoded data
   - Application Gateway WAF logs
   - Show management studio query example
-
-- IP based filtering in solutions and migrations
- - Pre-create Public IP Prefix
- - Let customer know well in advance
- - If possible, add capability to application to check if there is access to the new IP address
- - Deploy AKS with Public IP Prefix
- - https://learn.microsoft.com/en-us/azure/aks/configure-static-egress-gateway
 
  - MCP & AKS: https://github.com/Azure/aks-mcp
 
