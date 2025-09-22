@@ -134,8 +134,14 @@ From technical perspective, you also need to keep in mind that you cannot flood 
 This means that you need to carefully place _just enough information_
 to the context so that model starts to work correctly.
 Then you need to test that it works with the LLM well.
-Of course, in this example it's not a problem, but this is something
-to keep in mind when you design your system.
+And luckily, these models are constantly evolving and improving and size of the context window is also increasing.
+But still, you need to be careful about the amount of information you provide to the model.
+
+Of course, in this example it's not a problem.
+You can use 
+[Tokenizer](https://platform.openai.com/tokenizer)
+for estimating the number of tokens your system prompt and other parts of the context use.
+
 From the 
 [Function calling](https://learn.microsoft.com/en-us/semantic-kernel/concepts/ai-services/chat-completion/function-calling/?pivots=programming-language-csharp) documentation
 you can find some guidance and tips on this topic:
