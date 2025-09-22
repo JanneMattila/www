@@ -212,6 +212,7 @@ static Func<string, string, DateTime, DateTime, string, string> GetFlights()
           DateTime departureTime, DateTime returnTime,
           string travelClass) =>
   {
+    Console.WriteLine($"<Function-GetFlights: Fetching flights from ...>");
     return $@"Here are some flight options ...";
   };
 }
@@ -251,7 +252,8 @@ all the travel documents and calendar invites.
 Provide relevant travel greetings at the end after confirmation.
 ```
 
-Here's an example conversation output:
+Here's an example conversation output and you can see how
+the functions are called in the background:
 
 ```md
 **User:** I need to travel again to Stockholm next week Tuesday for 3 days.
@@ -366,6 +368,12 @@ This post reminded me from one of my presentation from 2020. Here's the summary 
 > Use the right tool for the right job
 
 Code for the Travel assistant scenario is available in my GitHub:
+
+- It's implemented so that Functions return hardcoded dummy data
+- It's super easy to debug and see how the functions are called
+- You can easily modify the code to call real APIs or databases
+
+Have a look:
 
 {% include githubEmbed.html text="JanneMattila/azure-ai-demos/01-SemanticKernelTravelAssistant" link="JanneMattila/azure-ai-demos/blob/main/src/01-SemanticKernelTravelAssistant/Program.cs" %}
 
