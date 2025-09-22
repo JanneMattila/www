@@ -356,7 +356,17 @@ The above capabilities are Knowledge sources in the Azure AI Foundry Agent Servi
 
 {% include imageEmbed.html link="/assets/posts/drafts/traditional-app-vs-chat-based-app/agent-service3.png" %}
 
+In this scenario, system prompt is more complex and if you add up all the
+used functions and their output, it's totally 1000+ tokens.
+
+Here's an example of my token usage metrics for `gpt-5-chat` model which I used for this example:
+
+{% include imageEmbed.html link="/assets/posts/drafts/traditional-app-vs-chat-based-app/token-usage.png" %}
+
+---
+
 For me, in scenario 2, the chat-based experience seems to be a better solution.
+And I would really like to see this kind of experience in real life.
 
 ## Conclusion
 
