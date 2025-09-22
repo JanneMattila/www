@@ -1,7 +1,7 @@
 ---
 layout: posts
 title: Azure Change Analysis
-image: /assets/posts/2025/08/18/change-analysis/change-analysis3.png
+image: /assets/posts/drafts/change-analysis/change-analysis3.png
 date: 2030-12-31 06:00:00 +0300
 categories: azure
 tags: azure governance
