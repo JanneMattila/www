@@ -37,6 +37,7 @@ User interface is very structured and guides the user to input order number and 
 other relevant information in very structured way.
 Additionally, your application can easily implement valuable features like form validation,
 data integrity checks, etc. which improves overall user experience and reduces errors.
+You can also get real-time data updates and notifications about order status changes without user interactions.
 
 Here is the same order processing analysis scenario as a chat-based experience:
 
@@ -126,21 +127,36 @@ and easy to implement. You basically just implement user interface,
 business logic to analyze the order status,
 and connect user provided parameters to the search conditions of the business logic.
 Additionally, you might have application that your users are already using that
-would easily be extended with this kind of functionality. So you would not have to create a new application from scratch.
+would easily be extended with this kind of functionality. So, you would not have to create a new application from scratch.
+Monitoring and logging is also easy to implement and you can leverage existing tools and practices for collecting your telemetry data.
+You can then analyze this collected telemetry data and see how much it has been used and how well it has performed over time.
+
 In comparison, in chat-based experiences, the user cannot directly "see" the options and they need to
-know what to ask from the system.
+know what to ask from the system. This can lead to misunderstandings, errors, and frustration.
+If your use case requires a lot of fields and parameters (e.g., order number, customer ID, date range, product ID, etc.),
+it can become cumbersome to provide all this information in a chat message.
+I've said it in some discussions that if you have user interface with many cascading dropdowns,
+then maybe chat-based experience is not the best fit for your use case.
 
-From technical perspective, you also need to keep in mind that you cannot flood the AI model with too much information.
-This means that you need to carefully place _just enough information_
-to the context so that model starts to work correctly.
-Then you need to test that it works with the LLM well.
-And luckily, these models are constantly evolving and improving and size of the context window is also increasing.
-But still, you need to be careful about the amount of information you provide to the model.
+From technical perspective, it's also good to understand the limitations of the model and its context window.
+They have evolved a lot and their context windows have increased significantly.
+For example (more information from [Foundry Models](https://learn.microsoft.com/en-us/azure/ai-foundry/foundry-models/concepts/models-sold-directly-by-azure?pivots=azure-openai&tabs=global-standard-aoai%2Cstandard-chat-completions%2Cglobal-standard)):
 
-Of course, in this example it's not a problem.
-You can use 
-[Tokenizer](https://platform.openai.com/tokenizer)
-for estimating the number of tokens your system prompt and other parts of the context use.
+> `gpt-5` model:<br/>
+> Input: **272,000 tokens**<br/>
+> Output: **128,000 tokens**<br/>
+
+and 
+
+> `gpt-4o` model:<br/>
+> Input: **128,000 tokens**<br/>
+> Output: **16,384 tokens**<br/>
+
+You can use [Tokenizer](https://platform.openai.com/tokenizer)
+for understanding how your prompts and other context elements consume tokens.
+Just to give you some idea about the usage, I used `=rand(30,30)` in Word to generate some random text
+of 14340 words and 24 pages, and copied that to Tokenizer and it consumed 16,380 tokens with `gpt-4o` model.
+So, with quick math, you could place 150-200 pages of text from Word document to the context of `gpt-4o` model.
 
 From the 
 [Function calling](https://learn.microsoft.com/en-us/semantic-kernel/concepts/ai-services/chat-completion/function-calling/?pivots=programming-language-csharp) documentation
@@ -358,6 +374,39 @@ The above capabilities are Knowledge sources in the Azure AI Foundry Agent Servi
 
 In this scenario, system prompt is more complex and if you add up all the
 used functions and their output, it's totally 1000+ tokens.
+Extending this scenario to handle a lot of other scenarios like all HR processes might easily become challenging.
+In this case maybe it would be better to look for multi-agent architecture and orchestrate the user interactions across different agents.
+Also, the above could be implemented using that kind of architecture and each of those functions could be operated parallelly by different agents.
+This is a topic for another blog post.
+
+I want to stress that you need to invest time in testing and ensuring that
+the system prompt and other context elements works well with the LLM
+and that it provides high-quality results.
+And you need to make sure that security and prompt injections are also considered in this testing
+(as I mentioned also in my previous post: 
+[Automated Order Processing from emails with Logic Apps and Azure OpenAI]({% post_url 2025/09/2025-09-21-automated-order-processing %})),
+This part is trickier in chat-based applications compared to traditional CRUD applications.
+In traditional applications, you can validate and sanitize user inputs more easily and
+we have established practices for unit testing for ensuring code quality.
+SQL Injections in traditional applications are not anymore a big issue if you follow best practices
+and use parameterized queries or ORM frameworks.
+But prompt injections is the same thing but in different format.
+Similarly, you should think about error handling and how it should be visible to the user.
+
+You might encounter cases where more LLM specific testing is required, like travel time in this demo.
+I noticed that the way you calculate travel dates requires additional prompting to get it right.
+Initially, if I just said "_next week Tuesday for 3 days_", the model interpreted that as
+Tuesday + 1 day = Wednesday, +1 day = Thursday, +1 day = Friday, so the return date was Friday.
+But I realized, that this is not how most people would interpret "_for 3 days_" since they would typically
+include the departure day as well.
+So, I had to add additional guidance in the system prompt to ensure that the model understands this context:
+
+```plain
+When calculating travel dates, include both the departure and return dates
+(e.g., if departing on a Monday and returning on Wednesday, that counts as 3 days)
+but remember that hotel stays are calculated by stayed nights only.
+```
+
 
 Here's an example of my token usage metrics for `gpt-5-chat` model which I used for this example:
 
@@ -372,6 +421,7 @@ And I would really like to see this kind of experience in real life.
 
 In conclusion, both structured traditional CRUD-like applications and chat-based applications have their own strengths and weaknesses.
 The choice between the two approaches depends on the specific use case and user needs.
+Try to avoid coming to me with "_I have a business requirement to... and my solution is Chat-based app_".
 
 And yes, I'm just going to put this out here:
 
@@ -387,6 +437,7 @@ Code for the Travel assistant scenario is available in my GitHub:
 
 - It's implemented so that Functions return hardcoded dummy data
 - It's super easy to debug and see how the functions are called
+  - Use this to learn how to build your own solution
 - You can easily modify the code to call real APIs or databases
 
 Have a look:
