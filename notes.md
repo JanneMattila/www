@@ -2,6 +2,12 @@
 
 ## Upcoming posts
 
+- SQL Injection vs. prompt injection
+ - Show .NET code with SQL query + SQL Profiler, EF Core
+  - Show how SQL injection works
+ - Show similar in prompt injection
+  - Show how you can try to mitigate it
+
 - Why would I need to build multi-agent system?
 
 - Size of context demo

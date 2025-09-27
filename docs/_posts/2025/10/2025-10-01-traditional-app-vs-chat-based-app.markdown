@@ -1,7 +1,7 @@
 ---
 title: Traditional application vs. chat-based application
-image: /assets/posts/drafts/traditional-app-vs-chat-based-app/crud-vs-chat.png
-date: 2025-10-12 06:00:00 +0300
+image: /assets/posts/2025/10/01/traditional-app-vs-chat-based-app/crud-vs-chat.png
+date: 2025-10-01 06:00:00 +0300
 layout: posts
 categories: azure
 tags: azure ai chat
@@ -31,7 +31,7 @@ so it was natural selection for this this first scenario.
 Here is _one very simplified way_ of illustrating a traditional CRUD application user interface
 for order processing analysis scenario:
 
-{% include imageEmbed.html link="/assets/posts/drafts/traditional-app-vs-chat-based-app/crud-app1.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/10/01/traditional-app-vs-chat-based-app/crud-app1.png" %}
 
 User interface is very structured and guides the user to input order number and any
 other relevant information in very structured way.
@@ -41,7 +41,7 @@ You can also get real-time data updates and notifications about order status cha
 
 Here is the same order processing analysis scenario as a chat-based experience:
 
-{% include imageEmbed.html link="/assets/posts/drafts/traditional-app-vs-chat-based-app/chat-app1.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/10/01/traditional-app-vs-chat-based-app/chat-app1.png" %}
 
 This user experience is very flexible and dynamic and users input would
 be processed by AI model, making the interaction feel more like a conversation than a transaction.
@@ -89,11 +89,11 @@ The order with ID **ORD123456** has been successfully processed!
 And here is an example of how you could implement this using
 [Azure AI Foundry Agent Service](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/overview):
 
-{% include imageEmbed.html link="/assets/posts/drafts/traditional-app-vs-chat-based-app/agent-service1.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/10/01/traditional-app-vs-chat-based-app/agent-service1.png" %}
 
 Here's the corresponding Logic App used in the Agent Service as _Action_:
 
-{% include imageEmbed.html link="/assets/posts/drafts/traditional-app-vs-chat-based-app/agent-service2.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/10/01/traditional-app-vs-chat-based-app/agent-service2.png" %}
 
 Alternatively, you could implement
 [Model Context Protocol (MCP) server](https://learn.microsoft.com/en-us/dotnet/ai/resources/mcp-servers)
@@ -184,7 +184,7 @@ This includes flights, hotels, and car rentals.
 Here is user interface of a traditional applications for travel booking scenario.
 They typically start by looking for flights:
 
-{% include imageEmbed.html link="/assets/posts/drafts/traditional-app-vs-chat-based-app/crud-app2.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/10/01/traditional-app-vs-chat-based-app/crud-app2.png" %}
 
 The above is of course just a first step of the travel booking process.
 After selecting the flights, user would typically find the hotel and then proceed to look for
@@ -192,7 +192,7 @@ additional services like car rentals, etc. Corporate travel tools don't typicall
 
 Here is the same travel booking scenario as a chat-based experience:
 
-{% include imageEmbed.html link="/assets/posts/drafts/traditional-app-vs-chat-based-app/chat-app2.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/10/01/traditional-app-vs-chat-based-app/chat-app2.png" %}
 
 In this user experience, users can describe their travel needs in a more natural way.
 This experience really feels like your personal travel assistant helping you to find the best options
@@ -370,7 +370,7 @@ Here are additional capabilities that might be very useful in this kind of scena
 
 The above capabilities are Knowledge sources in the Azure AI Foundry Agent Service:
 
-{% include imageEmbed.html link="/assets/posts/drafts/traditional-app-vs-chat-based-app/agent-service3.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/10/01/traditional-app-vs-chat-based-app/agent-service3.png" %}
 
 In this scenario, system prompt is more complex and if you add up all the
 used functions and their output, it's totally 1000+ tokens.
@@ -410,7 +410,7 @@ but remember that hotel stays are calculated by stayed nights only.
 
 Here's an example of my token usage metrics for `gpt-5-chat` model which I used for this example:
 
-{% include imageEmbed.html link="/assets/posts/drafts/traditional-app-vs-chat-based-app/token-usage.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/10/01/traditional-app-vs-chat-based-app/token-usage.png" %}
 
 ---
 
@@ -429,7 +429,7 @@ And yes, I'm just going to put this out here:
 
 This post reminded me from one of my presentation from 2020. Here's the summary slide from that presentation:
 
-{% include imageEmbed.html link="/assets/posts/drafts/traditional-app-vs-chat-based-app/right-tool-for-the-right-job.png" %}
+{% include imageEmbed.html link="/assets/posts/2025/10/01/traditional-app-vs-chat-based-app/right-tool-for-the-right-job.png" %}
 
 > Use the right tool for the right job
 
