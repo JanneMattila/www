@@ -10,12 +10,6 @@
 
 - Why would I need to build multi-agent system?
 
-- Size of context demo
-  - My childhood dog name when I was 1 year old
-  - Increment by adding more text and always asking the same question
-  - Show token usage
-  - =rand(100,100) in Word
-
 - IP based filtering in solutions and migrations
  - Pre-create Public IP Prefix
  - Let customer know well in advance
@@ -36,7 +30,9 @@
 
 - AKS & Blobfuse2
  - https://youtu.be/FmMDHrdM5TE
+ - https://learn.microsoft.com/en-us/azure/storage/blobs/blobfuse2-what-is
  - https://github.com/Azure/azure-storage-fuse
+ - https://learn.microsoft.com/en-us/azure/aks/azure-csi-blob-storage-provision?tabs=mount-nfs%2Csecret
  - Single process to fetch up to date data
  - Multiple processes operating these data assets
 

@@ -407,10 +407,11 @@ When calculating travel dates, include both the departure and return dates
 but remember that hotel stays are calculated by stayed nights only.
 ```
 
-
 Here's an example of my token usage metrics for `gpt-5-chat` model which I used for this example:
 
 {% include imageEmbed.html link="/assets/posts/2025/10/01/traditional-app-vs-chat-based-app/token-usage.png" %}
+
+Monitoring is another topic that deserves its own blog post.
 
 ---
 
