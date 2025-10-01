@@ -2,13 +2,13 @@
 
 ## Upcoming posts
 
+- Why would I need to build multi-agent system?
+
 - SQL Injection vs. prompt injection
  - Show .NET code with SQL query + SQL Profiler, EF Core
   - Show how SQL injection works
  - Show similar in prompt injection
   - Show how you can try to mitigate it
-
-- Why would I need to build multi-agent system?
 
 - IP based filtering in solutions and migrations
  - Pre-create Public IP Prefix
