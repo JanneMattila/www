@@ -3,12 +3,26 @@
 ## Upcoming posts
 
 - Why would I need to build multi-agent system?
+https://techcommunity.microsoft.com/blog/azuredevcommunityblog/build-multi%E2%80%91agent-ai-systems-with-microsoft/4454510
 
-- SQL Injection vs. prompt injection
+https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/keeping-agents-on-track-introducing-task-adherence-in-azure-ai-foundry/4458397
+
+https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/better-detecting-cross-prompt-injection-attacks-introducing-spotlighting-in-azur/4458404
+
+- Architecture: Share models vs. project specific deployments
+
+- SQL Injection vs. prompt injection, Evaluations vs. Unit testings
  - Show .NET code with SQL query + SQL Profiler, EF Core
   - Show how SQL injection works
  - Show similar in prompt injection
   - Show how you can try to mitigate it
+
+ - Logic Apps as remote MCP server
+ - https://techcommunity.microsoft.com/blog/integrationsonazureblog/introducing-logic-apps-mcp-servers-public-preview/4450419
+ - https://learn.microsoft.com/en-us/azure/logic-apps/set-up-model-context-protocol-server-standard
+ - https://techcommunity.microsoft.com/blog/integrationsonazureblog/logic-apps---mcp-demos/4452175
+ 
+ - Evaluations
 
 - IP based filtering in solutions and migrations
  - Pre-create Public IP Prefix
@@ -19,11 +33,7 @@
  - Chart overtime to shift traffic to new IP address
  - 
 
-- Logic Apps as remote MCP server
- - https://techcommunity.microsoft.com/blog/integrationsonazureblog/introducing-logic-apps-mcp-servers-public-preview/4450419
- - https://learn.microsoft.com/en-us/azure/logic-apps/set-up-model-context-protocol-server-standard
- - https://techcommunity.microsoft.com/blog/integrationsonazureblog/logic-apps---mcp-demos/4452175
- 
+
 - AKS & KEP-1442
  - https://kubernetes.io/blog/2025/04/23/kubernetes-v1-33-release/#secret-less-image-pulls-with-kubelet
  - Pull images with managed identity from different tenant
