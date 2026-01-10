@@ -2,6 +2,13 @@
 
 ## Upcoming posts
 
+- @Azure
+  Application Gateway now supports:
+  ✅ JWT Validation
+  ✅ mTLS Passthrough
+  ✅ TLS/TCP Proxy
+  - https://x.com/AzNetEng/status/1996293359825232260?t=yBNwhqKrtoUJUFTt-cBcHg&s=09
+
 - Why would I need to build multi-agent system?
 https://techcommunity.microsoft.com/blog/azuredevcommunityblog/build-multi%E2%80%91agent-ai-systems-with-microsoft/4454510
 
