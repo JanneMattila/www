@@ -150,7 +150,7 @@ Here are additional instructions to be added to the subagent instructions:
     https://dev.azure.com/<organization>/<project>/_workitems/edit/<workitem id>/
 ```
 
-Add _CreateAzureDevOpsWorkItemWithoutResourceLinkage_ tool to the subagent:
+Add _Create Azure DevOps WorkItem Without Resource Linkage_ tool to the subagent:
 
 {% include imageEmbed.html link="/assets/posts/2026/01/11/extending-azure-sre-agent/subagent5.png" %}
 
