@@ -173,7 +173,7 @@ Of course, we could now further enhance the subagent to include additional tools
 
 {% include imageEmbed.html imagesize="80%" link="/assets/posts/2026/01/11/extending-azure-sre-agent/extras1.png" %}
 
-Or we could add trigger to run the subagent on schedule or based incidents:
+Or we could add trigger to run the subagent on schedule or based on incidents:
 
 {% include imageEmbed.html imagesize="80%" link="/assets/posts/2026/01/11/extending-azure-sre-agent/extras2.png" %}
 
