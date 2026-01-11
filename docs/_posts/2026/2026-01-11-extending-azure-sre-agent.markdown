@@ -4,7 +4,7 @@ title:  "Extending Azure SRE Agent capabilities with Python"
 image: /assets/posts/2026/01/11/extending-azure-sre-agent/agent.png
 date:   2026-01-11 06:00:00 +0300
 categories: azure
-tags: azure sre devops automation
+tags: azure sre agent ai devops automation
 ---
 
 [Azure SRE Agent](https://learn.microsoft.com/en-us/azure/sre-agent/overview)
