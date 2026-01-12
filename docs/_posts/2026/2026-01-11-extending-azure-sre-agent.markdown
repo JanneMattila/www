@@ -18,18 +18,18 @@ official documentation in the link above. Another good starting point is
 One of the features of Azure SRE Agent is its ability to integrate with various tools.
 Here is a subset view of _Azure Operation_ category which is one of the available tool categories:
 
-{% include imageEmbed.html imagesize="80%" link="/assets/posts/2026/01/11/extending-azure-sre-agent/tools1.png" %}
+{% include imageEmbed.html imagesize="80%" alt="Azure SRE Agent interface showing a list of Azure Operation tools including options like RestartWebApp, RunAzCliReadCommands, and RunAzCliWriteCommands" link="/assets/posts/2026/01/11/extending-azure-sre-agent/tools1.png" %}
 
 As you can see from the list, some of them are quite specific, e.g., _RestartWebApp_ to
 restart an Azure App Service but then there are more generic ones like _RunAzCliWriteCommands_:
 
-{% include imageEmbed.html imagesize="80%" link="/assets/posts/2026/01/11/extending-azure-sre-agent/tools2.png" %}
+{% include imageEmbed.html imagesize="80%" alt="RunAzCliWriteCommands tool details showing its description and configuration options for executing Azure CLI commands" link="/assets/posts/2026/01/11/extending-azure-sre-agent/tools2.png" %}
 
 If you need to do something that is not covered by the existing tools,
 you have a few options:
 
 1) [Custom MCP Server](https://learn.microsoft.com/en-us/azure/sre-agent/custom-mcp-server): This allows you to connect to your own MCP server:
-{% include imageEmbed.html link="/assets/posts/2026/01/11/extending-azure-sre-agent/connector.png" %}
+{% include imageEmbed.html alt="Custom MCP Server connector configuration interface in Azure SRE Agent" link="/assets/posts/2026/01/11/extending-azure-sre-agent/connector.png" %}
 
 2) [ExecutePythonCode](https://learn.microsoft.com/en-us/azure/sre-agent/execute-python-code): This tool allows you to run custom Python code within your automations.
 
@@ -62,7 +62,7 @@ Or you can check the source code from GitHub:
 
 Lets's create a new subagent `EndpointAgent` to use the above Python code snippet:
 
-{% include imageEmbed.html link="/assets/posts/2026/01/11/extending-azure-sre-agent/subagent1.png" %}
+{% include imageEmbed.html alt="Azure SRE Agent subagent builder interface showing the creation of EndpointAgent with name and description fields" link="/assets/posts/2026/01/11/extending-azure-sre-agent/subagent1.png" %}
 
 Here are example instructions for the subagent:
 
@@ -105,7 +105,7 @@ reachability and operational correctness.
 
 Add _ExecutePythonCode_ tool to the subagent:
 
-{% include imageEmbed.html imagesize="80%" link="/assets/posts/2026/01/11/extending-azure-sre-agent/subagent2.png" %}
+{% include imageEmbed.html imagesize="80%" alt="Tool selection interface showing ExecutePythonCode being added to the subagent with its description about Jupyter-style environment capabilities" link="/assets/posts/2026/01/11/extending-azure-sre-agent/subagent2.png" %}
 
 _ExecutePythonCode_ description tells about its capabilities:
 
@@ -121,11 +121,11 @@ _ExecutePythonCode_ description tells about its capabilities:
 
 Here is our subagent with the tool added:
 
-{% include imageEmbed.html link="/assets/posts/2026/01/11/extending-azure-sre-agent/subagent3.png" %}
+{% include imageEmbed.html alt="EndpointAgent subagent configuration showing the ExecutePythonCode tool successfully added to the tools list" link="/assets/posts/2026/01/11/extending-azure-sre-agent/subagent3.png" %}
 
 Now we're ready to use _Test playground_ to test the subagent:
 
-{% include imageEmbed.html imagesize="80%" link="/assets/posts/2026/01/11/extending-azure-sre-agent/subagent4.png" %}
+{% include imageEmbed.html imagesize="80%" alt="Test playground showing successful execution of the EndpointAgent with HTTP 200 response and operational status true" link="/assets/posts/2026/01/11/extending-azure-sre-agent/subagent4.png" %}
 
 Your endpoint should have receive the following POST request:
 
@@ -152,30 +152,30 @@ Here are additional instructions to be added to the subagent instructions:
 
 Add _Create Azure DevOps WorkItem Without Resource Linkage_ tool to the subagent:
 
-{% include imageEmbed.html link="/assets/posts/2026/01/11/extending-azure-sre-agent/subagent5.png" %}
+{% include imageEmbed.html alt="Tool selection interface showing Create Azure DevOps WorkItem Without Resource Linkage tool being added to the subagent" link="/assets/posts/2026/01/11/extending-azure-sre-agent/subagent5.png" %}
 
 Here is our current implementation:
 
-{% include imageEmbed.html link="/assets/posts/2026/01/11/extending-azure-sre-agent/subagent6.png" %}
+{% include imageEmbed.html alt="EndpointAgent subagent configuration showing both ExecutePythonCode and Create Azure DevOps WorkItem tools in the tools list" link="/assets/posts/2026/01/11/extending-azure-sre-agent/subagent6.png" %}
 
 If we now take down the endpoint and run the test again with operator `NotWorking`, the subagent discovers the failure
 and reports back the newly created Azure DevOps task URL:
 
-{% include imageEmbed.html link="/assets/posts/2026/01/11/extending-azure-sre-agent/subagent7.png" %}
+{% include imageEmbed.html alt="Test playground showing failed endpoint test with operational status false and a newly created Azure DevOps task URL in the response" link="/assets/posts/2026/01/11/extending-azure-sre-agent/subagent7.png" %}
 
 Here is the Azure DevOps task created by the subagent:
 
-{% include imageEmbed.html link="/assets/posts/2026/01/11/extending-azure-sre-agent/subagent8.png" %}
+{% include imageEmbed.html alt="Azure DevOps work item task view showing the automatically created task with endpoint test failure details" link="/assets/posts/2026/01/11/extending-azure-sre-agent/subagent8.png" %}
 
 ---
 
 Of course, we could now further enhance the subagent to include additional tools:
 
-{% include imageEmbed.html imagesize="80%" link="/assets/posts/2026/01/11/extending-azure-sre-agent/extras1.png" %}
+{% include imageEmbed.html imagesize="80%" alt="Azure SRE Agent tool catalog showing various additional tools available for extending subagent capabilities" link="/assets/posts/2026/01/11/extending-azure-sre-agent/extras1.png" %}
 
 Or we could add trigger to run the subagent on schedule or based on incidents:
 
-{% include imageEmbed.html imagesize="80%" link="/assets/posts/2026/01/11/extending-azure-sre-agent/extras2.png" %}
+{% include imageEmbed.html imagesize="80%" alt="Azure SRE Agent trigger configuration options showing schedule and incident-based automation triggers" link="/assets/posts/2026/01/11/extending-azure-sre-agent/extras2.png" %}
 
 More about those topics in future posts!
 

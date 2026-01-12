@@ -23,7 +23,7 @@ Tachyon beams and splitters:
 
 I don't now why, but I really like these kinds of puzzles:
 
-{% include imageEmbed.html imagesize="80%" link="/assets/posts/2025/12/14/advent-of-code/day7.png" %}
+{% include imageEmbed.html imagesize="80%" alt="Grid visualization of tachyon beam puzzle showing light paths splitting and reflecting through a matrix of mirrors and splitters." link="/assets/posts/2025/12/14/advent-of-code/day7.png" %}
 
 #### Day 10
 
@@ -38,7 +38,7 @@ Then I used Z3 optimizer to minimize the total button presses.
 
 I first created these formulas on paper to validate the idea (yes it was awfully messy):
 
-{% include imageEmbed.html imagesize="80%" link="/assets/posts/2025/12/14/advent-of-code/day10-snippet.jpg" %}
+{% include imageEmbed.html imagesize="80%" alt="Hand-written mathematical formulas and equations on paper showing voltage requirements and button press calculations for the Z3 solver approach." link="/assets/posts/2025/12/14/advent-of-code/day10-snippet.jpg" %}
 
 Here is the main code snippet of that solution:
 
@@ -100,7 +100,7 @@ return resultButtonPresses.Sum();
 
 Time for [Mermaid](https://mermaid.live/) diagrams (see previous years for background)!
 
-{% include imageEmbed.html imagesize="100%" link="/assets/posts/2025/12/14/advent-of-code/day11.png" %}
+{% include imageEmbed.html imagesize="100%" alt="Large Mermaid diagram displaying a complex map with red arrow marking the starting point, green arrows highlighting intermediate waypoints, and blue arrow indicating the final destination." link="/assets/posts/2025/12/14/advent-of-code/day11.png" %}
 
 As you can see from the diagram, it is a humangous map!
 I've highlighted with red arrow the starting point,
@@ -117,7 +117,7 @@ Day 12 really got me. I struggled a lot and really tried to find way to solve it
 With example input it was easy to find the solution and I created
 ways to validate the solution visually:
 
-{% include imageEmbed.html imagesize="40%" link="/assets/posts/2025/12/14/advent-of-code/day12.png" %}
+{% include imageEmbed.html imagesize="40%" alt="Visual representation of Day 12 puzzle solution using example input, showing the validation output." link="/assets/posts/2025/12/14/advent-of-code/day12.png" %}
 
 But the real input was so much bigger than I couldn't figure out how to solve it.
 I finally gave up and peeked at the [r/adventofcode](https://www.reddit.com/r/adventofcode/) and [2025 Day 12 Solutions](https://www.reddit.com/r/adventofcode/comments/1pkje0o/2025_day_12_solutions/) megathread.
@@ -125,7 +125,7 @@ I finally gave up and peeked at the [r/adventofcode](https://www.reddit.com/r/ad
 And yes, immediately I understood that the good old trick to confuse puzzle solver like
 me really did it job well:
 
-{% include imageEmbed.html imagesize="40%" link="/assets/posts/2025/12/14/advent-of-code/excel.png" %}
+{% include imageEmbed.html imagesize="40%" alt="Excel spreadsheet showing the puzzle trick that reveals the hidden pattern in the input data." link="/assets/posts/2025/12/14/advent-of-code/excel.png" %}
 
 Here is my visualization of the solution (but I had to add a bit more variance in presents to show cooler visualization):
 
@@ -149,6 +149,6 @@ created by the community:
 Yet another year of Advent of Code has passed. As always, 
 I want to give a big shout out to [Eric Wastl](https://x.com/ericwastl) for creating another amazing event:
 
-{% include imageEmbed.html imagesize="40%" link="/assets/posts/2025/12/14/advent-of-code/aoc-stars.png" %}
+{% include imageEmbed.html imagesize="40%" alt="Advent of Code completion status showing collected stars for the 2025 event." link="/assets/posts/2025/12/14/advent-of-code/aoc-stars.png" %}
 
 I still have some puzzles to finish up from 2017 and 2018. Maybe next year I'll find time to finish those.

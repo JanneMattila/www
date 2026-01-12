@@ -29,4 +29,7 @@ end
 # Performance-booster for watching directories on Windows
 gem "wdm", :platforms => [:mingw, :x64_mingw, :mswin]
 
+# Required for Ruby 3.5.0+ (no longer a default gem)
+gem "fiddle"
+
 gem "faraday-retry"

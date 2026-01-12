@@ -48,6 +48,7 @@ GEM
     faraday-retry (2.2.1)
       faraday (~> 2.0)
     ffi (1.17.1-x64-mingw-ucrt)
+    fiddle (1.1.8)
     forwardable-extended (2.6.0)
     gemoji (4.1.0)
     github-pages (232)
@@ -280,6 +281,7 @@ PLATFORMS
 
 DEPENDENCIES
   faraday-retry
+  fiddle
   github-pages
   jekyll-feed
   tzinfo
