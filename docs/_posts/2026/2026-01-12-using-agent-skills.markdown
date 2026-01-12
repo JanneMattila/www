@@ -77,7 +77,7 @@ _as I had to escape some characters to make it display properly here._
 
 Full version of the skill content is available in GitHub:
 
-{% include githubEmbed.html text="JanneMattila/www/.github/skills/image-alt-text/SKILL.md" link="JanneMattila/www/.github/skills/image-alt-text/SKILL.md" %}
+{% include githubEmbed.html text="JanneMattila/www/.github/skills/image-alt-text/SKILL.md" link="JanneMattila/www/blob/main/.github/skills/image-alt-text/SKILL.md" %}
 
 When I started to write the content of the `SKILL.md`, I didn't plan it at all and
 just described that in one flow with the help from Copilot.
