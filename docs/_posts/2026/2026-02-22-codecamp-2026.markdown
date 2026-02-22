@@ -1,0 +1,113 @@
+---
+layout: posts
+title: Codecamp 2026 summary
+image: /assets/posts/2026/02/22/codecamp-2026/Storyteller.jpg
+date: 2026-02-22 06:00:00 +0300
+categories: appdev
+tags: appdev azure openai unity
+---
+
+This post continues the series of posting summary from our
+Codecamp. See my post from [last year]({% post_url 2025/01/2025-01-26-codecamp-2025 %})
+for context.
+
+This year we expanded and enhanced Jarmo's existing [Unity](https://unity.com) 
+functionality for creating stories that are dynamic and interactive.
+
+We used Meta Quest 3 devices during the Codecamp:
+
+{% include imageEmbed.html link="/assets/posts/2026/02/22/codecamp-2026/MetaQuest3.jpg" %}
+
+<!-- You can find **summary video** on
+[Jarmo's LinkedIn post](https://www.linkedin.com/posts/jarmo-h%C3%A4m%C3%A4l%C3%A4inen-821337a_unity-unity3d-activity-7289245348051505152-Z92r). -->
+
+---
+
+We created different stories and characters to demonstrate the implemented functionalities. 
+Here's our characters (in the order of appearance in the video):
+
+**Codecamp Host:**
+
+{% include imageEmbed.html link="/assets/posts/2026/02/22/codecamp-2026/JanneHostCodecamp20262.jpg" %}
+_This might remind you of someone..._
+
+**Doctor:**
+
+{% include imageEmbed.html link="/assets/posts/2026/02/22/codecamp-2026/Scary.jpg" %}
+
+**Angry neighbour:**
+
+{% include imageEmbed.html link="/assets/posts/2026/02/22/codecamp-2026/Angry.jpg" %}
+
+**Tour guide:**
+
+{% include imageEmbed.html link="/assets/posts/2026/02/22/codecamp-2026/TourGuide.png" %}
+
+**Storyteller:**
+
+{% include imageEmbed.html link="/assets/posts/2026/02/22/codecamp-2026/Storyteller.jpg" %}
+_Same avatar as the Tour guide since we ran out of time..._
+
+You can see the characters and the story better in the video linked above,
+so I won't go into details about the story itself. 
+Instead, now we're focusing on the technical details of how we implemented the characters and the story.
+
+Each character has the following features:
+
+**1) Unlimited number of idle and speak animations**
+
+When are idle animations used? When the character is not speaking, it will use idle animations to make it look more lively and engaging.
+For example, the character look around, scratch their head, or doing some other things to make it look more natural.
+You need to have quite many of them to make the character look more natural and less repetitive.
+If you only have e.g., 1 idle animation, the character will look very robotic and boring.
+
+When are speak animations used? When the character is speaking, it will use speak animations to show more expressive and engaging dialogue.
+For example, the character can use hand gestures, facial expressions, or other animations to make the dialogue more interesting.
+
+Animations are not using Unity's animation system, but instead we are using motion capture data from Meta Quest 3.
+
+**2) Prompts defining their behavior and personality**
+
+Each character has a prompt that describes their characteristics, behavior, and personality. 
+This creates very interesting dialogues since you never know in advance what the character will say
+and to which direction the story will go.
+
+**3) Scene content and events are created and maintained by configuration, not Unity editor**
+
+This means that we can create and modify the story and the scenes without having to touch Unity editor or code.
+We can use motion capture to record the animations, enhance them with finger tracking, add key frames etc.
+and then just add them to the configuration to be used by the characters.
+
+Characters can have text associated to key frames in the configuration but they can also speak text generated
+by Azure OpenAI based on the prompt and the context of the story.
+
+---
+
+Here's a architecture diagram of the implemented solution:
+
+{% include imageEmbed.html link="/assets/posts/2026/02/22/codecamp-2026/Codecamp2026.png" %}
+
+Since the Meta Quest 3 devices and Unity have some challenges with running complex
+.NET code in the Android environment and performance constraints, some of the processing is done outside the device.
+This enables very fast development by having only the necessary code running on the device itself.
+
+Client can use local service endpoint `(1)` if that is available and if not,
+it can use the Azure Function endpoint `(2)`. All the needed Azure services are
+behind these endpoints.
+
+---
+
+As always, during Codecamps, we take quick turns when ideas arise. 
+This time in the Sunday morning, we came up with an idea to use 
+[Whisper.net](https://github.com/sandrohanea/whisper.net)
+in the local service for speech-to-text for faster processing of the voice commands
+and only submit the text to Azure OpenAI for generating the responses.
+This way we can process the voice commands locally and only send the text to Azure OpenAI when required.
+
+Impact of this change can be seen in the Storyteller video since other videos were recorded before this change was implemented.
+
+---
+
+As always, we had a lot of fun at our Codecamp.
+
+I hope you enjoyed reading about our experience!
