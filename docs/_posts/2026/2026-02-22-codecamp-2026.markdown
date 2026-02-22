@@ -18,8 +18,8 @@ We used Meta Quest 3 devices during the Codecamp:
 
 {% include imageEmbed.html link="/assets/posts/2026/02/22/codecamp-2026/MetaQuest3.jpg" %}
 
-<!-- You can find **summary video** on
-[Jarmo's LinkedIn post](https://www.linkedin.com/posts/jarmo-h%C3%A4m%C3%A4l%C3%A4inen-821337a_unity-unity3d-activity-7289245348051505152-Z92r). -->
+You can find **summary video** on
+[Jarmo's LinkedIn post](https://www.linkedin.com/posts/jarmo-h%C3%A4m%C3%A4l%C3%A4inen-821337a_unity-unity3d-activity-7289245348051505152-Z92r).
 
 ---
 
@@ -80,6 +80,11 @@ and then just add them to the configuration to be used by the characters.
 
 Characters can have text associated to key frames in the configuration but they can also speak text generated
 by Azure OpenAI based on the prompt and the context of the story.
+
+**4) AI is used to generate the dialogue and image generation**
+
+No surprise here, but we are using AI for generating the dynamic dialogue and the images
+which support the story. 
 
 ---
 
