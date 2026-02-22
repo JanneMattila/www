@@ -19,7 +19,7 @@ We used Meta Quest 3 devices during the Codecamp:
 {% include imageEmbed.html link="/assets/posts/2026/02/22/codecamp-2026/MetaQuest3.jpg" %}
 
 You can find **summary video** on
-[Jarmo's LinkedIn post](https://www.linkedin.com/posts/jarmo-h%C3%A4m%C3%A4l%C3%A4inen-821337a_unity-unity3d-activity-7289245348051505152-Z92r).
+[Jarmo's LinkedIn post](https://www.linkedin.com/posts/jarmo-h%C3%A4m%C3%A4l%C3%A4inen-821337a_codecamp-just-for-fun-heres-the-summary-activity-7431308555875487744-CNLz).
 
 ---
 
