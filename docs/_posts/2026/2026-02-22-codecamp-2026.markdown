@@ -21,6 +21,9 @@ We used Meta Quest 3 devices during the Codecamp:
 You can find **summary video** on
 [Jarmo's LinkedIn post](https://www.linkedin.com/posts/jarmo-h%C3%A4m%C3%A4l%C3%A4inen-821337a_codecamp-just-for-fun-heres-the-summary-activity-7431308555875487744-CNLz).
 
+Here is the latest updated video with Storyteller in
+[Jarmo's LinkedIn post](https://www.linkedin.com/posts/jarmo-h%C3%A4m%C3%A4l%C3%A4inen-821337a_codecamp-just-for-fun-with-janne-mattila-activity-7431309921956081664-g3K5).
+
 ---
 
 We created different stories and characters to demonstrate the implemented functionalities. 
@@ -85,6 +88,7 @@ by Azure OpenAI based on the prompt and the context of the story.
 
 No surprise here, but we are using AI for generating the dynamic dialogue and the images
 which support the story. 
+It also means that story is different every time run it and you can impact the direction of the story.
 
 ---
 
